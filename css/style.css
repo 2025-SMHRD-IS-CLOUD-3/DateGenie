@@ -46,6 +46,10 @@ body.dark-mode .glow-card p {
     color: #cccccc;
 }
 
+body.dark-mode .glow-card:hover {
+    box-shadow: 0 15px 30px rgba(255, 255, 255, 0.1);
+}
+
 body.dark-mode .pricing {
     background: #2a2a2a;
 }
@@ -231,6 +235,56 @@ body.dark-mode .dark-mode-toggle .moon-icon {
     display: none;
 }
 
+/* Heartbeat Animation Styles */
+.heartbeat-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 200px;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.heartbeat-line {
+    width: 100%;
+    height: 100%;
+}
+
+.heartbeat-path {
+    stroke-dasharray: 1500;
+    stroke-dashoffset: 1500;
+    animation: heartbeatPulse 3s ease-in-out infinite;
+}
+
+@keyframes heartbeatPulse {
+    0% {
+        stroke-dashoffset: 1500;
+        opacity: 0.3;
+    }
+    15% {
+        opacity: 1;
+    }
+    50% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        stroke-dashoffset: -1500;
+        opacity: 0.3;
+    }
+}
+
+/* 다크모드에서 심장박동계 스타일 */
+body.dark-mode .heartbeat-container {
+    opacity: 0.8;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -414,7 +468,7 @@ body.dark-mode .dark-mode-toggle .moon-icon {
     margin-bottom: 2rem;
     font-size: 0.9rem;
     color: #1e1b4b;
-    animation: fadeInUp 1s ease-out 0.5s both, float 3s ease-in-out infinite;
+    animation: fadeInUp 1s ease-out 1.5s both, float 3s ease-in-out infinite 2.5s;
 }
 
 @keyframes fadeInUp {
@@ -447,7 +501,7 @@ body.dark-mode .dark-mode-toggle .moon-icon {
     font-weight: 700;
     margin-bottom: 1.5rem;
     line-height: 1.2;
-    animation: fadeInUp 1s ease-out 1s both;
+    animation: fadeInUp 1s ease-out 2s both;
 }
 
 /* 통계 값들 - 어두운 색으로 변경 */
@@ -487,7 +541,7 @@ body.dark-mode .dark-mode-toggle .moon-icon {
     margin-bottom: 2rem;
     opacity: 0.9;
     line-height: 1.6;
-    animation: fadeInUp 1s ease-out 1.5s both;
+    animation: fadeInUp 1s ease-out 2.5s both;
 }
 
 .hero-buttons {
@@ -496,7 +550,7 @@ body.dark-mode .dark-mode-toggle .moon-icon {
     justify-content: center;
     margin-bottom: 3rem;
     flex-wrap: wrap;
-    animation: fadeInUp 1s ease-out 2s both;
+    animation: fadeInUp 1s ease-out 3s both;
 }
 
 .btn-primary {
@@ -548,7 +602,7 @@ body.dark-mode .dark-mode-toggle .moon-icon {
     justify-content: center;
     gap: 3rem;
     flex-wrap: wrap;
-    animation: fadeInUp 1s ease-out 2.5s both;
+    animation: fadeInUp 1s ease-out 3.5s both;
 }
 
 .stat-item {
@@ -609,7 +663,7 @@ body.dark-mode .dark-mode-toggle .moon-icon {
 
 
 .glow-card:hover {
-    box-shadow: 0 15px 30px rgba(236, 72, 153, 0.25);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
 .feature-content {
@@ -887,5 +941,16 @@ body.dark-mode .dark-mode-toggle .moon-icon {
     .glow-card {
         height: auto;
         min-height: 280px;
+    }
+    
+    /* 모바일에서 심장박동계 조정 */
+    .heartbeat-container {
+        opacity: 0.5;
+        height: 150px;
+        width: 140%;
+    }
+    
+    body.dark-mode .heartbeat-container {
+        opacity: 0.7;
     }
 } 
