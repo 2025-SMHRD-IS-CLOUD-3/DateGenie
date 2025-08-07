@@ -109,6 +109,37 @@ body.dark-mode .stat-label {
     color: #cccccc;
 }
 
+/* Hero 섹션 다크모드 수정 */
+body.dark-mode .hero {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 25%, #1e1e1e 50%, #2d2d2d 75%, #1a1a1a 100%);
+    color: #ffffff;
+}
+
+body.dark-mode .hero-title {
+    color: #ffffff;
+}
+
+body.dark-mode .stat-number {
+    color: #ffffff;
+}
+
+body.dark-mode .gradient-text {
+    color: #ec4899;
+    text-shadow: 
+        0 0 10px rgba(236, 72, 153, 0.3),
+        0 0 20px rgba(236, 72, 153, 0.2);
+}
+
+body.dark-mode .hero-badge {
+    background: rgba(236, 72, 153, 0.1);
+    border-color: rgba(236, 72, 153, 0.3);
+    color: #ffffff;
+}
+
+body.dark-mode .hero-badge i {
+    color: #ec4899;
+}
+
 body.dark-mode .btn-secondary {
     color: #ffffff;
     border-color: #7c3aed;
