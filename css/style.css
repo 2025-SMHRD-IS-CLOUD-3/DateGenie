@@ -11,6 +11,193 @@ body {
     word-break: keep-all;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    font-display: block;
+    transition: all 0.3s ease;
+}
+
+/* 다크모드 스타일 */
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+body.dark-mode .navbar {
+    background: rgba(26, 26, 26, 0.95) !important;
+}
+
+body.dark-mode .nav-logo a {
+    color: #ffffff;
+}
+
+body.dark-mode .nav-menu a {
+    color: #ffffff;
+}
+
+body.dark-mode .glow-card {
+    background: rgba(40, 40, 40, 0.95);
+    color: #ffffff;
+}
+
+body.dark-mode .glow-card h3 {
+    color: #ffffff;
+}
+
+body.dark-mode .glow-card p {
+    color: #cccccc;
+}
+
+body.dark-mode .pricing {
+    background: #2a2a2a;
+}
+
+body.dark-mode .pricing-card {
+    background: #333333;
+    color: #ffffff;
+}
+
+body.dark-mode .pricing-card h3 {
+    color: #ffffff;
+}
+
+body.dark-mode .pricing-card p {
+    color: #cccccc;
+}
+
+body.dark-mode .pricing-features li {
+    color: #cccccc;
+}
+
+body.dark-mode .faq {
+    background: #1a1a1a;
+}
+
+body.dark-mode .faq-item {
+    background: #333333;
+}
+
+body.dark-mode .faq-question {
+    background: #2a2a2a;
+}
+
+body.dark-mode .faq-question h3 {
+    color: #ffffff;
+}
+
+body.dark-mode .faq-answer p {
+    color: #cccccc;
+}
+
+body.dark-mode .section-header h2 {
+    color: #ffffff;
+}
+
+body.dark-mode .section-header p {
+    color: #cccccc;
+}
+
+/* 다크모드에서 안 보이는 텍스트들 수정 */
+body.dark-mode .hero-description {
+    color: #e5e5e5;
+}
+
+body.dark-mode .hero-badge {
+    color: #e5e5e5;
+    border-color: rgba(124, 58, 237, 0.5);
+}
+
+body.dark-mode .stat-label {
+    color: #cccccc;
+}
+
+body.dark-mode .btn-secondary {
+    color: #ffffff;
+    border-color: #7c3aed;
+    background: rgba(124, 58, 237, 0.1);
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: rgba(124, 58, 237, 0.2);
+    color: #ffffff;
+}
+
+body.dark-mode .features {
+    background: #1a1a1a;
+}
+
+body.dark-mode .faq-question:hover {
+    background: #3a3a3a;
+}
+
+body.dark-mode .faq-question i {
+    color: #cccccc;
+}
+
+body.dark-mode .pricing-header p {
+    color: #cccccc;
+}
+
+body.dark-mode .period {
+    color: #cccccc;
+}
+
+body.dark-mode .pricing-badge {
+    color: #ffffff;
+}
+
+body.dark-mode .amount {
+    color: #ec4899;
+}
+
+body.dark-mode .pricing-card .btn-secondary {
+    color: #ffffff;
+    border-color: #7c3aed;
+}
+
+body.dark-mode .pricing-card .btn-secondary:hover {
+    background: rgba(124, 58, 237, 0.2);
+    color: #ffffff;
+}
+
+/* 다크모드 토글 버튼 */
+.dark-mode-toggle {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.dark-mode-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode-toggle .sun-icon {
+    display: none;
+}
+
+.dark-mode-toggle .moon-icon {
+    display: block;
+}
+
+body.dark-mode .dark-mode-toggle .sun-icon {
+    display: block;
+}
+
+body.dark-mode .dark-mode-toggle .moon-icon {
+    display: none;
 }
 
 .container {
@@ -43,33 +230,35 @@ body {
 .nav-logo {
     display: flex;
     align-items: center;
-    font-size: 1.25rem;
+    font-size: 1.8rem;
     font-weight: 600;
-    color: #111827; /* 다크 그레이 톤으로 깔끔하게 */
-    gap: 0.5rem;     /* 간격 주기 */
+    color: #111827;
+    gap: 0.5rem;
     letter-spacing: -0.3px;
+    font-family: 'Dancing Script', cursive;
 }
 
 .nav-logo a {
     display: flex;
     align-items: center;
-    font-size: 1.25rem;
+    font-size: 1.8rem;
     font-weight: 600;
     color: #111827;
     gap: 0.5rem;
     letter-spacing: -0.3px;
     text-decoration: none;
-    transition: all 0.3s ease;
+    font-family: 'Dancing Script', cursive;
+    font-display: block;
 }
 
 .nav-logo a:hover {
-    transform: translateY(-1px);
     color: #ec4899;
 }
 
-.nav-logo i {
-    color: #ec4899; /* 하트는 강조 유지 */
-    font-size: 1.2rem;
+.logo-icon {
+}
+
+.nav-logo:hover .logo-icon {
 }
 
 
@@ -98,24 +287,50 @@ body {
     text-decoration: none;
     color: #333;
     font-weight: 500;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+.nav-menu a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #ec4899, #8b5cf6);
+    transition: width 0.3s ease;
 }
 
 .nav-menu a:hover {
     color: #ec4899;
+    transform: translateY(-1px);
+}
+
+.nav-menu a:hover::after {
+    width: 100%;
 }
 
 .nav-btn {
     background: linear-gradient(135deg, #ec4899, #8b5cf6);
-    color: white !important;
-    padding: 0.5rem 1.5rem;
+    color: white;
+    padding: 0.75rem 1.8rem;
     border-radius: 25px;
-    transition: transform 0.3s ease;
     margin-left: auto;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
 }
 
+
+
 .nav-btn:hover {
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, #f472b6, #a855f7);
 }
 
 /* Hero Section */
@@ -125,10 +340,10 @@ body {
     align-items: center;
     justify-content: center;
     position: relative;
-    background: linear-gradient(to bottom, #0d0d1f 0%, #12122d 30%, #6e1a65 100%);
-    color: white;
+    background: linear-gradient(135deg, #fce7f3 0%, #fdf2f8 25%, #f3e8ff 50%, #e9d5ff 75%, #fce7f3 100%);
+    color: #1e1b4b;
     overflow: hidden;
-    animation: hueShift 30s ease-in-out infinite;
+    animation: hueShift 10s ease-in-out infinite;
 }
 
 @keyframes hueShift {
@@ -136,16 +351,16 @@ body {
         filter: hue-rotate(0deg);
     }
     25% {
-        filter: hue-rotate(90deg);
+        filter: hue-rotate(20deg);
     }
     50% {
-        filter: hue-rotate(180deg);
+        filter: hue-rotate(60deg);
     }
     75% {
-        filter: hue-rotate(270deg);
+        filter: hue-rotate(20deg);
     }
     100% {
-        filter: hue-rotate(360deg);
+        filter: hue-rotate(0deg);
     }
 }
 
@@ -160,13 +375,14 @@ body {
 .hero-badge {
     display: inline-flex;
     align-items: center;
-    background: rgba(139, 92, 246, 0.2);
+    background: rgba(124, 58, 237, 0.1);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(139, 92, 246, 0.3);
+    border: 1px solid rgba(124, 58, 237, 0.3);
     padding: 0.5rem 1rem;
     border-radius: 25px;
     margin-bottom: 2rem;
     font-size: 0.9rem;
+    color: #1e1b4b;
     animation: fadeInUp 1s ease-out 0.5s both, float 3s ease-in-out infinite;
 }
 
@@ -192,7 +408,7 @@ body {
 
 .hero-badge i {
     margin-right: 0.5rem;
-    color: #ec4899;
+    color: #7c3aed;
 }
 
 .hero-title {
@@ -203,22 +419,19 @@ body {
     animation: fadeInUp 1s ease-out 1s both;
 }
 
-/* 통계 값들 - 흰색으로 통일 */
+/* 통계 값들 - 어두운 색으로 변경 */
 .stat-number {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #ffffff; /* 흰색으로 통일 */
+    color: #1e1b4b; /* 어두운 색으로 변경 */
 }
 
 /* 나머지 요소들은 색 고정 */
 .gradient-text {
-    color: #ffffff;
+    color: #7c3aed;
     text-shadow: 
-        0 0 10px rgba(236, 72, 153, 0.8),
-        0 0 20px rgba(236, 72, 153, 0.6),
-        0 0 30px rgba(236, 72, 153, 0.4),
-        0 0 40px rgba(236, 72, 153, 0.2);
-    animation: textGlow 3s ease-in-out infinite;
+        0 0 10px rgba(124, 58, 237, 0.3),
+        0 0 20px rgba(124, 58, 237, 0.2);
 }
 
 @keyframes textGlow {
@@ -272,20 +485,7 @@ body {
     overflow: hidden;
 }
 
-.btn-primary::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-}
 
-.btn-primary:hover::before {
-    left: 100%;
-}
 
 .btn-primary:hover {
     transform: translateY(-2px);
@@ -293,9 +493,9 @@ body {
 }
 
 .btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(124, 58, 237, 0.1);
+    color: #1e1b4b;
+    border: 2px solid #7c3aed;
     padding: 1rem 2rem;
     border-radius: 50px;
     font-size: 1rem;
@@ -306,8 +506,10 @@ body {
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(124, 58, 237, 0.2);
+    border-color: #6d28d9;
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(124, 58, 237, 0.3);
 }
 
 .hero-stats {
@@ -365,8 +567,7 @@ body {
     padding: 2rem;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0s ease;
     position: relative;
     overflow: hidden;
     height: 320px;
@@ -374,24 +575,10 @@ body {
     flex-direction: column;
 }
 
-.glow-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent);
-    transition: left 0.6s;
-}
 
-.glow-card:hover::before {
-    left: 100%;
-}
 
 .glow-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 15px 30px rgba(236, 72, 153, 0.25);
 }
 
 .feature-content {
@@ -410,12 +597,9 @@ body {
     justify-content: center;
     margin-bottom: 1.5rem;
     position: relative;
-    transition: all 0.3s ease;
 }
 
 .feature-icon:hover {
-    transform: scale(1.1);
-    box-shadow: 0 10px 25px rgba(236, 72, 153, 0.3);
 }
 
 .feature-icon i {
@@ -448,6 +632,8 @@ body {
     gap: 2rem;
     max-width: 1000px;
     margin: 0 auto;
+    justify-items: center;
+    align-items: stretch;
 }
 
 .pricing-card {
@@ -458,6 +644,17 @@ body {
     transition: all 0.3s ease;
     position: relative;
     border: 2px solid transparent;
+    width: 100%;
+    max-width: 350px;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.pricing-card:not(.featured) {
+    max-width: 300px;
+    min-height: 450px;
+    transform: scale(0.95);
 }
 
 .pricing-card:hover {
@@ -465,13 +662,17 @@ body {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
+.pricing-card:not(.featured):hover {
+    transform: scale(0.95) translateY(-5px);
+}
+
 .pricing-card.featured {
     border-color: #ec4899;
-    transform: scale(1.05);
+    z-index: 1;
 }
 
 .pricing-card.featured:hover {
-    transform: scale(1.05) translateY(-5px);
+    transform: translateY(-5px);
 }
 
 .pricing-badge {
@@ -522,6 +723,7 @@ body {
 .pricing-features {
     list-style: none;
     margin-bottom: 2rem;
+    flex: 1;
 }
 
 .pricing-features li {
@@ -541,6 +743,7 @@ body {
 .pricing-card .btn-secondary {
     width: 100%;
     justify-content: center;
+    margin-top: auto;
 }
 
 /* FAQ Section */

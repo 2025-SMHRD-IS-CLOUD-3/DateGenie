@@ -83,48 +83,12 @@ function showDemo() {
 
 // Glow effect for feature cards
 function initGlowEffects() {
-    const glowCards = document.querySelectorAll('.glow-card');
-    
-    glowCards.forEach(card => {
-        card.addEventListener('mousemove', function(e) {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            const angleX = (y - centerY) / centerY;
-            const angleY = (centerX - x) / centerX;
-            
-            // Add subtle 3D effect
-            card.style.transform = `perspective(1000px) rotateX(${angleX * 5}deg) rotateY(${angleY * 5}deg) translateZ(10px)`;
-            
-            // Add glow effect based on mouse position
-            const glowColor = card.getAttribute('data-glow-color') || 'purple';
-            const glowIntensity = Math.max(0, 1 - Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2) / (rect.width / 2));
-            
-            card.style.boxShadow = `0 10px 30px rgba(0, 0, 0, 0.1), 
-                                   0 0 20px rgba(${getGlowColor(glowColor)}, ${glowIntensity * 0.3})`;
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
-            card.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
-        });
-    });
+    // Glow effects disabled
 }
 
-// Get glow color RGB values
+// Get glow color RGB values (disabled)
 function getGlowColor(color) {
-    const colors = {
-        purple: '139, 92, 246',
-        red: '236, 72, 153',
-        blue: '59, 130, 246',
-        green: '34, 197, 94',
-        orange: '249, 115, 22'
-    };
-    return colors[color] || '139, 92, 246';
+    return '139, 92, 246';
 }
 
 // Parallax effect for hero section
@@ -262,14 +226,115 @@ window.addEventListener('load', scrollToTop);
 window.addEventListener('DOMContentLoaded', scrollToTop);
 window.addEventListener('pageshow', scrollToTop);
 
-// 새로고침 감지
+// 새로고침 감지 및 강제 스크롤
 window.addEventListener('beforeunload', function() {
     sessionStorage.setItem('wasRefreshed', 'true');
 });
 
 window.addEventListener('load', function() {
+    // 즉시 최상단으로 이동
+    window.scrollTo(0, 0);
+    
+    // 새로고침인 경우 추가로 최상단으로 이동
     if (sessionStorage.getItem('wasRefreshed') === 'true') {
-        window.scrollTo(0, 0);
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+        }, 100);
         sessionStorage.removeItem('wasRefreshed');
     }
+});
+
+// F5 키 감지
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+        sessionStorage.setItem('wasRefreshed', 'true');
+    }
+}); 
+
+// hue-rotate 값 실시간 모니터링
+function monitorHueRotate() {
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+
+    // 애니메이션 시작 시간
+    const startTime = Date.now();
+    const animationDuration = 30000; // 30초
+
+    function updateHueValue() {
+        const elapsed = (Date.now() - startTime) % animationDuration;
+        const progress = elapsed / animationDuration;
+        
+        // 애니메이션 진행도에 따른 hue-rotate 값 계산
+        let hueValue;
+        if (progress <= 0.25) {
+            // 0% -> 25%: 0deg -> 40deg
+            hueValue = (progress * 4) * 40;
+        } else if (progress <= 0.5) {
+            // 25% -> 50%: 40deg -> 80deg
+            hueValue = 40 + ((progress - 0.25) * 4) * 40;
+        } else if (progress <= 0.75) {
+            // 50% -> 75%: 80deg -> 40deg
+            hueValue = 80 - ((progress - 0.5) * 4) * 40;
+        } else {
+            // 75% -> 100%: 40deg -> 0deg
+            hueValue = 40 - ((progress - 0.75) * 4) * 40;
+        }
+
+        console.log(`Hue Rotate: ${hueValue.toFixed(1)}deg (Progress: ${(progress * 100).toFixed(1)}%)`);
+    }
+
+    // 100ms마다 업데이트
+    setInterval(updateHueValue, 100);
+}
+
+// 페이지 로드 시 모니터링 시작
+document.addEventListener('DOMContentLoaded', function() {
+    monitorHueRotate();
+});
+
+// 다크모드 토글 기능
+function initDarkMode() {
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const body = document.body;
+    
+    // 저장된 다크모드 상태 불러오기
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'true') {
+        body.classList.add('dark-mode');
+    }
+    
+    darkModeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        
+        // 다크모드 상태 저장
+        const isDarkMode = body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDarkMode);
+    });
+}
+
+// 기존 FAQ 토글 기능
+document.addEventListener('DOMContentLoaded', function() {
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        
+        question.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+            
+            // 모든 FAQ 아이템 닫기
+            faqItems.forEach(otherItem => {
+                otherItem.classList.remove('active');
+            });
+            
+            // 클릭된 아이템만 토글
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        });
+    });
+    
+    // 다크모드 초기화
+    initDarkMode();
 }); 
