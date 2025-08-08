@@ -1,3 +1,119 @@
+# Date Genie — AI로 분석하는 연애 전략 (WebPT)
+
+![Status](https://img.shields.io/badge/status-active-success?style=for-the-badge)
+![Made with](https://img.shields.io/badge/Made%20with-HTML5%20%7C%20CSS3%20%7C%20JavaScript-orange?style=for-the-badge&logo=javascript)
+![Responsive](https://img.shields.io/badge/Responsive-Yes-00c853?style=for-the-badge)
+![Dark Mode](https://img.shields.io/badge/Dark%20Mode-Supported-4a148c?style=for-the-badge)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue?style=for-the-badge)
+
+<p align="center">
+  <a href="https://kwanGDss.github.io/WebPT/" target="_blank"><img src="https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-8b5cf6?style=for-the-badge&logo=github" alt="Live Demo" /></a>
+  <a href="https://github.com/kwanGDss/WebPT" target="_blank"><img src="https://img.shields.io/badge/Repo-WebPT-ec4899?style=for-the-badge&logo=github" alt="Repo" /></a>
+</p>
+
+AI가 카카오톡 대화와 통화 녹음을 분석하여 썸 가능성과 맞춤형 연애 전략을 제안하는 웹 랜딩 페이지입니다. 감성적인 그라디언트 UI, 다크 모드, 모바일 내비게이션을 지원합니다.
+
+## ✨ 핵심 기능
+
+- AI 소개 랜딩(히어로/기능/요금제/FAQ)
+- 모바일 햄버거 내비, 부드러운 스크롤, 패럴랙스
+- 다크 모드 토글 및 상태 영구 저장(LocalStorage)
+- FAQ 아코디언 인터랙션
+- 반응형 레이아웃 및 애니메이션(IntersectionObserver)
+
+## 🖋️ 타이포/브랜딩
+
+- Body: Noto Sans KR
+- Headings/Brand: Noto Serif KR
+- 메인 그라디언트: `#ec4899 ↔ #8b5cf6`
+
+## 🚀 데모
+
+- Live: `https://kwanGDss.github.io/WebPT/`
+- 메인: `index.html`
+- 로그인: `login.html`
+
+## 🛠️ 기술 스택
+
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-000000?logo=javascript&logoColor=F7DF1E)
+![Font Awesome](https://img.shields.io/badge/Icons-Font%20Awesome-339AF0?logo=fontawesome&logoColor=white)
+
+## 📁 폴더 구조
+
+```text
+WebPT/
+├─ index.html         # 랜딩 페이지
+├─ login.html         # 로그인
+├─ css/
+│  ├─ style.css       # 글로벌/랜딩 스타일
+│  └─ login.css       # 로그인 스타일
+├─ js/
+│  ├─ main.js         # 내비/애니메이션/다크모드/FAQ 등 초기화
+│  └─ login.js        # 로그인 UI 검증/알림
+├─ images/            # 스크린샷/에셋(선택)
+└─ scripts/
+   └─ auto-commit.ps1 # 변경 감지 자동 커밋(선택 실행)
+```
+
+## 🧩 기능 요약
+
+- Hero 심전도(Heartbeat) 애니메이션, 그라디언트 배경
+- Features/Glow Cards, Pricing(Featured 카드), FAQ(아코디언)
+- 모바일 햄버거 메뉴 + 접근성 속성(`aria-expanded`, `aria-hidden`)
+- 부드러운 스크롤, 스크롤 애니메이션(IntersectionObserver)
+- 다크 모드 토글 + LocalStorage 저장
+
+## 🔧 로컬 실행
+
+정적 사이트이므로 다음 중 하나로 실행합니다.
+
+1) 파일 더블클릭
+- `index.html`을 브라우저로 열기
+
+2) 간단 서버(예: VS Code Live Server)
+- 루트(`WebPT/`)에서 Live Server 실행
+
+## ⚙️ 스크립트: 자동 커밋(선택)
+
+PowerShell 감시 스크립트로 변경 사항을 자동 커밋합니다.
+
+```powershell
+# 백그라운드(숨김) 실행 예시
+Start-Process powershell -WindowStyle Hidden -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File','scripts/auto-commit.ps1','-DebounceSeconds','3'
+
+# 포그라운드 실행
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/auto-commit.ps1 -DebounceSeconds 3
+```
+
+> 커밋 메시지 예: `chore: auto-commit - index.html, css/style.css, ...`
+
+## 🔒 개인정보/보안(초안)
+
+- 데모 단계로, 실제 사용자 데이터는 수집하지 않습니다.
+- 개인 데이터 사용 시 비식별화·동의 절차를 포함한 정책 수립 예정.
+
+## 🗺️ 로드맵(예시)
+
+- [ ] 분석 리포트 샘플 페이지 추가
+- [ ] 성향 분석 섹션(그래프 샘플) 보강
+- [ ] i18n(EN) 지원
+- [ ] 접근성 개선(키보드 초점 스타일, 명도 대비)
+
+## 🤝 Contributing
+
+버그 제보/개선 제안/PR 환영합니다. 브랜치 네이밍 예:
+- `feature/<요약>` / `fix/<이슈>` / `refactor/<영역>` / `docs/<문서>` / `chore/<작업>`
+
+## 📜 라이선스
+
+현재 저장소 라이선스는 미정입니다. 필요 시 `LICENSE` 파일로 고지합니다.
+
+---
+
+Made with ❤️ for better relationships.
+
 # SomeTalk - AI 기반 연애 분석 서비스
 
 ## 프로젝트 개요
