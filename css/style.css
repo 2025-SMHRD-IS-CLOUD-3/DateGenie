@@ -1,24 +1,17 @@
-/* Gmarket Sans font faces */
-@font-face {
-    font-family: 'GmarketSans';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.3/GmarketSansLight.woff') format('woff');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
+/* Typography: Noto Sans KR (body) + Noto Serif KR (headings/brand) */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&display=swap');
+
+/* Typography variables and global rendering tweaks */
+:root {
+    --font-body: 'Noto Sans KR', system-ui, -apple-system, 'Segoe UI', Roboto, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    --font-display: 'Noto Serif KR', 'Noto Serif CJK KR', serif;
 }
-@font-face {
-    font-family: 'GmarketSans';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.3/GmarketSansMedium.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-@font-face {
-    font-family: 'GmarketSans';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.3/GmarketSansBold.woff') format('woff');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
+
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 * {
@@ -28,7 +21,7 @@
 }
 
 body {
-    font-family: 'GmarketSans', 'Noto Sans KR', system-ui, -apple-system, 'Segoe UI', Roboto, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    font-family: var(--font-body);
     line-height: 1.6;
     color: #333;
     word-break: keep-all;
@@ -37,6 +30,21 @@ body {
     font-display: block;
     transition: all 0.3s ease;
 }
+
+/* Headings/brand use display font */
+h1, h2, h3, h4, h5, h6,
+.nav-logo, .nav-logo a,
+.hero-title,
+.section-header h2 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+}
+
+/* Numeric alignment for stats */
+.stat-number { font-variant-numeric: tabular-nums; }
+
+/* Form controls inherit body font */
+button, input, select, textarea { font-family: inherit; }
 
 /* 다크모드 스타일 */
 body.dark-mode {
@@ -368,7 +376,7 @@ body.dark-mode .heartbeat-container {
     color: #111827;
     gap: 0.5rem;
     letter-spacing: -0.3px;
-    font-family: 'GmarketSans', sans-serif;
+    font-family: var(--font-display);
 }
 
 .nav-logo a {
@@ -380,7 +388,7 @@ body.dark-mode .heartbeat-container {
     gap: 0.5rem;
     letter-spacing: -0.3px;
     text-decoration: none;
-    font-family: 'GmarketSans', sans-serif;
+    font-family: var(--font-display);
     font-display: block;
 }
 
