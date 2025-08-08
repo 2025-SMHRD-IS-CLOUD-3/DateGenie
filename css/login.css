@@ -2,6 +2,7 @@ body {
     word-break: keep-all;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    font-family: 'GmarketSans', 'Noto Sans KR', system-ui, -apple-system, 'Segoe UI', Roboto, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
 
 .login-section {
