@@ -1,10 +1,10 @@
-/* Typography: Pretendard (modern, clean Korean font) + SacheonHangGong (elegant logo) */
+/* Typography: Pretendard (modern, clean Korean font) + SacheonUju (elegant logo) */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
 
-/* SacheonHangGong Font */
+/* SacheonUju Font */
 @font-face {
-    font-family: 'SacheonHangGong-Regular';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/SacheonHangGong-Regular.woff2') format('woff2');
+    font-family: 'SacheonUju-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/SacheonUju-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
@@ -13,7 +13,7 @@
 :root {
     --font-body: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
     --font-display: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-    --font-logo: 'SacheonHangGong-Regular', serif;
+    --font-logo: 'SacheonUju-Regular', serif;
 }
 
 html {
