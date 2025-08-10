@@ -52,6 +52,8 @@ h1, h2, h3, h4, h5, h6,
     font-family: var(--font-logo);
     letter-spacing: -0.03em;
     font-weight: 700;
+    line-height: 1;
+    vertical-align: baseline;
 }
 
 /* Numeric alignment for stats */
