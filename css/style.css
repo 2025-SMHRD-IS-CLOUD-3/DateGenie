@@ -401,7 +401,7 @@ body.dark-mode .heartbeat-container {
     color: #111827;
     gap: 0.5rem;
     letter-spacing: -0.3px;
-    font-family: var(--font-display);
+    font-family: var(--font-logo);
 }
 
 .nav-logo a {
@@ -413,7 +413,7 @@ body.dark-mode .heartbeat-container {
     gap: 0.5rem;
     letter-spacing: -0.3px;
     text-decoration: none;
-    font-family: var(--font-display);
+    font-family: var(--font-logo);
     font-display: block;
 }
 
