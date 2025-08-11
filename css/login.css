@@ -188,12 +188,21 @@ body {
 .toggle-password {
     position: absolute;
     right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
     background: none;
     border: none;
     color: #666;
     cursor: pointer;
     z-index: 1;
     transition: color 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.toggle-password:hover {
+    color: #ec4899;
+    background: rgba(236, 72, 153, 0.1);
 }
 
 .toggle-password:hover {
@@ -501,6 +510,11 @@ body.dark-mode .input-wrapper i {
 
 body.dark-mode .toggle-password {
     color: #cccccc;
+}
+
+body.dark-mode .toggle-password:hover {
+    color: #ec4899;
+    background: rgba(236, 72, 153, 0.2);
 }
 
 body.dark-mode .checkbox-wrapper {
