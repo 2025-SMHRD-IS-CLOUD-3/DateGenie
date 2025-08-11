@@ -3,7 +3,7 @@
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인 - SomeTalk</title>
+    <title>로그인 - Date Genie</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/login.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -15,14 +15,19 @@
             <div class="nav-logo">
                 <a href="index.html">
                     <i class="fas fa-heart"></i>
-                    SomeTalk
+                    Date Genie
                 </a>
             </div>
             <ul class="nav-menu">
                 <li><a href="index.html">홈</a></li>
                 <li><a href="index.html#features">기능</a></li>
-                <li><a href="index.html#about">소개</a></li>
+                <li><a href="index.html#pricing">요금제</a></li>
+                <li><a href="index.html#faq">FAQ</a></li>
             </ul>
+            <div class="nav-auth-buttons">
+                <a href="login.html" class="nav-btn-login">로그인</a>
+                <a href="signup.html" class="nav-btn-signup">회원가입</a>
+            </div>
         </div>
     </nav>
 
@@ -33,10 +38,10 @@
                 <div class="login-header">
                     <div class="logo">
                         <i class="fas fa-heart"></i>
-                        <span>SomeTalk</span>
+                        <span>Date Genie</span>
                     </div>
                     <h2>로그인</h2>
-                    <p>AI 기반 연애 분석 서비스를 이용하세요</p>
+                    <p>AI 기반 연애 분석 서비스로 더 나은 데이트를 경험하세요</p>
                 </div>
                 
                 <form class="login-form" id="loginForm">
@@ -94,6 +99,12 @@
             </div>
         </div>
     </section>
+
+    <!-- Dark Mode Toggle -->
+    <button class="dark-mode-toggle" id="darkModeToggle">
+        <i class="fas fa-sun sun-icon"></i>
+        <i class="fas fa-moon moon-icon"></i>
+    </button>
 
     <script src="js/main.js"></script>
     <script src="js/login.js"></script>
