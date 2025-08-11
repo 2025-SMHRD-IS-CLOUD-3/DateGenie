@@ -163,7 +163,7 @@ body {
 
 .input-wrapper input {
     width: 100%;
-    padding: 1rem 2.5rem 1rem 3rem;
+    padding: 1rem 3rem 1rem 3rem;
     border: 2px solid #e5e7eb;
     border-radius: 12px;
     font-size: 1rem;
@@ -187,7 +187,7 @@ body {
 
 .toggle-password {
     position: absolute;
-    right: 0.75rem;
+    right: 0.5rem;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -196,9 +196,12 @@ body {
     cursor: pointer;
     z-index: 1;
     transition: all 0.3s ease;
-    padding: 0.25rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .toggle-password:hover {
