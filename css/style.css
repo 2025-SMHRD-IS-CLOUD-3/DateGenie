@@ -403,7 +403,7 @@ body.dark-mode .heartbeat-container {
     justify-content: flex-start;
 }
 .navbar.auth .nav-logo { margin-right: auto; }
-.navbar.auth .nav-menu, .navbar.auth .nav-auth-buttons { display: none !important; }
+.navbar.auth .nav-menu { display: none !important; }
 
 body.dark-mode .navbar.auth {
     background: rgba(26,26,26,0.9) !important;
