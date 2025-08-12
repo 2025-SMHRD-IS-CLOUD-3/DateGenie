@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대시보드 - Date Genie</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .dashboard-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fce7f3 0%, #fdf2f8 25%, #f3e8ff 50%, #e9d5ff 75%, #fce7f3 100%);
+            padding-top: var(--navbar-height);
+        }
+
+        .dashboard-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .welcome-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e1b4b;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ec4899;
+        }
+
+        .user-details h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e1b4b;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-details p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .card-icon.analysis {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        }
+
+        .card-icon.chat {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .card-icon.profile {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1e1b4b;
+        }
+
+        .card-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-button {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .card-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(236, 72, 153, 0.3);
+        }
+
+        .logout-section {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .logout-button {
+            background: rgba(255, 255, 255, 0.9);
+            color: #666;
+            border: 2px solid #e5e7eb;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-button:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-content {
+                padding: 1rem;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html" class="brand-logo" aria-label="Date Genie Home">
+                    <i class="fas fa-heart heart-icon" aria-hidden="true"></i>
+                    <span class="logo-text">Date Genie</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="#analysis" class="nav-link">연애 분석</a>
+                <a href="#chat" class="nav-link">AI 상담</a>
+                <a href="#profile" class="nav-link">프로필</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <div class="dashboard-content">
+            <div class="welcome-section">
+                <h1 class="welcome-title">환영합니다! 🎉</h1>
+                <p class="welcome-subtitle">Date Genie와 함께 더 나은 연애를 시작해보세요</p>
+                
+                <div class="user-info" id="userInfo">
+                    <!-- 사용자 정보가 여기에 동적으로 로드됩니다 -->
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon analysis">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="card-title">연애 분석</h3>
+                    </div>
+                    <p class="card-description">
+                        AI가 당신의 연애 패턴을 분석하고 개선점을 제안해드립니다.
+                    </p>
+                    <a href="#analysis" class="card-button">분석 시작하기</a>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon chat">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3 class="card-title">AI 상담</h3>
+                    </div>
+                    <p class="card-description">
+                        연애 고민이 있으신가요? AI 상담사와 대화해보세요.
+                    </p>
+                    <a href="#chat" class="card-button">상담 시작하기</a>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon profile">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="card-title">프로필 관리</h3>
+                    </div>
+                    <p class="card-description">
+                        개인 정보와 연애 선호도를 관리하고 업데이트하세요.
+                    </p>
+                    <a href="#profile" class="card-button">프로필 보기</a>
+                </div>
+            </div>
+
+            <div class="logout-section">
+                <button class="logout-button" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    로그아웃
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <button class="dark-mode-toggle" id="darkModeToggle">
+        <i class="fas fa-sun sun-icon"></i>
+        <i class="fas fa-moon moon-icon"></i>
+    </button>
+
+    <script src="js/main.js"></script>
+    <script>
+        // 사용자 정보 로드 및 표시
+        function loadUserInfo() {
+            const userInfo = localStorage.getItem('user');
+            const authProvider = localStorage.getItem('authProvider');
+            
+            if (userInfo) {
+                const user = JSON.parse(userInfo);
+                const userInfoElement = document.getElementById('userInfo');
+                
+                userInfoElement.innerHTML = `
+                    <img src="${user.picture || 'https://via.placeholder.com/80'}" alt="프로필 사진" class="user-avatar">
+                    <div class="user-details">
+                        <h3>${user.name || '사용자'}</h3>
+                        <p>${user.email || '이메일 없음'} (${authProvider || '알 수 없음'} 로그인)</p>
+                    </div>
+                `;
+            } else {
+                // 로그인 정보가 없으면 로그인 페이지로 리다이렉트
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 로그아웃 함수
+        function logout() {
+            // 구글 로그아웃 (구글 OAuth가 로드된 경우)
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.disableAutoSelect();
+            }
+            
+            // 로컬 스토리지 클리어
+            localStorage.removeItem('user');
+            localStorage.removeItem('authProvider');
+            
+            // 로그인 페이지로 리다이렉트
+            window.location.href = 'login.html';
+        }
+
+        // 페이지 로드 시 사용자 정보 로드
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserInfo();
+        });
+
+        // 카드 클릭 이벤트 (임시)
+        document.querySelectorAll('.card-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                
+                // 임시 알림 (실제 구현 시 해당 페이지로 이동)
+                alert(`${href.substring(1)} 기능은 준비 중입니다. 곧 만나보실 수 있어요! 🚀`);
+            });
+        });
+    </script>
+</body>
+</html>
