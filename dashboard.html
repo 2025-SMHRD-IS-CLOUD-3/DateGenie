@@ -58,6 +58,8 @@
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid #ec4899;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+            background: #f3f4f6;
         }
 
         .user-details h3 {
@@ -286,11 +288,30 @@
                 const user = JSON.parse(userInfo);
                 const userInfoElement = document.getElementById('userInfo');
                 
+                // 구글 프로필 사진 URL 처리
+                let profilePicture = user.picture || 'https://via.placeholder.com/80';
+                
+                // 구글 프로필 사진 크기 조정 (더 고화질로)
+                if (profilePicture.includes('googleusercontent.com') && profilePicture.includes('=s96-c')) {
+                    profilePicture = profilePicture.replace('=s96-c', '=s200-c');
+                }
+                
+                const providerName = authProvider === 'google' ? '구글' : 
+                                   authProvider === 'kakao' ? '카카오' : 
+                                   '일반';
+                
                 userInfoElement.innerHTML = `
-                    <img src="${user.picture || 'https://via.placeholder.com/80'}" alt="프로필 사진" class="user-avatar">
+                    <img src="${profilePicture}" 
+                         alt="${user.name || '사용자'} 프로필 사진" 
+                         class="user-avatar"
+                         onerror="this.src='https://via.placeholder.com/80'">
                     <div class="user-details">
                         <h3>${user.name || '사용자'}</h3>
-                        <p>${user.email || '이메일 없음'} (${authProvider || '알 수 없음'} 로그인)</p>
+                        <p>${user.email || '이메일 없음'}</p>
+                        <p style="font-size: 0.85rem; color: #999; margin-top: 0.25rem;">
+                            <i class="fas fa-${authProvider === 'google' ? 'google' : 'user-circle'}" style="margin-right: 0.25rem;"></i>
+                            ${providerName} 계정으로 로그인
+                        </p>
                     </div>
                 `;
             } else {

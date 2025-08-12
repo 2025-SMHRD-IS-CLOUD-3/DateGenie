@@ -94,7 +94,26 @@ class GoogleOAuth {
 
     handleCredentialResponse(response) {
         this.showLoadingState();
-        this.verifyTokenWithServer(response.credential);
+        
+        // ID 토큰에서 사용자 정보 추출
+        const userInfo = this.parseJwt(response.credential);
+        console.log('Google user info:', userInfo);
+        
+        // 개발 환경에서는 직접 처리
+        if (!this.clientId || window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            const userData = {
+                id: userInfo.sub,
+                email: userInfo.email,
+                name: userInfo.name,
+                picture: userInfo.picture,
+                provider: 'google',
+                verified: userInfo.email_verified
+            };
+            this.handleSuccessfulLogin(userData);
+        } else {
+            // 프로덕션에서는 서버 검증
+            this.verifyTokenWithServer(response.credential);
+        }
     }
 
     async verifyTokenWithServer(idToken) {
@@ -171,6 +190,20 @@ class GoogleOAuth {
         }
     }
 
+    parseJwt(token) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        } catch (e) {
+            console.error('Error parsing JWT:', e);
+            return null;
+        }
+    }
+
     mockGoogleLogin() {
         this.showLoadingState();
         setTimeout(() => {
@@ -178,8 +211,9 @@ class GoogleOAuth {
                 id: 'google_123456',
                 email: 'test@example.com',
                 name: '테스트 사용자',
-                picture: 'https://via.placeholder.com/150',
-                provider: 'google'
+                picture: 'https://lh3.googleusercontent.com/a/ACg8ocKgB5HU3QJc8KRkJvhHX8-Qg_BXlHZMaB3Qr4rJpA=s96-c',
+                provider: 'google',
+                verified: true
             };
             this.handleSuccessfulLogin(mockUserData);
         }, 800);
