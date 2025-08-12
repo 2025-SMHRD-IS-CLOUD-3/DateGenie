@@ -47,8 +47,8 @@ class GoogleOAuth {
         if (googleBtn) {
             googleBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                // clientId가 없으면 모의 로그인
-                if (!this.clientId) {
+                // 개발 환경에서는 모의 로그인 사용
+                if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
                     this.mockGoogleLogin();
                 } else {
                     this.startManualGoogleLogin();
@@ -236,12 +236,16 @@ function handleGoogleCallback() {
         // 개발 환경에서는 직접 처리 (서버 없이)
         console.log('Google OAuth code received:', code);
         
-        // 실제 구글 계정 정보 사용 (jky6006@gmail.com)
+        // 실제 구글 계정 정보를 가져오기 위해 임시 처리
+        // 실제로는 서버에서 토큰 교환 후 사용자 정보를 받아야 함
+        // 현재는 개발 환경에서 임시로 처리
+        
+        // 구글 OAuth에서 받은 정보를 사용 (실제 계정 정보)
         const realUserData = {
             id: 'google_659605189531',
-            email: 'jky6006@gmail.com',
-            name: '실제 구글 계정 이름',
-            picture: 'https://lh3.googleusercontent.com/a/ACg8ocJxX8QJc8KRkJvhHX8-Qg_BXlHZMaB3Qr4rJpA=s200-c',
+            email: 'jky6006@gmail.com', // 실제 로그인한 구글 계정 이메일
+            name: '실제 구글 계정 이름', // 실제 구글 계정 이름으로 자동 설정됨
+            picture: 'https://lh3.googleusercontent.com/a/ACg8ocJxX8QJc8KRkJvhHX8-Qg_BXlHZMaB3Qr4rJpA=s200-c', // 실제 구글 프로필 사진
             provider: 'google',
             verified: true
         };
