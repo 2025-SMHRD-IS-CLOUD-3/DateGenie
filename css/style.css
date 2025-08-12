@@ -394,6 +394,22 @@ body.dark-mode .heartbeat-container {
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
+/* Auth pages navbar (minimal) */
+.navbar.auth {
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(236, 72, 153, 0.15);
+}
+.navbar.auth .nav-container {
+    justify-content: flex-start;
+}
+.navbar.auth .nav-logo { margin-right: auto; }
+.navbar.auth .nav-menu, .navbar.auth .nav-auth-buttons { display: none !important; }
+
+body.dark-mode .navbar.auth {
+    background: rgba(26,26,26,0.9) !important;
+    border-bottom: 1px solid rgba(236,72,153,0.2);
+}
+
 .nav-container {
     max-width: 1200px;
     margin: 0 auto;
