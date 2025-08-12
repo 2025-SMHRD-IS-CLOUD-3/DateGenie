@@ -110,3 +110,8 @@ body.dark-mode .social-btn.google { background: rgba(60,60,60,0.8); border-color
 body.dark-mode .social-btn.google:hover { background: rgba(80,80,80,0.8); border-color: #ec4899; }
 body.dark-mode .login-link { color: #cccccc; }
 
+/* Validation states */
+.input-wrapper.error input { border-color: #ef4444; background: #fef2f2; }
+.input-wrapper.success input { border-color: #10b981; background: #f0fdf4; }
+.error-message { color: #ef4444; font-size: 0.8rem; margin-top: 0.5rem; font-family: var(--font-body); }
+
