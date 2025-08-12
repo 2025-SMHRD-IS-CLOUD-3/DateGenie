@@ -98,12 +98,42 @@ document.addEventListener('DOMContentLoaded', function() {
     passwordInput.addEventListener('input', function(){ clearError(this); });
   }
 
+  function validateConfirmPassword(onBlur = false){
+    if (!confirmPasswordInput) return;
+    const pw = passwordInput ? passwordInput.value : '';
+    const cf = confirmPasswordInput.value;
+    if (!cf) {
+      // 입력 중에는 중립, blur에서만 에러로 안내
+      if (onBlur) showError(confirmPasswordInput, '비밀번호 확인을 입력해주세요.');
+      else clearError(confirmPasswordInput);
+      return false;
+    }
+    if (!pw) {
+      showError(confirmPasswordInput, '먼저 비밀번호를 입력해주세요.');
+      return false;
+    }
+    if (!validatePassword(pw)) {
+      showError(confirmPasswordInput, '비밀번호 조건을 먼저 충족해주세요.');
+      return false;
+    }
+    if (pw !== cf) {
+      showError(confirmPasswordInput, '비밀번호가 일치하지 않습니다.');
+      return false;
+    }
+    clearError(confirmPasswordInput); showSuccess(confirmPasswordInput);
+    return true;
+  }
+
   if (confirmPasswordInput) {
-    confirmPasswordInput.addEventListener('blur', function(){
-      if (this.value !== passwordInput.value) return showError(this, '비밀번호가 일치하지 않습니다.');
-      clearError(this); showSuccess(this);
+    confirmPasswordInput.addEventListener('blur', function(){ validateConfirmPassword(true); });
+    confirmPasswordInput.addEventListener('input', function(){ validateConfirmPassword(false); });
+  }
+
+  if (passwordInput && confirmPasswordInput) {
+    // 비밀번호 변경 시 확인값 상태도 재검증
+    passwordInput.addEventListener('input', function(){
+      if (confirmPasswordInput.value) validateConfirmPassword(false); else clearError(confirmPasswordInput);
     });
-    confirmPasswordInput.addEventListener('input', function(){ clearError(this); });
   }
 
   if (form) {
