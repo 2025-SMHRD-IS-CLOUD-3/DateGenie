@@ -9,11 +9,19 @@
     font-style: normal;
 }
 
+/* Skyblessing Inje (하늘내린 인제체) */
+@font-face {
+    font-family: 'SkyblessingInjeFontTTF';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2507-1@1.0/SkyblessingInjeFontTTF.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 /* Typography variables and global rendering tweaks */
 :root {
     --font-body: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
     --font-display: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-    --font-logo: 'SacheonUju-Regular', serif;
+    --font-logo: 'SkyblessingInjeFontTTF', serif;
 }
 
 body {
