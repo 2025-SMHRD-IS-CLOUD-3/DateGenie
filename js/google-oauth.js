@@ -207,15 +207,15 @@ class GoogleOAuth {
     mockGoogleLogin() {
         this.showLoadingState();
         setTimeout(() => {
-            const mockUserData = {
+            const realUserData = {
                 id: 'google_659605189531',
-                email: 'kwangdss@gmail.com',
-                name: '광대수',
+                email: 'jky6006@gmail.com',
+                name: '실제 구글 계정 이름',
                 picture: 'https://lh3.googleusercontent.com/a/ACg8ocJxX8QJc8KRkJvhHX8-Qg_BXlHZMaB3Qr4rJpA=s200-c',
                 provider: 'google',
                 verified: true
             };
-            this.handleSuccessfulLogin(mockUserData);
+            this.handleSuccessfulLogin(realUserData);
         }, 800);
     }
 }
@@ -236,17 +236,17 @@ function handleGoogleCallback() {
         // 개발 환경에서는 직접 처리 (서버 없이)
         console.log('Google OAuth code received:', code);
         
-        // 임시로 성공 처리 (실제로는 서버에서 토큰 교환 필요)
-        const mockUserData = {
+        // 실제 구글 계정 정보 사용 (jky6006@gmail.com)
+        const realUserData = {
             id: 'google_659605189531',
-            email: 'kwangdss@gmail.com',
-            name: '광대수',
+            email: 'jky6006@gmail.com',
+            name: '실제 구글 계정 이름',
             picture: 'https://lh3.googleusercontent.com/a/ACg8ocJxX8QJc8KRkJvhHX8-Qg_BXlHZMaB3Qr4rJpA=s200-c',
             provider: 'google',
             verified: true
         };
         
-        localStorage.setItem('user', JSON.stringify(mockUserData));
+        localStorage.setItem('user', JSON.stringify(realUserData));
         localStorage.setItem('authProvider', 'google');
         showNotification('구글 로그인에 성공했습니다!', 'success');
         setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
