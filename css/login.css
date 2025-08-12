@@ -112,10 +112,7 @@ body {
     letter-spacing: -0.03em;
 }
 
-.login-header .logo i {
-    margin-right: 0.5rem;
-    animation: iconPulse 2s ease-in-out infinite;
-}
+.login-header .logo i { margin-right: 0.5rem; }
 
 @keyframes iconPulse {
     0%, 100% {
