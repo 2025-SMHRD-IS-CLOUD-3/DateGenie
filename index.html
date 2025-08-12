@@ -4,42 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Date Genie - AI로 분석하는 연애 전략</title>
+        <style>html.wf-hide-body body{visibility:hidden}</style>
+        <script>(function(){try{document.documentElement.classList.add('wf-hide-body')}catch(e){}})();</script>
         <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin>
         <link rel="preload" as="font" href="https://fastly.jsdelivr.net/gh/projectnoonnu/2507-1@1.0/SkyblessingInjeFontTTF.woff" type="font/woff" crossorigin>
         <link rel="preload" as="font" href="https://fastly.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/SacheonUju-Regular.woff2" type="font/woff2" crossorigin>
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+        <script>
+            (function(){
+              var d=document.documentElement; var revealed=false; function reveal(){ if(revealed) return; revealed=true; d.classList.remove('wf-hide-body'); }
+              try{
+                if(document.fonts && document.fonts.load){
+                  Promise.race([
+                    document.fonts.load('1em Pretendard'),
+                    document.fonts.ready,
+                    new Promise(function(r){ setTimeout(r,1200); })
+                  ]).then(reveal).catch(reveal);
+                } else { setTimeout(reveal, 300); }
+              }catch(e){ reveal(); }
+            })();
+        </script>
     <link rel="stylesheet" href="css/style.css">
-</head>
+        <script>
+            (function(){
+              try {
+                var d = document.documentElement;
+                d.classList.add('wf-hide-logo');
+                var font = new FontFace('SkyblessingInjeFontTTF',
+                  'url(https://fastly.jsdelivr.net/gh/projectnoonnu/2507-1@1.0/SkyblessingInjeFontTTF.woff) format("woff")');
+                font.load().then(function(loaded){
+                  document.fonts.add(loaded);
+                  d.classList.remove('wf-hide-logo');
+                }).catch(function(){
+                  d.classList.remove('wf-hide-logo');
+                });
+                // 폴백 타이머(2초 후 강제 표시)
+                setTimeout(function(){ d.classList.remove('wf-hide-logo'); }, 2000);
+              } catch(e) { document.documentElement.classList.remove('wf-hide-logo'); }
+            })();
+        </script>
+    </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
                 <a href="#" id="logoHomeLink">
-                    <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- 배경 원 -->
-                        <circle cx="16" cy="16" r="15" fill="url(#gradient)" stroke="url(#gradient)" stroke-width="2"/>
-                        
-                        <!-- 마법 지팡이 -->
-                        <path d="M8 20L12 16L16 20L20 16L24 20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <circle cx="24" cy="20" r="2" fill="white"/>
-                        
-                        <!-- 하트 -->
-                        <path d="M12 10C12 8.89543 12.8954 8 14 8C15.1046 8 16 8.89543 16 10C16 8.89543 16.8954 8 18 8C19.1046 8 20 8.89543 20 10C20 12 18 14 16 16C14 14 12 12 12 10Z" fill="white"/>
-                        
-                        <!-- 작은 별들 -->
-                        <circle cx="10" cy="12" r="1" fill="white" opacity="0.8"/>
-                        <circle cx="22" cy="12" r="1" fill="white" opacity="0.8"/>
-                        <circle cx="16" cy="8" r="0.8" fill="white" opacity="0.6"/>
-                        
-                        <defs>
-                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
+                    <i class="fas fa-heart"></i>
                     Date Genie
                 </a>
             </div>
