@@ -1,8 +1,27 @@
 // App runtime configuration
-// 실제 클라이언트 ID와 리디렉션 URI를 채워 넣으세요.
-// 클라이언트 ID는 공개되어도 안전합니다.
+// 환경에 따라 자동으로 설정을 적용합니다
+
+const isProduction = window.location.hostname === 'kwangdss.github.io' || 
+                    window.location.hostname === 'dategenie.shop' || 
+                    window.location.hostname === 'www.dategenie.shop';
+
+const isDevelopment = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' ||
+                     window.location.protocol === 'file:';
+
 window.APP_CONFIG = {
-  googleClientId: '', // 예: 123456789-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
-  // 개발 환경 기본값: 로컬 서버에서 실행 중이 아니라면 localhost:3000으로 사용
-  redirectUri: '' // 예: http://localhost:3000/auth/google/callback
+  // 개발 환경
+  googleClientId: isDevelopment ? '' : 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+  
+  // 환경별 리디렉션 URI
+  redirectUri: isProduction 
+    ? (window.location.hostname === 'kwangdss.github.io' 
+       ? 'https://kwangdss.github.io/WebPT/auth/google/callback'
+       : 'https://dategenie.shop/auth/google/callback')
+    : 'http://localhost:8080/auth/google/callback'
 };
+
+// 설정 확인 로그
+console.log('Environment:', isProduction ? 'Production' : 'Development');
+console.log('Hostname:', window.location.hostname);
+console.log('Redirect URI:', window.APP_CONFIG.redirectUri);
