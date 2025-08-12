@@ -1,7 +1,7 @@
 // Google OAuth Configuration and Implementation
 class GoogleOAuth {
     constructor() {
-        this.clientId = 'YOUR_GOOGLE_CLIENT_ID'; // 실제 Google Cloud Console에서 발급받은 클라이언트 ID로 교체
+        this.clientId = '123456789-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com'; // 실제 클라이언트 ID로 교체하세요
         this.redirectUri = window.location.origin + '/auth/google/callback';
         this.scope = 'email profile';
         this.init();
@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const googleOAuth = new GoogleOAuth();
         
         // 개발 환경에서는 모의 로그인 활성화 (실제 구현 시 제거)
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '') {
             // 개발용 모의 로그인 버튼 이벤트
             const googleBtn = document.getElementById('googleLoginBtn');
             if (googleBtn) {
