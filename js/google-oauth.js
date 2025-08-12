@@ -228,7 +228,7 @@ function handleGoogleCallback() {
     if (error) {
         console.error('Google OAuth error:', error);
         showNotification('구글 로그인 중 오류가 발생했습니다.', 'error');
-        setTimeout(() => { window.location.href = '../../login.html'; }, 2000);
+        setTimeout(() => { window.location.href = 'login.html'; }, 2000);
         return;
     }
     
@@ -249,7 +249,7 @@ function handleGoogleCallback() {
         localStorage.setItem('user', JSON.stringify(mockUserData));
         localStorage.setItem('authProvider', 'google');
         showNotification('구글 로그인에 성공했습니다!', 'success');
-        setTimeout(() => { window.location.href = '../../dashboard.html'; }, 1500);
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
     }
 }
 

@@ -18,7 +18,7 @@ window.APP_CONFIG = {
     ? (window.location.hostname === 'kwangdss.github.io' 
        ? 'https://kwangdss.github.io/WebPT/auth/google/callback'
        : 'https://dategenie.shop/auth/google/callback')
-    : 'http://127.0.0.1:5500/auth/google/callback'
+    : 'http://127.0.0.1:5500/callback'
 };
 
 // 설정 확인 로그
