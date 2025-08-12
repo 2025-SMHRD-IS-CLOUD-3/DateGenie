@@ -10,8 +10,8 @@ const isDevelopment = window.location.hostname === 'localhost' ||
                      window.location.protocol === 'file:';
 
 window.APP_CONFIG = {
-  // 개발 환경
-  googleClientId: isDevelopment ? '' : '659605189531-q456cob1mu23civhuu85mo8lsqrcnal1.apps.googleusercontent.com',
+  // 개발 환경에서도 실제 클라이언트 ID 사용
+  googleClientId: '659605189531-q456cob1mu23civhuu85mo8lsqrcnal1.apps.googleusercontent.com',
   
   // 환경별 리디렉션 URI
   redirectUri: isProduction 

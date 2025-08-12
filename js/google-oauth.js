@@ -208,10 +208,10 @@ class GoogleOAuth {
         this.showLoadingState();
         setTimeout(() => {
             const mockUserData = {
-                id: 'google_123456',
-                email: 'test@example.com',
-                name: '테스트 사용자',
-                picture: 'https://lh3.googleusercontent.com/a/ACg8ocKgB5HU3QJc8KRkJvhHX8-Qg_BXlHZMaB3Qr4rJpA=s96-c',
+                id: 'google_659605189531',
+                email: 'kwangdss@gmail.com',
+                name: '광대수',
+                picture: 'https://lh3.googleusercontent.com/a/ACg8ocJxX8QJc8KRkJvhHX8-Qg_BXlHZMaB3Qr4rJpA=s200-c',
                 provider: 'google',
                 verified: true
             };
