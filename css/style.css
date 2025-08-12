@@ -1,5 +1,4 @@
 /* Typography: Pretendard (modern, clean Korean font) + SacheonUju (elegant logo) */
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
 
 /* SacheonUju Font */
 @font-face {
@@ -7,19 +6,44 @@
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/SacheonUju-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
+}
+
+/* Skyblessing Inje (하늘내린 인제체) */
+@font-face {
+    font-family: 'SkyblessingInjeFontTTF';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2507-1@1.0/SkyblessingInjeFontTTF.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
 }
 
 /* Typography variables and global rendering tweaks */
 :root {
-    --font-body: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+    --font-body: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
     --font-display: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-    --font-logo: 'SacheonUju-Regular', serif;
+    --font-logo: 'SkyblessingInjeFontTTF', serif;
+    --navbar-height: 64px;
 }
 
 html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    scroll-padding-top: var(--navbar-height);
+}
+
+/* Hide page until base font (Pretendard) is ready */
+html.wf-hide-body body {
+    visibility: hidden;
+}
+
+/* Prevent only logo flash until custom font is ready */
+.wf-hide-logo .nav-logo,
+.wf-hide-logo .nav-logo a,
+.wf-hide-logo .login-header .logo,
+.wf-hide-logo .signup-header .logo {
+    visibility: hidden;
 }
 
 * {
@@ -35,8 +59,9 @@ body {
     word-break: keep-all;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    font-display: block;
-    transition: all 0.3s ease;
+    font-size-adjust: from-font;
+    font-synthesis: none;
+    transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 /* Headings/brand use display font */
@@ -70,6 +95,7 @@ body.dark-mode {
 
 body.dark-mode .navbar {
     background: rgba(26, 26, 26, 0.95) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 body.dark-mode .nav-logo a {
@@ -365,6 +391,23 @@ body.dark-mode .heartbeat-container {
     backdrop-filter: blur(10px);
     z-index: 1000;
     padding: 1rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Auth pages navbar (minimal) */
+.navbar.auth {
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(236, 72, 153, 0.15);
+}
+.navbar.auth .nav-container {
+    justify-content: flex-start;
+}
+.navbar.auth .nav-logo { margin-right: auto; }
+.navbar.auth .nav-menu { display: none !important; }
+
+body.dark-mode .navbar.auth {
+    background: rgba(26,26,26,0.9) !important;
+    border-bottom: 1px solid rgba(236,72,153,0.2);
 }
 
 .nav-container {
@@ -418,7 +461,7 @@ body.dark-mode .heartbeat-container {
     align-items: center;
     font-size: 1.8rem;
     font-weight: 600;
-    color: #111827;
+    color: #ec4899;
     gap: 0.5rem;
     letter-spacing: -0.3px;
     text-decoration: none;
@@ -426,8 +469,33 @@ body.dark-mode .heartbeat-container {
     font-display: block;
 }
 
-.nav-logo a:hover {
+.nav-logo a:hover { color: #f472b6; }
+
+/* Brand logo styling */
+.brand-logo .heart-icon {
     color: #ec4899;
+    filter: drop-shadow(0 0 6px rgba(236,72,153,0.35));
+    animation: heartbeat 1.4s ease-in-out infinite;
+}
+
+.brand-logo .logo-text {
+    background: linear-gradient(90deg, #ec4899, #f472b6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.05);
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.18); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.12); }
+  60% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo .heart-icon { animation: none; }
 }
 
 /* .logo-icon 관련 비어있는 규칙 제거 */
@@ -551,7 +619,7 @@ body.dark-mode .heartbeat-container {
 
 /* Hero Section */
 .hero {
-    min-height: 100vh;
+    min-height: calc(100vh - var(--navbar-height));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -560,7 +628,55 @@ body.dark-mode .heartbeat-container {
     color: #1e1b4b;
     overflow: hidden;
     animation: hueShift 10s ease-in-out infinite;
+    margin-top: var(--navbar-height);
 }
+
+/* Nebula Genie overlay */
+.nebula-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.12;
+}
+
+.nebula-blob {
+    position: absolute;
+    width: 70vmax;
+    height: 70vmax;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    background: radial-gradient(60% 60% at 50% 50%, rgba(236,72,153,0.9) 0%, rgba(139,92,246,0.8) 45%, rgba(30,27,75,0.9) 100%);
+    filter: blur(40px) saturate(120%);
+    border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%;
+    animation: nebulaDrift 11s ease-in-out infinite alternate;
+}
+
+.nebula-stars { position: absolute; inset: 0; }
+.nebula-stars i {
+    position: absolute;
+    width: 2px; height: 2px; background: white; border-radius: 50%; opacity: 0.7;
+    animation: starTwinkle 2.6s ease-in-out infinite;
+}
+.nebula-stars i.s2 { width: 3px; height: 3px; opacity: 0.6; animation-duration: 3.2s; }
+.nebula-stars i.s3 { width: 4px; height: 4px; opacity: 0.5; animation-duration: 3.6s; }
+
+@keyframes nebulaDrift {
+    0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+    100% { transform: translate(-49%, -50%) rotate(6deg) scale(1.06); }
+}
+
+@keyframes starTwinkle {
+    0%,100% { opacity: 0.2; transform: translateY(0px); }
+    50% { opacity: 0.9; transform: translateY(-1px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nebula-blob, .nebula-stars i { animation: none; }
+}
+
+body.dark-mode .nebula-overlay { opacity: 0.16; }
 
 @keyframes hueShift {
     0% {

@@ -28,7 +28,7 @@ function Commit-Changes {
     if ($unique.Count -gt 5) { $head = "$head, ..." }
     $msg = "chore: auto-commit - $head"
 
-    git commit -m "$msg" | Out-Null
+    git commit --no-gpg-sign -m "$msg" | Out-Null
 }
 
 # Setup file watcher

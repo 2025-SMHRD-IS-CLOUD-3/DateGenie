@@ -52,10 +52,15 @@
                 navbar.style.background = 'rgba(255, 255, 255, 0.95)';
                 navbar.style.boxShadow = 'none';
             }
+            // update CSS var for navbar height (responsive)
+            const height = navbar.getBoundingClientRect().height;
+            document.documentElement.style.setProperty('--navbar-height', height + 'px');
         }
         window.addEventListener('scroll', applyNavbarStyle);
         // 초기 상태 반영
         applyNavbarStyle();
+        // 화면 리사이즈 시 높이 재계산
+        window.addEventListener('resize', applyNavbarStyle);
     }
 
     // Animate elements on scroll
@@ -180,7 +185,6 @@
             } else {
                 hueValue = 40 - ((progress - 0.75) * 4) * 40;
             }
-            console.log(`Hue Rotate: ${hueValue.toFixed(1)}deg (Progress: ${(progress * 100).toFixed(1)}%)`);
         }
         setInterval(updateHueValue, 100);
     }
