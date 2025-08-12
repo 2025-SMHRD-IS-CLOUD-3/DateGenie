@@ -45,6 +45,8 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/login.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google OAuth Client Library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -110,11 +112,11 @@
                 <div class="social-login">
                     <p>또는</p>
                     <div class="social-buttons">
-                        <button class="social-btn kakao">
+                        <button class="social-btn kakao" id="kakaoLoginBtn">
                             <i class="fas fa-comment"></i>
                             카카오로 로그인
                         </button>
-                        <button class="social-btn google">
+                        <button class="social-btn google" id="googleLoginBtn">
                             <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                                 <g fill="none">
                                     <path d="M17.64 9.2045c0-.638-.057-1.252-.164-1.841H9v3.481h4.844c-.209 1.125-.842 2.08-1.795 2.719v2.258h2.908c1.703-1.568 2.683-3.874 2.683-6.617z" fill="#4285F4"/>
@@ -143,5 +145,6 @@
 
     <script src="js/main.js"></script>
     <script src="js/login.js"></script>
+    <script src="js/google-oauth.js"></script>
 </body>
 </html> 
