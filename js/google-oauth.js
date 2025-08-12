@@ -47,12 +47,8 @@ class GoogleOAuth {
         if (googleBtn) {
             googleBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                // 개발 환경에서는 모의 로그인 사용
-                if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
-                    this.mockGoogleLogin();
-                } else {
-                    this.startManualGoogleLogin();
-                }
+                // 실제 구글 로그인 사용
+                this.startManualGoogleLogin();
             });
         }
     }
@@ -72,8 +68,8 @@ class GoogleOAuth {
 
     startManualGoogleLogin() {
         if (!this.clientId) {
-            console.warn('No clientId configured. Using mock login.');
-            this.mockGoogleLogin();
+            console.error('No clientId configured. Please set up Google OAuth client ID.');
+            this.showNotification('Google OAuth 설정이 필요합니다.', 'error');
             return;
         }
         const authUrl = this.buildAuthUrl();
@@ -220,7 +216,7 @@ class GoogleOAuth {
     }
 }
 
-function handleGoogleCallback() {
+async function handleGoogleCallback() {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
     const error = urlParams.get('error');
@@ -233,28 +229,69 @@ function handleGoogleCallback() {
     }
     
     if (code) {
-        // 개발 환경에서는 직접 처리 (서버 없이)
         console.log('Google OAuth code received:', code);
         
-        // 실제 구글 계정 정보를 가져오기 위해 임시 처리
-        // 실제로는 서버에서 토큰 교환 후 사용자 정보를 받아야 함
-        // 현재는 개발 환경에서 임시로 처리
-        
-        // 구글 OAuth에서 받은 정보를 사용 (실제 계정 정보)
-        const realUserData = {
-            id: 'google_659605189531',
-            email: 'jky6006@gmail.com', // 실제 로그인한 구글 계정 이메일
-            name: '실제 구글 계정 이름', // 실제 구글 계정 이름으로 자동 설정됨
-            picture: 'https://lh3.googleusercontent.com/a/ACg8ocJxX8QJc8KRkJvhHX8-Qg_BXlHZMaB3Qr4rJpA=s200-c', // 실제 구글 프로필 사진
-            provider: 'google',
-            verified: true
-        };
-        
-        localStorage.setItem('user', JSON.stringify(realUserData));
-        localStorage.setItem('authProvider', 'google');
-        showNotification('구글 로그인에 성공했습니다!', 'success');
-        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+        try {
+            // 실제 구글 API를 사용하여 사용자 정보 가져오기
+            const userInfo = await exchangeCodeForUserInfo(code);
+            
+            const realUserData = {
+                id: userInfo.id,
+                email: userInfo.email,
+                name: userInfo.name,
+                picture: userInfo.picture,
+                provider: 'google',
+                verified: userInfo.verified_email
+            };
+            
+            localStorage.setItem('user', JSON.stringify(realUserData));
+            localStorage.setItem('authProvider', 'google');
+            showNotification('구글 로그인에 성공했습니다!', 'success');
+            setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+            
+        } catch (error) {
+            console.error('Error getting user info:', error);
+            showNotification('사용자 정보를 가져오는 중 오류가 발생했습니다.', 'error');
+            setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+        }
     }
+}
+
+async function exchangeCodeForUserInfo(code) {
+    // Google OAuth 코드를 사용하여 사용자 정보 가져오기
+    // 실제로는 서버에서 처리해야 하지만, 개발 환경에서는 클라이언트에서 처리
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            code: code,
+            client_id: window.APP_CONFIG.googleClientId,
+            client_secret: '', // 클라이언트에서는 보안상 비밀번호를 사용할 수 없음
+            redirect_uri: window.APP_CONFIG.redirectUri,
+            grant_type: 'authorization_code'
+        })
+    });
+    
+    if (!tokenResponse.ok) {
+        throw new Error('Token exchange failed');
+    }
+    
+    const tokenData = await tokenResponse.json();
+    
+    // 액세스 토큰으로 사용자 정보 가져오기
+    const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+        headers: {
+            'Authorization': `Bearer ${tokenData.access_token}`
+        }
+    });
+    
+    if (!userInfoResponse.ok) {
+        throw new Error('Failed to get user info');
+    }
+    
+    return await userInfoResponse.json();
 }
 
 function showNotification(message, type = 'info') {
@@ -285,16 +322,6 @@ document.addEventListener('DOMContentLoaded', function() {
         handleGoogleCallback();
     } else {
         const googleOAuth = new GoogleOAuth();
-        // 개발 편의: file:// 또는 로컬 서버에서 clientId가 없으면 모의 로그인
-        if (!googleOAuth.clientId && (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-            const googleBtn = document.getElementById('googleLoginBtn');
-            if (googleBtn) {
-                googleBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    googleOAuth.mockGoogleLogin();
-                });
-            }
-        }
     }
 });
 
