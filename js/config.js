@@ -11,7 +11,7 @@ const isDevelopment = window.location.hostname === 'localhost' ||
 
 window.APP_CONFIG = {
   // 개발 환경
-  googleClientId: isDevelopment ? '' : 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+  googleClientId: isDevelopment ? '' : '659605189531-q456cob1mu23civhuu85mo8lsqrcnal1.apps.googleusercontent.com',
   
   // 환경별 리디렉션 URI
   redirectUri: isProduction 
