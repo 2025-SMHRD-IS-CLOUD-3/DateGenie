@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showError(input, message) {
         const wrapper = input.closest('.input-wrapper');
+        wrapper.classList.remove('success');
         wrapper.classList.add('error');
         
         // Remove existing error message
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function clearError(input) {
         const wrapper = input.closest('.input-wrapper');
         wrapper.classList.remove('error');
+        wrapper.classList.remove('success');
         
         const errorMessage = wrapper.parentNode.querySelector('.error-message');
         if (errorMessage) {

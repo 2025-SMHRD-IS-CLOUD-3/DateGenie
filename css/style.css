@@ -41,7 +41,8 @@ html.wf-hide-body body {
 /* Prevent only logo flash until custom font is ready */
 .wf-hide-logo .nav-logo,
 .wf-hide-logo .nav-logo a,
-.wf-hide-logo .login-header .logo {
+.wf-hide-logo .login-header .logo,
+.wf-hide-logo .signup-header .logo {
     visibility: hidden;
 }
 

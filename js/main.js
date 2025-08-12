@@ -185,7 +185,6 @@
             } else {
                 hueValue = 40 - ((progress - 0.75) * 4) * 40;
             }
-            console.log(`Hue Rotate: ${hueValue.toFixed(1)}deg (Progress: ${(progress * 100).toFixed(1)}%)`);
         }
         setInterval(updateHueValue, 100);
     }

@@ -45,7 +45,8 @@ body {
     justify-content: center;
     background: linear-gradient(135deg, #fce7f3 0%, #fdf2f8 25%, #f3e8ff 50%, #e9d5ff 75%, #fce7f3 100%);
     padding: calc(var(--navbar-height) + 1rem) 0 2rem;
-    animation: hueShift 10s ease-in-out infinite;
+    /* 배경 색 변환으로 인한 버튼/브랜드 색상 변화를 방지 */
+    animation: none;
     color: #1e1b4b;
 }
 
@@ -394,25 +395,61 @@ body {
 }
 
 .social-btn.kakao {
-    background: #fee500;
-    border-color: #fee500;
-    color: #333;
+    background: #FEE500;
+    border-color: #FEE500;
+    color: #000000;
 }
 
-.social-btn.kakao:hover {
-    background: #fdd835;
-    border-color: #fdd835;
+.social-btn.kakao:hover,
+.social-btn.kakao:focus,
+.social-btn.kakao:active {
+    background: #FEE500;
+    border-color: #FEE500;
+    color: #000000;
 }
 
 .social-btn.google {
-    background: rgba(255, 255, 255, 0.8);
-    border-color: #e5e7eb;
-    color: #333;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    color: #3c4043;
 }
 
-.social-btn.google:hover {
-    border-color: #ec4899;
-    background: white;
+.social-btn.google i { color: inherit; }
+
+.social-btn.google:hover,
+.social-btn.google:focus {
+    background: #ffffff;
+    border-color: #dadce0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 1px 3px rgba(60,64,67,.15);
+    transform: none;
+}
+
+.social-btn.google:active {
+    background: #f8f9fa;
+    box-shadow: inset 0 1px 0 rgba(0,0,0,0.05);
+}
+
+/* Google button alternative (left accent strip) */
+.social-btn.google.alt {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    color: #3c4043;
+}
+.social-btn.google.alt::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    bottom: -1px;
+    width: 6px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    background: linear-gradient(180deg, #4285F4 0%, #DB4437 33%, #F4B400 66%, #0F9D58 100%);
+}
+.social-btn.google.alt:hover,
+.social-btn.google.alt:focus {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .signup-link {
