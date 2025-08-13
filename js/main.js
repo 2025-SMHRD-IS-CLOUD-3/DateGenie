@@ -255,6 +255,14 @@
                 window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
             });
         }
+		// "대화 분석 시작하기" 버튼 → 로그인 페이지로 이동
+		const startAnalysisBtn = document.querySelector('.hero .btn-primary');
+		if (startAnalysisBtn) {
+			startAnalysisBtn.addEventListener('click', function (e) {
+				e.preventDefault();
+				window.location.href = window.location.origin + '/login.html';
+			});
+		}
         // 필요 시 색상 전환 효과 활성화
         // initColorTransition();
     });
