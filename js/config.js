@@ -16,9 +16,9 @@ window.APP_CONFIG = {
   // 환경별 리디렉션 URI
   redirectUri: isProduction 
     ? (window.location.hostname === 'kwangdss.github.io' 
-       ? 'https://kwangdss.github.io/WebPT/auth/google/callback'
-       : 'https://dategenie.shop/auth/google/callback')
-    : 'http://127.0.0.1:5500/callback.html'
+       ? 'https://kwangdss.github.io/WebPT/auth/google/callback.html'
+       : 'https://dategenie.shop/auth/google/callback.html')
+    : 'http://127.0.0.1:5500/auth/google/callback.html'
 };
 
 // 설정 확인 로그

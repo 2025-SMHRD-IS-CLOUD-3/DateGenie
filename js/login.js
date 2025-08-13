@@ -153,8 +153,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Social login buttons
+    // Social login buttons (카카오만 처리, 구글은 google-oauth.js에서 처리)
     socialButtons.forEach(button => {
+        // 구글 로그인 버튼은 google-oauth.js에서 처리하므로 제외
+        if (button.id === 'googleLoginBtn') {
+            return;
+        }
+        
         button.addEventListener('click', function(e) {
             e.preventDefault();
             

@@ -8,7 +8,6 @@
     <script>(function(){try{document.documentElement.classList.add('wf-hide-body')}catch(e){}})();</script>
     <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin>
     <link rel="preload" as="font" href="https://fastly.jsdelivr.net/gh/projectnoonnu/2507-1@1.0/SkyblessingInjeFontTTF.woff" type="font/woff" crossorigin>
-    <link rel="preload" as="font" href="https://fastly.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/SacheonUju-Regular.woff2" type="font/woff2" crossorigin>
     <script>
         (function(){
           try {
@@ -46,7 +45,7 @@
     <link rel="stylesheet" href="css/login.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Google OAuth Client Library -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -79,7 +78,7 @@
                         <label for="email">이메일</label>
                         <div class="input-wrapper">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" id="email" name="email" required>
+                            <input type="email" id="email" name="email" autocomplete="email" required>
                         </div>
                     </div>
                     
@@ -87,7 +86,7 @@
                         <label for="password">비밀번호</label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="password" name="password" required>
+                            <input type="password" id="password" name="password" autocomplete="current-password" required>
                             <button type="button" class="toggle-password">
                                 <i class="fas fa-eye"></i>
                             </button>
@@ -143,9 +142,9 @@
         <i class="fas fa-moon moon-icon"></i>
     </button>
 
+    <script src="js/config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/login.js"></script>
-    <script src="js/config.js"></script>
     <script src="js/google-oauth.js"></script>
 </body>
 </html> 
