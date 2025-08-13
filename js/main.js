@@ -1,4 +1,4 @@
-"use strict"; //s
+"use strict";
 
 // 메인 스크립트를 모듈 형태로 정리하여 기능은 유지하고 구조를 개선합니다.
 (function () {
@@ -260,8 +260,7 @@
 		if (startAnalysisBtn) {
 			startAnalysisBtn.addEventListener('click', function (e) {
 				e.preventDefault();
-				const basePath = window.location.pathname.includes('/WebPT/') ? '/WebPT' : '';
-				window.location.href = `${window.location.origin}${basePath}/login.html`;
+				window.location.href = window.location.origin + '/login.html';
 			});
 		}
         // 필요 시 색상 전환 효과 활성화
