@@ -260,7 +260,8 @@
 		if (startAnalysisBtn) {
 			startAnalysisBtn.addEventListener('click', function (e) {
 				e.preventDefault();
-				window.location.href = window.location.origin + '/login.html';
+				const basePath = window.location.pathname.includes('/WebPT/') ? '/WebPT' : '';
+				window.location.href = `${window.location.origin}${basePath}/login.html`;
 			});
 		}
         // 필요 시 색상 전환 효과 활성화
