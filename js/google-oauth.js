@@ -42,28 +42,8 @@ class GoogleOAuth {
             cancel_on_tap_outside: true
         });
         this.setupGoogleLoginButton();
-        
-        // Google One Tap 로그인 활성화 (페이지 로드 시 자동 표시)
-        setTimeout(() => {
-            if (!this.isProcessing) {
-                try {
-                    google.accounts.id.prompt((notification) => {
-                        console.log('Google One Tap notification:', notification);
-                        if (notification.isNotDisplayed()) {
-                            console.log('One Tap not displayed:', notification.getNotDisplayedReason());
-                            // One Tap이 표시되지 않는 경우에 대한 정보 제공
-                            console.info('브라우저 설정에서 "Third-party sign-in"을 허용해주세요.');
-                        } else if (notification.isSkippedMoment()) {
-                            console.log('One Tap skipped:', notification.getSkippedReason());
-                        } else if (notification.isDismissedMoment()) {
-                            console.log('One Tap dismissed:', notification.getDismissedReason());
-                        }
-                    });
-                } catch (error) {
-                    console.error('One Tap initialization error:', error);
-                }
-            }
-        }, 2000); // 2초 후 표시
+
+        // 자동 One Tap 프롬프트는 FedCM 충돌을 유발할 수 있어 비활성화
     }
 
     setupGoogleLoginButton() {
@@ -121,22 +101,9 @@ class GoogleOAuth {
                 console.log('Google One Tap notification:', notification);
                 this.isProcessing = false;
                 
-                if (notification.isNotDisplayed()) {
-                    console.log('One Tap not displayed:', notification.getNotDisplayedReason());
-                    const reason = notification.getNotDisplayedReason();
-                    if (reason === 'browser_not_supported') {
-                        this.showNotification('브라우저가 구글 로그인을 지원하지 않습니다.', 'error');
-                    } else {
-                        this.showNotification('구글 로그인을 사용할 수 없습니다. 수동 로그인을 시도합니다.', 'info');
-                        // 자동으로 수동 로그인 시도
-                        setTimeout(() => this.startManualGoogleLogin(), 1000);
-                    }
-                } else if (notification.isSkippedMoment()) {
-                    console.log('One Tap skipped:', notification.getSkippedReason());
-                    this.showNotification('구글 버튼을 다시 클릭해주세요.', 'info');
-                } else if (notification.isDismissedMoment()) {
-                    console.log('One Tap dismissed:', notification.getDismissedReason());
-                    this.showNotification('구글 로그인이 취소되었습니다.', 'info');
+                if (notification.isNotDisplayed() || notification.isSkippedMoment() || notification.isDismissedMoment()) {
+                    console.log('One Tap not proceeding, falling back to token client');
+                    this.loginWithTokenClient();
                 }
             });
         } catch (error) {
@@ -158,21 +125,9 @@ class GoogleOAuth {
             return;
         }
         
-        // Google One Tap을 다시 시도하거나 토큰 플로우(팝업)로 전환
+        // 바로 토큰 클라이언트 플로우 실행 (One Tap 재시도는 생략)
         try {
-            if (typeof google !== 'undefined' && google.accounts) {
-                // 1) One Tap 재시도
-                google.accounts.id.prompt((notification) => {
-                    console.log('Manual Google One Tap notification:', notification);
-                    if (notification.isNotDisplayed() || notification.isSkippedMoment() || notification.isDismissedMoment()) {
-                        // 2) One Tap이 안되면 OAuth2 Token Client로 팝업 플로우 실행
-                        this.loginWithTokenClient();
-                    }
-                });
-            } else {
-                // Google 라이브러리가 없으면 바로 토큰 플로우 시도
-                this.loginWithTokenClient();
-            }
+            this.loginWithTokenClient();
         } catch (error) {
             console.error('Manual login error:', error);
             // 에러 발생 시 모의 로그인으로 대체
@@ -185,6 +140,8 @@ class GoogleOAuth {
             if (!google || !google.accounts || !google.accounts.oauth2) {
                 throw new Error('Google OAuth2 token client not available');
             }
+            this.isProcessing = true;
+            this.showLoadingState();
             const tokenClient = google.accounts.oauth2.initTokenClient({
                 client_id: this.clientId,
                 scope: this.scope, // 'openid email profile'
@@ -212,6 +169,8 @@ class GoogleOAuth {
                     } catch (err) {
                         console.error('Token flow userinfo error:', err);
                         this.showNotification('구글 사용자 정보를 가져오지 못했습니다.', 'error');
+                        this.isProcessing = false;
+                        this.hideLoadingState();
                     }
                 }
             });
@@ -222,6 +181,8 @@ class GoogleOAuth {
             const authUrl = this.buildAuthUrl();
             console.log('Fallback to OAuth URL:', authUrl);
             window.location.href = authUrl;
+            this.isProcessing = false;
+            this.hideLoadingState();
         }
     }
     
