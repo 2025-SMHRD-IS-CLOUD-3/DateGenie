@@ -1,4 +1,4 @@
-"use strict";
+"use strict"; //s
 
 // 메인 스크립트를 모듈 형태로 정리하여 기능은 유지하고 구조를 개선합니다.
 (function () {
