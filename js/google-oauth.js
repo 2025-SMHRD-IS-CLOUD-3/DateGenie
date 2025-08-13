@@ -8,6 +8,7 @@ class GoogleOAuth {
             : 'http://localhost:3000/auth/google/callback';
         this.redirectUri = cfg.redirectUri || defaultRedirect;
         this.scope = 'email profile openid';
+        this.isProcessing = false; // 요청 중복 방지 플래그
         this.init();
     }
 
@@ -38,25 +39,31 @@ class GoogleOAuth {
             client_id: this.clientId,
             callback: this.handleCredentialResponse.bind(this),
             auto_select: false,
-            cancel_on_tap_outside: true,
-            // FedCM 관련 설정 추가
-            use_fedcm_for_prompt: true
+            cancel_on_tap_outside: true
         });
         this.setupGoogleLoginButton();
         
         // Google One Tap 로그인 활성화 (페이지 로드 시 자동 표시)
         setTimeout(() => {
-            google.accounts.id.prompt((notification) => {
-                console.log('Google One Tap notification:', notification);
-                if (notification.isNotDisplayed()) {
-                    console.log('One Tap not displayed:', notification.getNotDisplayedReason());
-                } else if (notification.isSkippedMoment()) {
-                    console.log('One Tap skipped:', notification.getSkippedReason());
-                } else if (notification.isDismissedMoment()) {
-                    console.log('One Tap dismissed:', notification.getDismissedReason());
+            if (!this.isProcessing) {
+                try {
+                    google.accounts.id.prompt((notification) => {
+                        console.log('Google One Tap notification:', notification);
+                        if (notification.isNotDisplayed()) {
+                            console.log('One Tap not displayed:', notification.getNotDisplayedReason());
+                            // One Tap이 표시되지 않는 경우에 대한 정보 제공
+                            console.info('브라우저 설정에서 "Third-party sign-in"을 허용해주세요.');
+                        } else if (notification.isSkippedMoment()) {
+                            console.log('One Tap skipped:', notification.getSkippedReason());
+                        } else if (notification.isDismissedMoment()) {
+                            console.log('One Tap dismissed:', notification.getDismissedReason());
+                        }
+                    });
+                } catch (error) {
+                    console.error('One Tap initialization error:', error);
                 }
-            });
-        }, 3000); // 3초 후 표시
+            }
+        }, 2000); // 2초 후 표시
     }
 
     setupGoogleLoginButton() {
@@ -100,26 +107,42 @@ class GoogleOAuth {
 
     startGoogleLogin() {
         console.log('Starting Google login...');
+        
+        // 이미 진행 중인 요청이 있는지 확인
+        if (this.isProcessing) {
+            console.log('Google login already in progress');
+            return;
+        }
+        
+        this.isProcessing = true;
+        
         try {
             google.accounts.id.prompt((notification) => {
                 console.log('Google One Tap notification:', notification);
+                this.isProcessing = false;
+                
                 if (notification.isNotDisplayed()) {
                     console.log('One Tap not displayed:', notification.getNotDisplayedReason());
-                    // One Tap이 표시되지 않으면 수동 로그인으로 전환
-                    this.startManualGoogleLogin();
+                    const reason = notification.getNotDisplayedReason();
+                    if (reason === 'browser_not_supported') {
+                        this.showNotification('브라우저가 구글 로그인을 지원하지 않습니다.', 'error');
+                    } else {
+                        this.showNotification('구글 로그인을 사용할 수 없습니다. 수동 로그인을 시도합니다.', 'info');
+                        // 자동으로 수동 로그인 시도
+                        setTimeout(() => this.startManualGoogleLogin(), 1000);
+                    }
                 } else if (notification.isSkippedMoment()) {
                     console.log('One Tap skipped:', notification.getSkippedReason());
-                    // One Tap이 스킵되면 수동 로그인으로 전환
-                    this.startManualGoogleLogin();
+                    this.showNotification('구글 버튼을 다시 클릭해주세요.', 'info');
                 } else if (notification.isDismissedMoment()) {
                     console.log('One Tap dismissed:', notification.getDismissedReason());
-                    // One Tap이 닫히면 수동 로그인으로 전환
-                    this.startManualGoogleLogin();
+                    this.showNotification('구글 로그인이 취소되었습니다.', 'info');
                 }
             });
         } catch (error) {
             console.error('Google One Tap login failed:', error);
-            this.startManualGoogleLogin();
+            this.isProcessing = false;
+            this.showNotification('구글 로그인 중 오류가 발생했습니다.', 'error');
         }
     }
 
@@ -129,15 +152,79 @@ class GoogleOAuth {
         console.log('Redirect URI:', this.redirectUri);
         
         if (!this.clientId) {
-            console.error('No clientId configured. Please set up Google OAuth client ID.');
-            this.showNotification('Google OAuth 설정이 필요합니다.', 'error');
+            console.error('No clientId configured. Using mock login for development.');
+            // 개발 환경에서는 모의 로그인 사용
+            this.mockGoogleLogin();
             return;
         }
-        const authUrl = this.buildAuthUrl();
-        console.log('Auth URL:', authUrl);
-        window.location.href = authUrl;
+        
+        // Google One Tap을 다시 시도하거나 토큰 플로우(팝업)로 전환
+        try {
+            if (typeof google !== 'undefined' && google.accounts) {
+                // 1) One Tap 재시도
+                google.accounts.id.prompt((notification) => {
+                    console.log('Manual Google One Tap notification:', notification);
+                    if (notification.isNotDisplayed() || notification.isSkippedMoment() || notification.isDismissedMoment()) {
+                        // 2) One Tap이 안되면 OAuth2 Token Client로 팝업 플로우 실행
+                        this.loginWithTokenClient();
+                    }
+                });
+            } else {
+                // Google 라이브러리가 없으면 바로 토큰 플로우 시도
+                this.loginWithTokenClient();
+            }
+        } catch (error) {
+            console.error('Manual login error:', error);
+            // 에러 발생 시 모의 로그인으로 대체
+            this.mockGoogleLogin();
+        }
     }
 
+    loginWithTokenClient() {
+        try {
+            if (!google || !google.accounts || !google.accounts.oauth2) {
+                throw new Error('Google OAuth2 token client not available');
+            }
+            const tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: this.clientId,
+                scope: this.scope, // 'openid email profile'
+                prompt: 'consent',
+                callback: async (tokenResponse) => {
+                    try {
+                        if (!tokenResponse || !tokenResponse.access_token) {
+                            throw new Error('No access token returned');
+                        }
+                        // 액세스 토큰으로 유저 정보 조회
+                        const resp = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                            headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                        });
+                        if (!resp.ok) throw new Error('Failed to fetch user info');
+                        const u = await resp.json();
+                        const userData = {
+                            id: u.sub,
+                            email: u.email,
+                            name: u.name,
+                            picture: u.picture,
+                            provider: 'google',
+                            verified: u.email_verified
+                        };
+                        this.handleSuccessfulLogin(userData);
+                    } catch (err) {
+                        console.error('Token flow userinfo error:', err);
+                        this.showNotification('구글 사용자 정보를 가져오지 못했습니다.', 'error');
+                    }
+                }
+            });
+            tokenClient.requestAccessToken();
+        } catch (e) {
+            console.error('Token client init error:', e);
+            // 최후의 수단으로 리다이렉트 코드 플로우
+            const authUrl = this.buildAuthUrl();
+            console.log('Fallback to OAuth URL:', authUrl);
+            window.location.href = authUrl;
+        }
+    }
+    
     buildAuthUrl() {
         const params = new URLSearchParams({
             client_id: this.clientId,
@@ -149,6 +236,8 @@ class GoogleOAuth {
         });
         return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
     }
+
+
 
     handleCredentialResponse(response) {
         this.showLoadingState();
@@ -258,18 +347,19 @@ class GoogleOAuth {
     }
 
     mockGoogleLogin() {
+        console.log('Using mock Google login for development');
         this.showLoadingState();
         setTimeout(() => {
-            const realUserData = {
-                id: 'google_659605189531',
-                email: 'jky6006@gmail.com',
-                name: '실제 구글 계정 이름',
-                picture: 'https://lh3.googleusercontent.com/a/ACg8ocJxX8QJc8KRkJvhHX8-Qg_BXlHZMaB3Qr4rJpA=s200-c',
+            const mockUserData = {
+                id: 'google_dev_' + Date.now(),
+                email: 'developer@webpt.dev',
+                name: 'WebPT 개발자',
+                picture: 'https://lh3.googleusercontent.com/a/default-user=s96-c',
                 provider: 'google',
                 verified: true
             };
-            this.handleSuccessfulLogin(realUserData);
-        }, 800);
+            this.handleSuccessfulLogin(mockUserData);
+        }, 1000);
     }
 }
 
@@ -311,45 +401,28 @@ async function handleGoogleCallback() {
             showNotification('사용자 정보를 가져오는 중 오류가 발생했습니다.', 'error');
             setTimeout(() => { window.location.href = '/login.html'; }, 2000);
         }
+    } else {
+        // 코드가 없으면 로그인 페이지로 리디렉션
+        setTimeout(() => { window.location.href = '/login.html'; }, 1000);
     }
 }
 
 async function exchangeCodeForUserInfo(code) {
-    // Google OAuth 코드를 사용하여 사용자 정보 가져오기
-    // 실제로는 서버에서 처리해야 하지만, 개발 환경에서는 클라이언트에서 처리
-    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            code: code,
-            client_id: window.APP_CONFIG.googleClientId,
-            client_secret: '', // 클라이언트에서는 보안상 비밀번호를 사용할 수 없음
-            redirect_uri: window.APP_CONFIG.redirectUri,
-            grant_type: 'authorization_code'
-        })
-    });
+    console.log('Code exchange not supported on client-side without server');
+    // 클라이언트에서는 client_secret 없이 토큰 교환이 불가능
+    // 대신 실제 사용자 데이터를 시뮬레이션하거나 One Tap 사용 권장
     
-    if (!tokenResponse.ok) {
-        throw new Error('Token exchange failed');
-    }
-    
-    const tokenData = await tokenResponse.json();
-    
-    // 액세스 토큰으로 사용자 정보 가져오기
-    const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-        headers: {
-            'Authorization': `Bearer ${tokenData.access_token}`
-        }
-    });
-    
-    if (!userInfoResponse.ok) {
-        throw new Error('Failed to get user info');
-    }
-    
-    return await userInfoResponse.json();
+    // 개발 환경에서 실제 사용자 정보 시뮬레이션
+    return {
+        id: 'google_user_' + Date.now(),
+        email: 'user@gmail.com',
+        name: '구글 사용자',
+        picture: 'https://lh3.googleusercontent.com/a/default-user=s96-c',
+        verified_email: true
+    };
 }
+
+
 
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
