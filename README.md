@@ -5,7 +5,7 @@
 ![Responsive](https://img.shields.io/badge/Responsive-Yes-00c853?style=for-the-badge)
 ![Dark Mode](https://img.shields.io/badge/Dark%20Mode-Supported-4a148c?style=for-the-badge)
 
-## ✨ 핵심 기능!
+## ✨ 핵심 기능
 
 - **AI 기반 연애 분석**: 카카오톡 대화와 통화 녹음을 분석하여 썸 가능성과 맞춤형 연애 전략 제안
 - **소셜 로그인**: 구글 OAuth, 카카오 로그인 지원
