@@ -77,6 +77,127 @@
 
 		.actions-panel { display:flex; gap:1rem; margin-top:2rem; justify-content:center; }
 
+		/* User Dropdown Menu */
+		.user-dropdown {
+			position: relative;
+			margin-left: auto;
+		}
+
+		.user-info {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.5rem 0.75rem;
+			border-radius: 8px;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			background: rgba(255, 255, 255, 0.1);
+			border: 1px solid rgba(255, 255, 255, 0.2);
+		}
+
+		.user-info:hover {
+			background: rgba(255, 255, 255, 0.15);
+			transform: translateY(-1px);
+		}
+
+		.user-avatar {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			border: 2px solid rgba(236, 72, 153, 0.6);
+			object-fit: cover;
+		}
+
+		.user-name {
+			color: white;
+			font-weight: 600;
+			font-size: 0.9rem;
+			white-space: nowrap;
+		}
+
+		.dropdown-arrow {
+			color: rgba(255, 255, 255, 0.7);
+			font-size: 0.75rem;
+			transition: transform 0.2s ease;
+		}
+
+		.user-info.active .dropdown-arrow {
+			transform: rotate(180deg);
+		}
+
+		.dropdown-menu {
+			position: absolute;
+			top: calc(100% + 0.5rem);
+			right: 0;
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+			border: 1px solid rgba(0, 0, 0, 0.08);
+			min-width: 200px;
+			opacity: 0;
+			visibility: hidden;
+			transform: translateY(-10px);
+			transition: all 0.2s ease;
+			z-index: 1000;
+			overflow: hidden;
+		}
+
+		.dropdown-menu.show {
+			opacity: 1;
+			visibility: visible;
+			transform: translateY(0);
+		}
+
+		.dropdown-item {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+			padding: 0.75rem 1rem;
+			color: #374151;
+			text-decoration: none;
+			transition: all 0.2s ease;
+			border: none;
+			background: none;
+			cursor: pointer;
+			width: 100%;
+			text-align: left;
+		}
+
+		.dropdown-item:hover {
+			background: #f3f4f6;
+			color: #1f2937;
+		}
+
+		.dropdown-item i {
+			color: #6b7280;
+			width: 16px;
+		}
+
+		.dropdown-item.logout-btn:hover {
+			background: #fef2f2;
+			color: #dc2626;
+		}
+
+		.dropdown-item.logout-btn:hover i {
+			color: #dc2626;
+		}
+
+		.dropdown-divider {
+			height: 1px;
+			background: #e5e7eb;
+			margin: 0.5rem 0;
+		}
+
+		/* 반응형 */
+		@media (max-width: 768px) {
+			.user-name {
+				display: none;
+			}
+			.user-dropdown {
+				margin-left: 1rem;
+			}
+		}
+
 		/* 다크 모드 보완 */
 		body.dark-mode.upload-page::before { background: linear-gradient(135deg, #0f0f12 0%, #16161b 40%, #12121a 100%); }
 		body.dark-mode .panel { background: rgba(34,34,34,0.95); box-shadow: 0 10px 30px rgba(0,0,0,.45); }
@@ -86,6 +207,29 @@
 		body.dark-mode .btn-ghost { color:#c7b8ff; border-color: rgba(124,58,237,.5); }
 		body.dark-mode .dropzone { background: rgba(124,58,237,.12); border-color: rgba(124,58,237,.45); }
 		body.dark-mode .progress { background: rgba(255,255,255,.12); }
+		
+		/* 다크 모드 드롭다운 */
+		body.dark-mode .user-info {
+			background: rgba(255, 255, 255, 0.05);
+			border-color: rgba(255, 255, 255, 0.1);
+		}
+		body.dark-mode .user-info:hover {
+			background: rgba(255, 255, 255, 0.1);
+		}
+		body.dark-mode .dropdown-menu {
+			background: #2a2a2a;
+			border-color: rgba(255, 255, 255, 0.1);
+		}
+		body.dark-mode .dropdown-item {
+			color: #e5e7eb;
+		}
+		body.dark-mode .dropdown-item:hover {
+			background: rgba(255, 255, 255, 0.05);
+			color: #ffffff;
+		}
+		body.dark-mode .dropdown-divider {
+			background: rgba(255, 255, 255, 0.1);
+		}
     </style>
 </head>
 <body class="upload-page">
@@ -102,6 +246,30 @@
 				<a href="upload.html" class="nav-link active">업로드</a>
 				<a href="#analysis" class="nav-link">분석 결과</a>
                 <a href="#profile" class="nav-link">프로필</a>
+            </div>
+            
+            <!-- User Dropdown Menu -->
+            <div class="user-dropdown">
+                <div class="user-info" id="userDropdownToggle">
+                    <img src="https://via.placeholder.com/32" alt="프로필" class="user-avatar" id="userAvatar">
+                    <span class="user-name" id="userName">사용자님</span>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </div>
+                <div class="dropdown-menu" id="userDropdownMenu">
+                    <a href="#profile" class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        <span>회원정보 수정</span>
+                    </a>
+                    <a href="dashboard.html" class="dropdown-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>마이페이지</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>로그아웃</span>
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
@@ -185,7 +353,65 @@
 				window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html'; 
 				return; 
 			}
+			
+			const user = JSON.parse(userInfo);
+            let profilePicture = user.picture || 'https://via.placeholder.com/32';
+            if (profilePicture.includes('googleusercontent.com') && profilePicture.includes('=s96-c')) {
+                profilePicture = profilePicture.replace('=s96-c','=s200-c');
+            }
+            
+            // 드롭다운 메뉴 사용자 정보 업데이트
+            const userAvatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
+            if (userAvatar) userAvatar.src = profilePicture;
+            if (userName) userName.textContent = user.name ? user.name + '님' : '사용자님';
 		}
+
+        // 드롭다운 메뉴 초기화
+        function initUserDropdown() {
+            const dropdownToggle = document.getElementById('userDropdownToggle');
+            const dropdownMenu = document.getElementById('userDropdownMenu');
+            
+            if (!dropdownToggle || !dropdownMenu) return;
+            
+            // 드롭다운 토글 클릭 이벤트
+            dropdownToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const isOpen = dropdownMenu.classList.contains('show');
+                
+                if (isOpen) {
+                    closeDropdown();
+                } else {
+                    openDropdown();
+                }
+            });
+            
+            // 문서 클릭 시 드롭다운 닫기
+            document.addEventListener('click', function(e) {
+                if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    closeDropdown();
+                }
+            });
+            
+            // ESC 키로 드롭다운 닫기
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeDropdown();
+                }
+            });
+            
+            function openDropdown() {
+                dropdownMenu.classList.add('show');
+                dropdownToggle.classList.add('active');
+            }
+            
+            function closeDropdown() {
+                dropdownMenu.classList.remove('show');
+                dropdownToggle.classList.remove('active');
+            }
+        }
 
 		function initUpload() {
 			const dropzone = document.getElementById('dropzone');
@@ -337,6 +563,7 @@
 		document.addEventListener('DOMContentLoaded', function(){
             loadUserInfo();
 			initUpload();
+			initUserDropdown();
         });
     </script>
 </body>

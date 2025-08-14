@@ -50,12 +50,14 @@ class GoogleOAuth {
         const googleBtn = document.getElementById('googleLoginBtn');
         console.log('Setting up Google login button:', googleBtn);
         if (googleBtn) {
-            // 기존 이벤트 리스너 제거 (중복 방지)
-            googleBtn.replaceWith(googleBtn.cloneNode(true));
-            const newGoogleBtn = document.getElementById('googleLoginBtn');
+            // 이미 설정되었는지 확인
+            if (googleBtn.dataset.setupComplete === 'true') {
+                console.log('Google login button already set up');
+                return;
+            }
             
             // 원래 구글 로그인 버튼 모양으로 복원
-            newGoogleBtn.innerHTML = `
+            googleBtn.innerHTML = `
                 <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                     <g fill="none">
                         <path d="M17.64 9.2045c0-.638-.057-1.252-.164-1.841H9v3.481h4.844c-.209 1.125-.842 2.08-1.795 2.719v2.258h2.908c1.703-1.568 2.683-3.874 2.683-6.617z" fill="#4285F4"/>
@@ -67,12 +69,15 @@ class GoogleOAuth {
                 구글로 로그인
             `;
             
-            // 새로운 이벤트 리스너 한 번만 추가
-            newGoogleBtn.addEventListener('click', (e) => {
+            // 클릭 이벤트 추가 (한 번만)
+            const clickHandler = (e) => {
                 e.preventDefault();
                 console.log('Google login button clicked');
                 this.startGoogleLogin();
-            });
+            };
+            
+            googleBtn.addEventListener('click', clickHandler);
+            googleBtn.dataset.setupComplete = 'true';
         }
     }
 
@@ -102,8 +107,8 @@ class GoogleOAuth {
         this.showLoadingState();
         
         try {
-            // One Tap 건너뛰고 바로 Token Client로 진행
-            console.log('Skipping One Tap, using Token Client directly');
+            // Google Token Client 사용
+            console.log('Using Google Token Client...');
             this.loginWithTokenClient();
         } catch (error) {
             console.error('Google login failed:', error);
@@ -138,32 +143,36 @@ class GoogleOAuth {
     loginWithTokenClient() {
         try {
             if (!google || !google.accounts || !google.accounts.oauth2) {
-                throw new Error('Google OAuth2 token client not available');
-            }
-            
-            // 이미 처리 중이면 중단
-            if (this.isProcessing && this.isProcessing !== 'token_client') {
-                console.log('Another login process is already running');
+                console.error('Google OAuth2 token client not available');
+                this.isProcessing = false;
+                this.hideLoadingState();
+                this.showNotification('구글 로그인 서비스를 불러올 수 없습니다.', 'error');
                 return;
             }
             
-            this.isProcessing = 'token_client';
-            this.showLoadingState();
+            console.log('Initializing Google Token Client...');
             const tokenClient = google.accounts.oauth2.initTokenClient({
                 client_id: this.clientId,
                 scope: this.scope, // 'openid email profile'
                 prompt: 'consent',
                 callback: async (tokenResponse) => {
+                    console.log('Google Token Client callback received');
                     try {
                         if (!tokenResponse || !tokenResponse.access_token) {
                             throw new Error('No access token returned');
                         }
+                        
+                        console.log('Fetching user info from Google...');
                         // 액세스 토큰으로 유저 정보 조회
                         const resp = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
                             headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
                         });
+                        
                         if (!resp.ok) throw new Error('Failed to fetch user info');
+                        
                         const u = await resp.json();
+                        console.log('User info received:', u);
+                        
                         const userData = {
                             id: u.sub,
                             email: u.email,
@@ -172,6 +181,7 @@ class GoogleOAuth {
                             provider: 'google',
                             verified: u.email_verified
                         };
+                        
                         this.isProcessing = false; // 성공 시 처리 완료
                         this.handleSuccessfulLogin(userData);
                     } catch (err) {
@@ -182,6 +192,8 @@ class GoogleOAuth {
                     }
                 }
             });
+            
+            console.log('Requesting access token...');
             tokenClient.requestAccessToken();
         } catch (e) {
             console.error('Token client init error:', e);
