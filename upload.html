@@ -19,8 +19,67 @@
 			padding-left: 20px;
 			padding-right: 20px;
             display: grid;
-			grid-template-columns: minmax(0, 1fr);
-			gap: 1.5rem;
+			grid-template-columns: 250px minmax(0, 1fr);
+			gap: 2rem;
+		}
+
+		/* 사이드바 네비게이션 */
+		.sidebar-nav {
+			background: rgba(255,255,255,0.9);
+			backdrop-filter: blur(10px);
+			border-radius: 20px;
+			padding: 1.5rem;
+			box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+			height: fit-content;
+			position: sticky;
+			top: calc(var(--navbar-height) + 2rem);
+		}
+
+		.sidebar-nav h3 {
+			color: #1f1d3a;
+			font-size: 1.1rem;
+			font-weight: 700;
+			margin-bottom: 1rem;
+			padding-bottom: 0.5rem;
+			border-bottom: 2px solid #f3f4f6;
+		}
+
+		.nav-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+
+		.nav-item {
+			margin-bottom: 0.5rem;
+		}
+
+		.nav-link {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+			padding: 0.75rem 1rem;
+			color: #6b7280;
+			text-decoration: none;
+			border-radius: 12px;
+			transition: all 0.2s ease;
+			font-weight: 500;
+		}
+
+		.nav-link:hover {
+			color: #7c3aed;
+			background: rgba(124, 58, 237, 0.1);
+		}
+
+		.nav-link.active {
+			color: #7c3aed;
+			background: rgba(124, 58, 237, 0.15);
+			font-weight: 600;
+		}
+
+		.nav-link i {
+			width: 20px;
+			text-align: center;
 		}
 
 		/* 전체 배경 */
@@ -91,29 +150,25 @@
 			border-radius: 8px;
 			cursor: pointer;
 			transition: all 0.2s ease;
-			background: rgba(255, 255, 255, 0.1);
-			border: 1px solid rgba(255, 255, 255, 0.2);
+			background: transparent; /* 외곽 배경/테두리 제거 */
+			border: none;
 		}
 
-		.user-info:hover {
-			background: rgba(255, 255, 255, 0.15);
-			transform: translateY(-1px);
-		}
+		.user-info:hover { transform: none; }
+		.user-info:hover .user-greet { transform: none; }
 
 		.user-avatar {
 			width: 32px;
 			height: 32px;
 			border-radius: 50%;
-			border: 2px solid rgba(236, 72, 153, 0.6);
+			border: none; /* 외곽선 제거 */
 			object-fit: cover;
+			cursor: pointer;
 		}
 
-		.user-name {
-			color: white;
-			font-weight: 600;
-			font-size: 0.9rem;
-			white-space: nowrap;
-		}
+		.user-name { color: #1f2937; font-size: 0.9rem; white-space: nowrap; }
+		.user-name-text { font-weight: 800; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 2px; cursor: pointer; }
+		.user-greet { cursor: default; text-decoration: none; }
 
 		.dropdown-arrow {
 			color: rgba(255, 255, 255, 0.7);
@@ -207,15 +262,18 @@
 		body.dark-mode .btn-ghost { color:#c7b8ff; border-color: rgba(124,58,237,.5); }
 		body.dark-mode .dropzone { background: rgba(124,58,237,.12); border-color: rgba(124,58,237,.45); }
 		body.dark-mode .progress { background: rgba(255,255,255,.12); }
+		body.dark-mode .sidebar-nav { background: rgba(34,34,34,0.95); box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+		body.dark-mode .sidebar-nav h3 { color: #e5e7eb; border-bottom-color: rgba(255,255,255,.1); }
+		body.dark-mode .nav-link { color: #cbd5e1; }
+		body.dark-mode .nav-link:hover { color: #7c3aed; background: rgba(124, 58, 237, 0.2); }
+		body.dark-mode .nav-link.active { color: #7c3aed; background: rgba(124, 58, 237, 0.25); }
 		
 		/* 다크 모드 드롭다운 */
-		body.dark-mode .user-info {
-			background: rgba(255, 255, 255, 0.05);
-			border-color: rgba(255, 255, 255, 0.1);
-		}
-		body.dark-mode .user-info:hover {
-			background: rgba(255, 255, 255, 0.1);
-		}
+		body.dark-mode .user-info { background: transparent; border-color: transparent; }
+		body.dark-mode .user-info:hover { background: transparent; }
+		body.dark-mode .user-name { color: white; }
+		body.dark-mode .user-name-text { color: white; }
+		body.dark-mode .user-greet { color: rgba(255, 255, 255, 0.8); }
 		body.dark-mode .dropdown-menu {
 			background: #2a2a2a;
 			border-color: rgba(255, 255, 255, 0.1);
@@ -241,28 +299,28 @@
                     <span class="logo-text">Date Genie</span>
                 </a>
             </div>
-            <div class="nav-menu">
-				<a href="dashboard.html" class="nav-link">대시보드</a>
-				<a href="upload.html" class="nav-link active">업로드</a>
-				<a href="#analysis" class="nav-link">분석 결과</a>
-                <a href="#profile" class="nav-link">프로필</a>
-            </div>
+
             
             <!-- User Dropdown Menu -->
             <div class="user-dropdown">
                 <div class="user-info" id="userDropdownToggle">
                     <img src="https://via.placeholder.com/32" alt="프로필" class="user-avatar" id="userAvatar">
-                    <span class="user-name" id="userName">사용자님</span>
-                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    <span class="user-name">
+                        <span id="userNameText" class="user-name-text">사용자</span><span class="user-greet">님 환영합니다</span>
+                    </span>
                 </div>
                 <div class="dropdown-menu" id="userDropdownMenu">
-                    <a href="#profile" class="dropdown-item">
+                    <a href="profile-edit.html" class="dropdown-item">
                         <i class="fas fa-user"></i>
                         <span>회원정보 수정</span>
                     </a>
                     <a href="dashboard.html" class="dropdown-item">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>마이페이지</span>
+                    </a>
+                    <a href="settings.html" class="dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        <span>설정</span>
                     </a>
                     <div class="dropdown-divider"></div>
                     <a href="#" class="dropdown-item logout-btn" onclick="logout()">
@@ -275,6 +333,41 @@
     </nav>
 
     <div class="upload-shell">
+        <!-- 사이드바 네비게이션 -->
+        <aside class="sidebar-nav">
+            <h3>서비스</h3>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>마이 페이지</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="upload.html" class="nav-link active">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>파일 업로드</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <h3>계정 관리</h3>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="profile-edit.html" class="nav-link">
+                        <i class="fas fa-user-edit"></i>
+                        <span>회원정보 수정</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="settings.html" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>설정</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
         <main class="main">
 			<section class="panel hero-panel">
 				<h1><i class="fas fa-cloud-upload-alt"></i> 대화 & 음성 파일 업로드</h1>
@@ -311,25 +404,7 @@
 				</div>
 			</section>
 
-			<section class="panel">
-				<div class="panel-header">
-					<div class="panel-title"><i class="fas fa-list"></i><span>업로드된 파일</span></div>
-				</div>
-				<div class="file-list" id="fileList">
-					<div style="text-align:center; color:#6b7280; padding:2rem;">
-						아직 업로드된 파일이 없습니다. 위에서 파일을 선택해주세요.
-					</div>
-				</div>
-				
-				<div class="actions-panel">
-					<button class="btn-primary" id="analyzeBtn" style="display:none;">
-						<i class="fas fa-rocket"></i> 분석 시작하기
-					</button>
-					<a href="dashboard.html" class="btn-ghost">
-						<i class="fas fa-chart-line"></i> 분석 결과 보기
-					</a>
-				</div>
-			</section>
+
 		</main>
     </div>
 
@@ -361,10 +436,10 @@
             }
             
             // 드롭다운 메뉴 사용자 정보 업데이트
-            const userAvatar = document.getElementById('userAvatar');
-            const userName = document.getElementById('userName');
-            if (userAvatar) userAvatar.src = profilePicture;
-            if (userName) userName.textContent = user.name ? user.name + '님' : '사용자님';
+			const userAvatar = document.getElementById('userAvatar');
+			const userNameText = document.getElementById('userNameText');
+			if (userAvatar) userAvatar.src = profilePicture;
+			if (userNameText) { userNameText.textContent = user.name ? user.name : '사용자'; }
 		}
 
         // 드롭다운 메뉴 초기화
@@ -376,6 +451,11 @@
             
             // 드롭다운 토글 클릭 이벤트
             dropdownToggle.addEventListener('click', function(e) {
+                // "님, 환영합니다" 부분을 클릭했을 때는 드롭다운을 열지 않음
+                if (e.target.classList.contains('user-greet')) {
+                    return;
+                }
+                
                 e.preventDefault();
                 e.stopPropagation();
                 
