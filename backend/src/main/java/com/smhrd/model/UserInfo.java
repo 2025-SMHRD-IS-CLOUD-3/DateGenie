@@ -33,5 +33,9 @@ public class UserInfo {
 		this.pw = pw;
 	}
 	
+	// 로그인 요청 데이터
+	
+	// 로그인 응답 데이터
+	
 
 }

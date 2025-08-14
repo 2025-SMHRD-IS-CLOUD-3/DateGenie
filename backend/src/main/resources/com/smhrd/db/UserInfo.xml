@@ -3,7 +3,7 @@
 <mapper namespace="com.smhrd.db.UserInfo">
 
 	<insert id="join" parameterType="com.smhrd.model.UserInfo">
-		INSERT INTO USER_INFO VALUES(#{email}, #{pw}, #{nickname})
+		INSERT INTO USER_INFO (EMAIL, PW, NICKNAME) VALUES(#{email}, #{pw}, #{nickname})
 	</insert>
 	
 	<select id="login" resultType="com.smhrd.model.UserInfo" parameterType="com.smhrd.model.UserInfo">

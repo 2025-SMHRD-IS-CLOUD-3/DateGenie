@@ -1,12 +1,394 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Genie - AI로 분석하는 연애 전략</title>
+        <style>html.wf-hide-body body{visibility:hidden}</style>
+        <script>(function(){try{document.documentElement.classList.add('wf-hide-body')}catch(e){}})();</script>
+        <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin>
+        <link rel="preload" as="font" href="https://fastly.jsdelivr.net/gh/projectnoonnu/2507-1@1.0/SkyblessingInjeFontTTF.woff" type="font/woff" crossorigin>
+        <link rel="preload" as="font" href="https://fastly.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/SacheonUju-Regular.woff2" type="font/woff2" crossorigin>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+        <script>
+            (function(){
+              var d=document.documentElement; var revealed=false; function reveal(){ if(revealed) return; revealed=true; d.classList.remove('wf-hide-body'); }
+              try{
+                if(document.fonts && document.fonts.load){
+                  Promise.race([
+                    document.fonts.load('1em Pretendard'),
+                    document.fonts.ready,
+                    new Promise(function(r){ setTimeout(r,1200); })
+                  ]).then(reveal).catch(reveal);
+                } else { setTimeout(reveal, 300); }
+              }catch(e){ reveal(); }
+            })();
+        </script>
+    <link rel="stylesheet" href="css/style.css">
+        <script>
+            (function(){
+              try {
+                var d = document.documentElement;
+                d.classList.add('wf-hide-logo');
+                var font = new FontFace('SkyblessingInjeFontTTF',
+                  'url(https://fastly.jsdelivr.net/gh/projectnoonnu/2507-1@1.0/SkyblessingInjeFontTTF.woff) format("woff")');
+                font.load().then(function(loaded){
+                  document.fonts.add(loaded);
+                  d.classList.remove('wf-hide-logo');
+                }).catch(function(){
+                  d.classList.remove('wf-hide-logo');
+                });
+                // 폴백 타이머(2초 후 강제 표시)
+                setTimeout(function(){ d.classList.remove('wf-hide-logo'); }, 2000);
+              } catch(e) { document.documentElement.classList.remove('wf-hide-logo'); }
+            })();
+        </script>
+    </head>
 <body>
-	<a href="join.html">회원가입</a>
-	<a href="login.html">로그인</a>
-	
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="#" id="logoHomeLink" class="brand-logo" aria-label="Date Genie Home">
+                    <i class="fas fa-heart heart-icon" aria-hidden="true"></i>
+                    <span class="logo-text">Date Genie</span>
+                </a>
+            </div>
+            <!-- 모바일 햄버거 버튼 -->
+            <button class="hamburger" aria-label="메뉴 열기/닫기" aria-expanded="false" aria-controls="primaryMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="nav-menu" id="primaryMenu" aria-hidden="true">
+                <li><a href="#home">홈</a></li>
+                <li><a href="#features">기능</a></li>
+                <li><a href="#pricing">요금제</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <div class="nav-auth-buttons">
+                <a href="login.html" class="nav-btn-login">로그인</a>
+                <a href="signup.html" class="nav-btn-signup">회원가입</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <!-- Heartbeat Animation Background -->
+        <div class="heartbeat-container">
+            <svg class="heartbeat-line" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="heartbeatGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#ec4899;stop-opacity:0.8" />
+                        <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0.8" />
+                    </linearGradient>
+                </defs>
+                <path class="heartbeat-path" d="M0,100 L400,100 L420,50 L440,150 L460,20 L480,180 L500,100 L1200,100" 
+                      stroke="url(#heartbeatGradient)" 
+                      stroke-width="2.5" 
+                      fill="none" 
+                      stroke-linecap="round" 
+                      stroke-linejoin="round"/>
+            </svg>
+        </div>
+        
+        <!-- Nebula Genie Overlay -->
+        <div class="nebula-overlay" aria-hidden="true">
+            <div class="nebula-blob"></div>
+            <div class="nebula-stars">
+                <i style="left:10%;top:20%"></i>
+                <i class="s2" style="left:25%;top:35%"></i>
+                <i class="s3" style="left:40%;top:15%"></i>
+                <i style="left:60%;top:28%"></i>
+                <i class="s2" style="left:75%;top:18%"></i>
+                <i class="s3" style="left:85%;top:40%"></i>
+                <i style="left:20%;top:70%"></i>
+                <i class="s2" style="left:55%;top:75%"></i>
+                <i class="s3" style="left:72%;top:62%"></i>
+            </div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-heart"></i>
+                AI 기반 썸 분석
+            </div>
+            
+            <h1 class="hero-title">
+                <span class="gradient-text">AI 지능</span>으로 썸 관계를 분석해보세요
+            </h1>
+            
+            <p class="hero-description">
+                우리의 고급 AI가 카카오톡 대화와 통화 녹음을 분석하여 썸 관계의 발전 가능성을 정확하게 측정하고 맞춤형 연애 전략을 제공합니다.
+            </p>
+            
+            <div class="hero-buttons">
+                <button class="btn-primary">
+                    대화 분석 시작하기
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn-secondary">
+                    분석 예시 보기
+                </button>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number text-3xl font-bold text-white mb-2">10K+</div>
+                    <div class="stat-label text-gray-400">분석 완료</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number text-3xl font-bold text-white mb-2">95%</div>
+                    <div class="stat-label text-gray-400">정확도</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number text-3xl font-bold text-white mb-2">24/7</div>
+                    <div class="stat-label text-gray-400">AI 분석</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>왜 Date Genie의 AI 썸 분석을 선택해야 할까요?</h2>
+                <p>우리의 최첨단 기술은 감정 분석, 대화 패턴 분석, 성격 유형 분석을 결합하여 
+                   당신의 썸 관계를 정확하게 분석합니다.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="glow-card" data-glow-color="purple">
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>대화 분석</h3>
+                        <p>카카오톡 대화 파일과 통화 녹음을 AI가 분석하여 
+                           감정 흐름과 썸 가능성을 정확하게 측정합니다.</p>
+                    </div>
+                </div>
+                
+                <div class="glow-card" data-glow-color="red">
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3>감정 분석</h3>
+                        <p>대화의 감정 흐름을 분석하여 최고 호감일을 자동 탐색하고 
+                           썸 가능성 점수를 0~100%로 정확하게 산출합니다.</p>
+                    </div>
+                </div>
+                
+                <div class="glow-card" data-glow-color="blue">
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>성격 분석</h3>
+                        <p>MBTI 기반으로 상대방의 성격을 분석하고 
+                           맞춤형 공략법과 고백 타이밍을 추천합니다.</p>
+                    </div>
+                </div>
+                
+                <div class="glow-card" data-glow-color="green">
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>커뮤니티 중심</h3>
+                        <p>의미 있는 연결을 위해 노력하는 같은 생각을 가진 
+                           개인들의 커뮤니티에 참여하세요.</p>
+                    </div>
+                </div>
+                
+                <div class="glow-card" data-glow-color="orange">
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3>검증된 결과</h3>
+                        <p>우리 플랫폼을 사용하는 사용자의 95%가 첫 달 내에 
+                           더 나은 연애 경험을 보고합니다.</p>
+                    </div>
+                </div>
+                
+                <div class="glow-card" data-glow-color="purple">
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <h3>24/7 지원</h3>
+                        <p>우리의 AI 기반 지원 시스템이 항상 사용 가능하여 
+                           연애 여정을 탐색하는 데 도움을 줍니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2>요금제 선택</h2>
+                <p>당신의 연애 목표에 맞는 완벽한 플랜을 선택하세요</p>
+            </div>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>무료</h3>
+                        <div class="price">
+                            <span class="amount">₩0</span>
+                            <span class="period">/월</span>
+                        </div>
+                        <p>기본 데이트 매칭 기능을 무료로 체험해보세요</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 기본 프로필 매칭</li>
+                        <li><i class="fas fa-check"></i> 5개 데이트 추천</li>
+                        <li><i class="fas fa-check"></i> 기본 호환성 분석</li>
+                        <li><i class="fas fa-check"></i> 기본 채팅 기능</li>
+                    </ul>
+                    <button class="btn-secondary">무료 시작하기</button>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">인기</div>
+                    <div class="pricing-header">
+                        <h3>프리미엄</h3>
+                        <div class="price">
+                            <span class="amount">₩29,900</span>
+                            <span class="period">/월</span>
+                        </div>
+                        <p>고급 AI 매칭과 개인화된 데이트 추천</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 고급 AI 매칭 알고리즘</li>
+                        <li><i class="fas fa-check"></i> 무제한 데이트 추천</li>
+                        <li><i class="fas fa-check"></i> 상세 호환성 분석</li>
+                        <li><i class="fas fa-check"></i> 1:1 데이트 코칭</li>
+                        <li><i class="fas fa-check"></i> 우선 매칭 서비스</li>
+                        <li><i class="fas fa-check"></i> 고급 필터링 옵션</li>
+                    </ul>
+                    <button class="btn-primary">프리미엄 시작하기</button>
+                </div>
+                
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>VIP</h3>
+                        <div class="price">
+                            <span class="amount">₩99,900</span>
+                            <span class="period">/월</span>
+                        </div>
+                        <p>최고급 데이트 서비스와 전담 매니저</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 모든 프리미엄 기능</li>
+                        <li><i class="fas fa-check"></i> 전담 데이트 코치</li>
+                        <li><i class="fas fa-check"></i> 맞춤형 데이트 계획</li>
+                        <li><i class="fas fa-check"></i> 우선 매칭 서비스</li>
+                        <li><i class="fas fa-check"></i> 24/7 전담 지원</li>
+                        <li><i class="fas fa-check"></i> VIP 데이트 이벤트 초대</li>
+                    </ul>
+                    <button class="btn-secondary">VIP 시작하기</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2>자주하는 질문</h2>
+                <p>Date Genie에 대해 궁금한 점들을 확인해보세요</p>
+            </div>
+            
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Date Genie는 어떻게 작동하나요?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Date Genie는 고급 AI 기술을 사용하여 당신의 데이트 선호도, 성격, 관심사를 분석합니다. 
+                           이를 바탕으로 가장 호환되는 데이트 파트너를 추천하고 개인화된 데이트 조언을 제공합니다.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>개인정보는 안전한가요?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>네, 당신의 개인정보는 최고 수준의 암호화로 보호됩니다. 
+                           우리는 GDPR과 한국 개인정보보호법을 준수하며, 
+                           데이터는 오직 서비스 개선과 매칭 목적으로만 사용됩니다.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>무료 플랜으로도 충분한가요?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>무료 플랜으로도 기본적인 분석과 매칭을 경험할 수 있습니다. 
+                           하지만 더 정확하고 상세한 분석을 원한다면 프리미엄 플랜을 추천합니다.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>AI 분석의 정확도는 어느 정도인가요?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>우리의 AI는 95%의 정확도를 보여주고 있습니다. 
+                           지속적인 학습과 개선을 통해 더욱 정확한 분석을 제공하고 있습니다.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>환불 정책은 어떻게 되나요?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>첫 30일 이내에는 100% 환불을 보장합니다. 
+                           서비스에 만족하지 못하시면 언제든지 연락해 주세요.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>고객 지원은 어떻게 받을 수 있나요?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>24/7 AI 챗봇 지원과 함께, 평일 오전 9시부터 오후 6시까지 
+                           전문 상담원이 실시간으로 도움을 드립니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 다크모드 토글 버튼 -->
+    <button class="dark-mode-toggle" id="darkModeToggle">
+        <i class="fas fa-sun sun-icon"></i>
+        <i class="fas fa-moon moon-icon"></i>
+    </button>
+
+    <script src="js/main.js"></script>
 </body>
-</html>
+</html> 

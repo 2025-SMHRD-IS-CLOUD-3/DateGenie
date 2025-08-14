@@ -1,6 +1,11 @@
 package com.smhrd.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -8,8 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.smhrd.model.MavenMember;
+import com.google.gson.Gson;
 import com.smhrd.model.MemberDAO;
+import com.smhrd.model.UserInfo;
 
 @WebServlet("/LoginService")
 public class LoginService extends HttpServlet {
@@ -17,30 +23,116 @@ public class LoginService extends HttpServlet {
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		// 1. main.jsp에서 데이터를 받기 전, 인코딩 작업
-		request.setCharacterEncoding("UTF-8");
-		// 2. main.jsp의 form태그에서 name값을 기준으로 데이터 가져오기
-		String email = request.getParameter("email");
-		String pw = request.getParameter("pw");
-		
-		// 3. DB에 접근할 수 있는 DAO로 데이터 보내기 전, 데이터 처리 작업
-		//	-->
-		MavenMember loginMember = new MavenMember(email,pw);
-		// 4. DAO의 login메서드 호출 & 데이터 전송하기
-		MemberDAO dao = new MemberDAO();
-		// login 기능 실행
-		// -> 현재 입력된 email, pw와 DB에 있는 email,pw가 동일한지 비교 필요
-		MavenMember sMember = dao.login(loginMember);
-		// 5. 결과 값 처리하기
-		if(sMember != null) {
-			// sMember가 null값이 아니다 == DB에서 일치하는 값을 가져왔다.
-			// 성공 --> session영역에 sMember를 저장!
-			// jsp에서는 내장 객체 session이 지원되지만 servlet에서는 session을 선언해줘야 한다.
-			HttpSession session = request.getSession();
-			session.setAttribute("sMember", sMember);
-		}
-			// sMember == null 실패 --> redirect 방식으로 main.jsp 이동
-			response.sendRedirect("main.jsp");
+System.out.println("===== LoginService 호출됨 =====");
+        
+        try {
+            // JSON 요청/응답 설정
+            System.out.println("=== 1단계: 응답 설정 시작 ===");
+            request.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json; charset=UTF-8");
+            System.out.println("응답 설정 완료");
+            
+            // JSON 데이터 읽기
+            System.out.println("=== 2단계: JSON 데이터 읽기 시작 ===");
+            BufferedReader reader = request.getReader();
+            StringBuilder jsonString = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonString.append(line);
+            }
+            System.out.println("받은 JSON 데이터: " + jsonString.toString());
+            
+            // JSON 파싱
+            System.out.println("=== 3단계: JSON 파싱 시작 ===");
+            Gson gson = new Gson();
+            Map<String, String> loginData = gson.fromJson(jsonString.toString(), Map.class);
+            System.out.println("JSON 파싱 완료");
+            
+            String email = loginData.get("email");
+            String pw = loginData.get("password");
+            
+            System.out.println("파싱된 이메일: " + email);
+            System.out.println("파싱된 비밀번호: " + pw);
+            
+            // UserInfo 객체 생성
+            System.out.println("=== 4단계: UserInfo 객체 생성 ===");
+            UserInfo loginMember = new UserInfo(email, pw);
+            System.out.println("UserInfo 객체 생성 완료: " + loginMember);
+            
+            // DAO 생성 및 로그인 검증
+            System.out.println("=== 5단계: DB 로그인 검증 시작 ===");
+            MemberDAO dao = new MemberDAO();
+            System.out.println("MemberDAO 객체 생성 완료");
+            
+            UserInfo result = dao.login(loginMember);
+            System.out.println("dao.login() 실행 완료");
+            System.out.println("로그인 결과: " + result);
+            
+            // 응답 데이터 생성
+            System.out.println("=== 6단계: 응답 데이터 생성 ===");
+            Map<String, Object> responseData = new HashMap<>();
+            
+            if (result != null) {
+                System.out.println("=== 로그인 성공 처리 ===");
+                
+                // 세션 설정
+                HttpSession session = request.getSession();
+                session.setAttribute("loginMember", result);
+                System.out.println("세션 설정 완료");
+                
+                responseData.put("success", true);
+                responseData.put("message", "로그인에 성공했습니다!");
+                responseData.put("userInfo", result);
+                responseData.put("redirectUrl", "main.html");
+                
+                System.out.println("성공 응답 데이터 생성 완료");
+                System.out.println("로그인 성공 사용자: " + result.getEmail());
+                
+            } else {
+                System.out.println("=== 로그인 실패 처리 ===");
+                
+                responseData.put("success", false);
+                responseData.put("message", "이메일 또는 비밀번호가 일치하지 않습니다.");
+                
+                System.out.println("실패 응답 데이터 생성 완료");
+            }
+            
+            // JSON 응답 전송
+            System.out.println("=== 7단계: JSON 응답 전송 ===");
+            PrintWriter out = response.getWriter();
+            String jsonResponse = gson.toJson(responseData);
+            System.out.println("전송할 JSON: " + jsonResponse);
+            
+            out.print(jsonResponse);
+            out.flush();
+            System.out.println("JSON 응답 전송 완료");
+            
+        } catch (Exception e) {
+            System.out.println("=== ❌ 예외 발생 ===");
+            System.out.println("예외 위치: LoginService");
+            System.out.println("예외 메시지: " + e.getMessage());
+            e.printStackTrace();
+            
+            try {
+                // 오류 응답
+                System.out.println("=== 오류 응답 생성 ===");
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("message", "로그인 처리 중 오류가 발생했습니다.");
+                
+                response.setContentType("application/json; charset=UTF-8");
+                PrintWriter out = response.getWriter();
+                Gson gson = new Gson();
+                out.print(gson.toJson(errorResponse));
+                out.flush();
+                System.out.println("오류 응답 전송 완료");
+                
+            } catch (Exception ex) {
+                System.out.println("오류 응답 전송 중 추가 예외 발생: " + ex.getMessage());
+            }
+        }
+        
+        System.out.println("===== LoginService 종료 =====");	
 		
 		
 		
