@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smhrd.db.UserInfo">
+
+	<insert id="join" parameterType="com.smhrd.model.UserInfo">
+		INSERT INTO USER_INFO VALUES(#{email}, #{pw}, #{nickname})
+	</insert>
+	
+	<select id="login" resultType="com.smhrd.model.UserInfo" parameterType="com.smhrd.model.UserInfo">
+		SELECT * FROM USER_INFO WHERE EMAIL=#{email} AND PW=#{pw}
+	</select>
+	
+	<update id="update" parameterType="com.smhrd.model.UserInfo">
+		UPDATE USER_INFO SET PW=#{pw}, TEL=#{tel}, ADDRESS=#{address} WHERE EMAIL=#{email}
+	</update>
+	
+	<select id="select" resultType="com.smhrd.model.UserInfo">
+		select * from USER_INFO
+	</select>
+	
+</mapper>
