@@ -242,7 +242,7 @@ class GoogleOAuth {
         localStorage.setItem('user', JSON.stringify(userData));
         localStorage.setItem('authProvider', 'google');
         this.showNotification('구글 로그인에 성공했습니다!', 'success');
-        setTimeout(() => { window.location.href = window.location.origin + '/DateGenie/dashboard.html'; }, 1500);
+        setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/dashboard.html'; }, 1500);
     }
 
     handleLoginError(message) {
@@ -355,16 +355,16 @@ async function handleGoogleCallback() {
             localStorage.setItem('user', JSON.stringify(realUserData));
             localStorage.setItem('authProvider', 'google');
             showNotification('구글 로그인에 성공했습니다!', 'success');
-            setTimeout(() => { window.location.href = window.location.origin + '/DateGenie/dashboard.html'; }, 1500);
+            setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/dashboard.html'; }, 1500);
             
         } catch (error) {
             console.error('Error getting user info:', error);
             showNotification('사용자 정보를 가져오는 중 오류가 발생했습니다.', 'error');
-            setTimeout(() => { window.location.href = '/DateGenie/login.html'; }, 2000);
+            setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html'; }, 2000);
         }
     } else {
         // 코드가 없으면 로그인 페이지로 리디렉션
-        setTimeout(() => { window.location.href = '/DateGenie/login.html'; }, 1000);
+        setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html'; }, 1000);
     }
 }
 
