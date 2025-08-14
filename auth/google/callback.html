@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>구글 로그인 처리중...</title>
-    <base href="/DateGenie/">
+
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -45,8 +45,8 @@
         <p>잠시만 기다려주세요.</p>
     </div>
 
-    <script src="../js/config.js"></script>
-    <script src="../js/google-oauth.js"></script>
+    <script src="../../js/config.js"></script>
+    <script src="../../js/google-oauth.js"></script>
     <script>
         // 콜백 페이지에서 구글 OAuth 처리
         document.addEventListener('DOMContentLoaded', function() {
@@ -55,7 +55,7 @@
             } else {
                 console.error('handleGoogleCallback function not found');
                 setTimeout(() => {
-                    window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html';
+                    window.location.href = '../../login.html';
                 }, 2000);
             }
         });
