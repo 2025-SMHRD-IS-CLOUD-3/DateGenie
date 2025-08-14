@@ -112,7 +112,7 @@
             </div>
             <div class="nav-menu">
 				<a href="#overview" class="nav-link">개요</a>
-				<a href="#analysis" class="nav-link">분석</a>
+				<a href="upload.html" class="nav-link">업로드</a>
 				<a href="#insights" class="nav-link">인사이트</a>
                 <a href="#profile" class="nav-link">프로필</a>
             </div>
@@ -129,7 +129,7 @@
 						<p id="displayEmail">계정 이메일</p>
 					</div>
 					<div class="actions">
-						<a href="#analysis" class="btn-primary"><i class="fas fa-rocket"></i> 분석 시작</a>
+						<a href="upload.html" class="btn-primary"><i class="fas fa-upload"></i> 파일 업로드</a>
 						<a href="#profile" class="btn-ghost"><i class="fas fa-user"></i> 프로필</a>
                 </div>
             </div>
@@ -142,16 +142,19 @@
 
 			<section id="analysis" class="panel" aria-labelledby="analysisTitle">
 				<div class="panel-header">
-					<div class="panel-title"><i class="fas fa-flask"></i><span id="analysisTitle">대화/음성 업로드 · 분석</span></div>
-                        </div>
-				<div class="dropzone" id="dropzone">
-					<label class="label" for="fileInput"><i class="fas fa-file-arrow-up"></i> 파일 선택 또는 드래그 앤 드롭</label>
-					<input id="fileInput" type="file" accept=".txt,.csv,.json,.mp3,.m4a,.wav" multiple>
-					<p class="meta">카카오톡 대화(.txt/.csv/.json), 통화 녹음(.mp3/.m4a/.wav)</p>
-                    </div>
-				<div class="kpis">
-					<div class="kpi"><h4>업로드 진행률</h4><div class="progress"><span id="uploadProgress"></span></div></div>
-					<div class="kpi"><h4>분석 진행률</h4><div class="progress"><span id="analysisProgress"></span></div></div>
+					<div class="panel-title"><i class="fas fa-chart-line"></i><span id="analysisTitle">분석 결과</span></div>
+					<a href="upload.html" class="btn-primary" style="padding:.55rem .9rem;"><i class="fas fa-plus"></i> 새 파일 업로드</a>
+                </div>
+				<div class="list">
+					<div class="list-item">
+						<div class="left">
+							<i class="fas fa-chart-bar"></i> 
+							<span>아직 분석된 데이터가 없습니다. 파일을 업로드해주세요.</span>
+						</div>
+						<a href="upload.html" class="btn-ghost" style="padding:.4rem .8rem; font-size:.85rem;">
+							<i class="fas fa-upload"></i> 업로드하기
+						</a>
+					</div>
                 </div>
 			</section>
 
@@ -230,30 +233,25 @@
 			});
 		}
 
-		function initUpload() {
-			const dropzone = document.getElementById('dropzone');
-			const fileInput = document.getElementById('fileInput');
-			const uploadBar = document.getElementById('uploadProgress');
-			const analysisBar = document.getElementById('analysisProgress');
-			if (!dropzone || !fileInput) return;
-			dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
-			dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-			dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('dragover'); if (e.dataTransfer.files.length) simulate(e.dataTransfer.files); });
-			dropzone.querySelector('label').addEventListener('click', () => fileInput.click());
-			fileInput.addEventListener('change', () => { if (fileInput.files.length) simulate(fileInput.files); });
-			function simulate(files) {
-				// 통계 업데이트(데모)
-				document.getElementById('statFiles').textContent = files.length + '건';
+		function loadDashboardData() {
+			// URL 파라미터 확인하여 업로드에서 왔는지 체크
+			const urlParams = new URLSearchParams(window.location.search);
+			if (urlParams.get('from') === 'upload') {
+				// 업로드에서 온 경우 통계 업데이트
+				document.getElementById('statFiles').textContent = '3건';
 				document.getElementById('statLast').textContent = new Date().toLocaleString();
-				document.getElementById('statScore').textContent = (80 + Math.round(Math.random()*20)) + '점';
-				let up=0, an=0; const upTimer=setInterval(()=>{ up=Math.min(100, up + (6+Math.random()*12)); uploadBar.style.width=up+'%'; if(up>=100){ clearInterval(upTimer); const anTimer=setInterval(()=>{ an=Math.min(100, an + (4+Math.random()*9)); analysisBar.style.width=an+'%'; if(an>=100){ clearInterval(anTimer); if(window.showNotification){ window.showNotification('분석이 완료되었습니다. 인사이트를 확인해보세요.','success'); } } }, 180); } }, 120);
+				document.getElementById('statScore').textContent = (85 + Math.round(Math.random()*15)) + '점';
+				
+				if (window.showNotification) {
+					window.showNotification('파일 분석이 완료되었습니다!', 'success');
+				}
 			}
 		}
 
 		document.addEventListener('DOMContentLoaded', function(){
             loadUserInfo();
 			initSidebarLinks();
-			initUpload();
+			loadDashboardData();
 			const inline = document.getElementById('toggleDarkInline');
 			if (inline) inline.addEventListener('click', () => { document.getElementById('darkModeToggle')?.click(); });
         });

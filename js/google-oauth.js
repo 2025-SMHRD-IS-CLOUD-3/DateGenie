@@ -242,7 +242,7 @@ class GoogleOAuth {
         localStorage.setItem('user', JSON.stringify(userData));
         localStorage.setItem('authProvider', 'google');
         this.showNotification('구글 로그인에 성공했습니다!', 'success');
-        setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/dashboard.html'; }, 1500);
+        setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/upload.html'; }, 1500);
     }
 
     handleLoginError(message) {
@@ -355,7 +355,7 @@ async function handleGoogleCallback() {
             localStorage.setItem('user', JSON.stringify(realUserData));
             localStorage.setItem('authProvider', 'google');
             showNotification('구글 로그인에 성공했습니다!', 'success');
-            setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/dashboard.html'; }, 1500);
+            setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/upload.html'; }, 1500);
             
         } catch (error) {
             console.error('Error getting user info:', error);

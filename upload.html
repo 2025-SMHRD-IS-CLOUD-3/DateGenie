@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>파일 업로드 - Date Genie</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+		/* 업로드 페이지 전용 스타일 */
+		.upload-shell {
+            min-height: 100vh;
+            padding-top: var(--navbar-height);
+			background: transparent;
+            max-width: 1200px;
+            margin: 0 auto;
+			padding-left: 20px;
+			padding-right: 20px;
+            display: grid;
+			grid-template-columns: minmax(0, 1fr);
+			gap: 1.5rem;
+		}
+
+		/* 전체 배경 */
+		.upload-page::before {
+			content: '';
+			position: fixed;
+			inset: 0;
+			background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 40%, #eef2ff 100%);
+			z-index: -1;
+		}
+
+		.main { width: 100%; max-width: 1200px; padding: 2rem 2rem 3rem; justify-self: stretch; }
+		.panel { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 20px; padding: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
+		.panel-header { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1rem; }
+		.panel-title { display:flex; align-items:center; gap:.6rem; font-size:1.2rem; color:#1f1d3a; font-weight:700; }
+		.panel-title i { color:#7c3aed; }
+
+		.hero-panel { padding: 1.75rem; text-align: center; }
+		.hero-panel h1 { font-size:2rem; color:#1e1b4b; margin-bottom:1rem; }
+		.hero-panel p { color:#6b7280; font-size:1.1rem; margin-bottom:2rem; }
+
+		.btn-primary { background: linear-gradient(135deg, #ec4899, #8b5cf6); color:#fff; padding:.75rem 1.1rem; border:none; border-radius:12px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:.4rem; box-shadow:0 8px 20px rgba(236,72,153,.25); }
+		.btn-primary:hover { transform: translateY(-1px); box-shadow:0 12px 26px rgba(236,72,153,.32); }
+		.btn-ghost { background:transparent; color:#7c3aed; border:2px solid rgba(124,58,237,.35); padding:.7rem 1rem; border-radius:12px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:.4rem; }
+
+		/* 업로드 & 진행률 */
+		.dropzone { border:2px dashed rgba(124,58,237,.35); border-radius:14px; background: rgba(124,58,237,.06); padding:2rem; text-align:center; transition: all .2s ease; }
+		.dropzone.dragover { background: rgba(124,58,237,.12); border-color:#7c3aed; }
+		.dropzone input[type="file"] { display:none; }
+		.dropzone .label { display:inline-flex; align-items:center; gap:.5rem; background:linear-gradient(135deg,#ec4899,#8b5cf6); color:#fff; padding:.8rem 1.5rem; border-radius:12px; cursor:pointer; font-size:1.1rem; }
+		.dropzone .label:hover { transform: translateY(-2px); box-shadow:0 12px 26px rgba(236,72,153,.32); }
+		.dropzone-text { margin-top:1rem; color:#6b7280; font-size:1.1rem; }
+		.meta { margin-top:1rem; color:#6b7280; font-size:.9rem; }
+		
+		.progress-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem; margin-top:2rem; }
+		.progress-card { background:#fff; border:1px solid rgba(0,0,0,.05); border-radius:14px; padding:1.5rem; }
+		.progress-card h4 { font-size:1.1rem; color:#1e1b4b; margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; }
+		.progress-card i { color:#7c3aed; }
+		.progress { height:12px; background:#f3f4f6; border-radius:999px; overflow:hidden; margin-bottom:.5rem; }
+		.progress > span { display:block; height:100%; width:0; background:linear-gradient(135deg,#ec4899,#8b5cf6); transition:width .6s ease; }
+		.progress-text { font-size:.9rem; color:#6b7280; }
+
+		/* 파일 목록 */
+		.file-list { margin-top:2rem; }
+		.file-item { display:flex; align-items:center; justify-content:space-between; background:#fff; border:1px solid rgba(0,0,0,.05); border-radius:12px; padding:1rem; margin-bottom:.75rem; }
+		.file-item .left { display:flex; align-items:center; gap:.8rem; color:#374151; }
+		.file-item .file-icon { width:40px; height:40px; background:linear-gradient(135deg,#ec4899,#8b5cf6); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; }
+		.file-info h5 { font-size:.95rem; color:#1e1b4b; margin-bottom:.25rem; }
+		.file-info p { font-size:.8rem; color:#6b7280; }
+		.file-status { padding:.25rem .6rem; border-radius:999px; font-size:.75rem; font-weight:600; }
+		.file-status.processing { background:#fef3c7; color:#d97706; }
+		.file-status.completed { background:#dcfce7; color:#16a34a; }
+		.file-status.error { background:#fee2e2; color:#dc2626; }
+
+		.actions-panel { display:flex; gap:1rem; margin-top:2rem; justify-content:center; }
+
+		/* 다크 모드 보완 */
+		body.dark-mode.upload-page::before { background: linear-gradient(135deg, #0f0f12 0%, #16161b 40%, #12121a 100%); }
+		body.dark-mode .panel { background: rgba(34,34,34,0.95); box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+		body.dark-mode .progress-card, body.dark-mode .file-item { background:#2a2a2a; border-color: rgba(255,255,255,.08); }
+		body.dark-mode .panel-title, body.dark-mode .hero-panel h1, body.dark-mode .progress-card h4, body.dark-mode .file-info h5 { color:#e5e7eb; }
+		body.dark-mode .hero-panel p, body.dark-mode .dropzone-text, body.dark-mode .meta, body.dark-mode .progress-text, body.dark-mode .file-info p { color:#cbd5e1; }
+		body.dark-mode .btn-ghost { color:#c7b8ff; border-color: rgba(124,58,237,.5); }
+		body.dark-mode .dropzone { background: rgba(124,58,237,.12); border-color: rgba(124,58,237,.45); }
+		body.dark-mode .progress { background: rgba(255,255,255,.12); }
+    </style>
+</head>
+<body class="upload-page">
+    <nav class="navbar">
+        <div class="nav-container" style="max-width: 1200px;">
+            <div class="nav-logo">
+                <a href="index.html" class="brand-logo" aria-label="Date Genie Home">
+                    <i class="fas fa-heart heart-icon" aria-hidden="true"></i>
+                    <span class="logo-text">Date Genie</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+				<a href="dashboard.html" class="nav-link">대시보드</a>
+				<a href="upload.html" class="nav-link active">업로드</a>
+				<a href="#analysis" class="nav-link">분석 결과</a>
+                <a href="#profile" class="nav-link">프로필</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="upload-shell">
+        <main class="main">
+			<section class="panel hero-panel">
+				<h1><i class="fas fa-cloud-upload-alt"></i> 대화 & 음성 파일 업로드</h1>
+				<p>카카오톡 대화 파일이나 통화 녹음 파일을 업로드하면 AI가 썸 관계를 분석해드립니다</p>
+				<div class="actions-panel">
+					<a href="dashboard.html" class="btn-ghost"><i class="fas fa-chart-line"></i> 대시보드로 돌아가기</a>
+				</div>
+			</section>
+
+			<section class="panel">
+				<div class="panel-header">
+					<div class="panel-title"><i class="fas fa-file-upload"></i><span>파일 선택</span></div>
+				</div>
+				<div class="dropzone" id="dropzone">
+					<label class="label" for="fileInput">
+						<i class="fas fa-file-arrow-up"></i> 파일 선택 또는 드래그 앤 드롭
+					</label>
+					<input id="fileInput" type="file" accept=".txt,.csv,.json,.mp3,.m4a,.wav" multiple>
+					<div class="dropzone-text">여기에 파일을 끌어다 놓거나 클릭하여 선택하세요</div>
+					<p class="meta">지원 형식: 카카오톡 대화(.txt/.csv/.json), 통화 녹음(.mp3/.m4a/.wav)<br>최대 파일 크기: 50MB</p>
+				</div>
+
+				<div class="progress-grid">
+					<div class="progress-card">
+						<h4><i class="fas fa-upload"></i>업로드 진행률</h4>
+						<div class="progress"><span id="uploadProgress"></span></div>
+						<div class="progress-text" id="uploadText">업로드 대기 중...</div>
+					</div>
+					<div class="progress-card">
+						<h4><i class="fas fa-cogs"></i>분석 진행률</h4>
+						<div class="progress"><span id="analysisProgress"></span></div>
+						<div class="progress-text" id="analysisText">분석 대기 중...</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="panel">
+				<div class="panel-header">
+					<div class="panel-title"><i class="fas fa-list"></i><span>업로드된 파일</span></div>
+				</div>
+				<div class="file-list" id="fileList">
+					<div style="text-align:center; color:#6b7280; padding:2rem;">
+						아직 업로드된 파일이 없습니다. 위에서 파일을 선택해주세요.
+					</div>
+				</div>
+				
+				<div class="actions-panel">
+					<button class="btn-primary" id="analyzeBtn" style="display:none;">
+						<i class="fas fa-rocket"></i> 분석 시작하기
+					</button>
+					<a href="dashboard.html" class="btn-ghost">
+						<i class="fas fa-chart-line"></i> 분석 결과 보기
+					</a>
+				</div>
+			</section>
+		</main>
+    </div>
+
+    <button class="dark-mode-toggle" id="darkModeToggle">
+        <i class="fas fa-sun sun-icon"></i>
+        <i class="fas fa-moon moon-icon"></i>
+    </button>
+
+    <script src="js/main.js"></script>
+    <script>
+		function logout() {
+			if (typeof google !== 'undefined' && google.accounts) { google.accounts.id.disableAutoSelect(); }
+			localStorage.removeItem('user');
+			localStorage.removeItem('authProvider');
+			window.location.href = 'login.html';
+		}
+
+        function loadUserInfo() {
+            const userInfo = localStorage.getItem('user');
+            if (!userInfo) { 
+				window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html'; 
+				return; 
+			}
+		}
+
+		function initUpload() {
+			const dropzone = document.getElementById('dropzone');
+			const fileInput = document.getElementById('fileInput');
+			const uploadBar = document.getElementById('uploadProgress');
+			const analysisBar = document.getElementById('analysisProgress');
+			const uploadText = document.getElementById('uploadText');
+			const analysisText = document.getElementById('analysisText');
+			const fileList = document.getElementById('fileList');
+			const analyzeBtn = document.getElementById('analyzeBtn');
+			
+			let uploadedFiles = [];
+
+			if (!dropzone || !fileInput) return;
+
+			// 드래그 앤 드롭 이벤트
+			dropzone.addEventListener('dragover', e => { 
+				e.preventDefault(); 
+				dropzone.classList.add('dragover'); 
+			});
+			dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+			dropzone.addEventListener('drop', e => { 
+				e.preventDefault(); 
+				dropzone.classList.remove('dragover'); 
+				if (e.dataTransfer.files.length) processFiles(e.dataTransfer.files); 
+			});
+
+			// 파일 선택 이벤트
+			dropzone.querySelector('label').addEventListener('click', () => fileInput.click());
+			fileInput.addEventListener('change', () => { 
+				if (fileInput.files.length) processFiles(fileInput.files); 
+			});
+
+			function processFiles(files) {
+				Array.from(files).forEach(file => {
+					const fileItem = {
+						id: Date.now() + Math.random(),
+						name: file.name,
+						size: formatFileSize(file.size),
+						type: getFileType(file.name),
+						status: 'processing'
+					};
+					uploadedFiles.push(fileItem);
+				});
+
+				updateFileList();
+				simulateUpload();
+			}
+
+			function updateFileList() {
+				if (uploadedFiles.length === 0) {
+					fileList.innerHTML = `
+						<div style="text-align:center; color:#6b7280; padding:2rem;">
+							아직 업로드된 파일이 없습니다. 위에서 파일을 선택해주세요.
+						</div>
+					`;
+					analyzeBtn.style.display = 'none';
+					return;
+				}
+
+				fileList.innerHTML = uploadedFiles.map(file => `
+					<div class="file-item">
+						<div class="left">
+							<div class="file-icon">
+								<i class="fas ${getFileIcon(file.type)}"></i>
+							</div>
+							<div class="file-info">
+								<h5>${file.name}</h5>
+								<p>${file.size} • ${file.type}</p>
+							</div>
+						</div>
+						<div class="file-status ${file.status}">${getStatusText(file.status)}</div>
+					</div>
+				`).join('');
+
+				analyzeBtn.style.display = uploadedFiles.some(f => f.status === 'completed') ? 'inline-flex' : 'none';
+			}
+
+			function simulateUpload() {
+				let up = 0, an = 0;
+				uploadText.textContent = '파일 업로드 중...';
+				
+				const upTimer = setInterval(() => {
+					up = Math.min(100, up + (6 + Math.random() * 12));
+					uploadBar.style.width = up + '%';
+					
+					if (up >= 100) {
+						clearInterval(upTimer);
+						uploadText.textContent = '업로드 완료!';
+						analysisText.textContent = 'AI 분석 중...';
+						
+						const anTimer = setInterval(() => {
+							an = Math.min(100, an + (4 + Math.random() * 9));
+							analysisBar.style.width = an + '%';
+							
+							if (an >= 100) {
+								clearInterval(anTimer);
+								analysisText.textContent = '분석 완료!';
+								
+								// 파일 상태 업데이트
+								uploadedFiles.forEach(file => file.status = 'completed');
+								updateFileList();
+								
+								if (window.showNotification) {
+									window.showNotification('파일 분석이 완료되었습니다!', 'success');
+								}
+							}
+						}, 200);
+					}
+				}, 150);
+			}
+
+			function formatFileSize(bytes) {
+				if (bytes === 0) return '0 Bytes';
+				const k = 1024;
+				const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+				const i = Math.floor(Math.log(bytes) / Math.log(k));
+				return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+			}
+
+			function getFileType(filename) {
+				const ext = filename.split('.').pop().toLowerCase();
+				if (['txt', 'csv', 'json'].includes(ext)) return '카카오톡 대화';
+				if (['mp3', 'm4a', 'wav'].includes(ext)) return '통화 녹음';
+				return '알 수 없음';
+			}
+
+			function getFileIcon(type) {
+				if (type === '카카오톡 대화') return 'fa-comments';
+				if (type === '통화 녹음') return 'fa-microphone';
+				return 'fa-file';
+			}
+
+			function getStatusText(status) {
+				switch(status) {
+					case 'processing': return '처리 중';
+					case 'completed': return '완료';
+					case 'error': return '오류';
+					default: return '대기';
+				}
+			}
+
+			// 분석 시작 버튼
+			analyzeBtn.addEventListener('click', () => {
+				window.location.href = 'dashboard.html?from=upload';
+			});
+		}
+
+		document.addEventListener('DOMContentLoaded', function(){
+            loadUserInfo();
+			initUpload();
+        });
+    </script>
+</body>
+</html>
