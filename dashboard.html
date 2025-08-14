@@ -205,7 +205,7 @@
         function loadUserInfo() {
             const userInfo = localStorage.getItem('user');
             const authProvider = localStorage.getItem('authProvider');
-			if (!userInfo) { window.location.href = 'login.html'; return; }
+			if (!userInfo) { window.location.href = '/DateGenie/login.html'; return; }
                 const user = JSON.parse(userInfo);
 			let profilePicture = user.picture || 'https://via.placeholder.com/88';
 			if (profilePicture.includes('googleusercontent.com') && profilePicture.includes('=s96-c')) { profilePicture = profilePicture.replace('=s96-c','=s200-c'); }
