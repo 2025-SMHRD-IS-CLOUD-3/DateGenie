@@ -43,6 +43,145 @@
     </script>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/login.css">
+    <style>
+        /* User Dropdown Menu Styles */
+        .user-dropdown {
+            position: relative;
+            margin-left: auto;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            border: none;
+        }
+
+        .user-info:hover { transform: none; }
+        .user-info:hover .user-greet { transform: none; }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .user-name { color: #1f2937; font-size: 0.9rem; white-space: nowrap; }
+        .user-name-text { font-weight: 800; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 2px; cursor: pointer; }
+        .user-greet { cursor: default; text-decoration: none; }
+
+        .dropdown-arrow {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            transition: transform 0.2s ease;
+        }
+
+        .user-info.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #374151;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .dropdown-item i {
+            color: #6b7280;
+            width: 16px;
+        }
+
+        .dropdown-item.logout-btn:hover {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .dropdown-item.logout-btn:hover i {
+            color: #dc2626;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 0.5rem 0;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .user-name {
+                display: none;
+            }
+            .user-dropdown {
+                margin-left: 1rem;
+            }
+        }
+
+        /* 다크 모드 */
+        body.dark-mode .user-info { background: transparent; border-color: transparent; }
+        body.dark-mode .user-info:hover { background: transparent; }
+        body.dark-mode .user-name { color: white; }
+        body.dark-mode .user-name-text { color: white; }
+        body.dark-mode .user-greet { color: rgba(255, 255, 255, 0.8); }
+        body.dark-mode .dropdown-menu {
+            background: #2a2a2a;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        body.dark-mode .dropdown-item {
+            color: #e5e7eb;
+        }
+        body.dark-mode .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+        body.dark-mode .dropdown-divider {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Google OAuth Client Library -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -57,9 +196,38 @@
                     <span class="logo-text">Date Genie</span>
                 </a>
             </div>
-            <div class="nav-auth-buttons">
+            <div class="nav-auth-buttons" id="authButtons">
                 <a href="login.html" class="nav-btn-login">로그인</a>
                 <a href="signup.html" class="nav-btn-signup">회원가입</a>
+            </div>
+            
+            <!-- User Dropdown Menu (로그인 후 표시) -->
+            <div class="user-dropdown" id="userDropdown" style="display: none;">
+                <div class="user-info" id="userDropdownToggle">
+                    <img src="https://via.placeholder.com/32" alt="프로필" class="user-avatar" id="userAvatar">
+                    <span class="user-name">
+                        <span id="userNameText" class="user-name-text">사용자</span><span class="user-greet">님 환영합니다</span>
+                    </span>
+                </div>
+                <div class="dropdown-menu" id="userDropdownMenu">
+                    <a href="dashboard.html" class="dropdown-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>마이페이지</span>
+                    </a>
+                    <a href="profile-edit.html" class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        <span>회원정보 수정</span>
+                    </a>
+                    <a href="settings.html" class="dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        <span>설정</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>로그아웃</span>
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
@@ -86,7 +254,7 @@
                         <label for="password">비밀번호</label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="password" name="pw" autocomplete="current-password" required>
+                            <input type="password" id="password" name="password" autocomplete="current-password" required>
                             <button type="button" class="toggle-password">
                                 <i class="fas fa-eye"></i>
                             </button>
@@ -147,5 +315,111 @@
     <script src="js/login.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
     <script src="js/google-oauth.js"></script>
+    <script>
+        // 사용자 드롭다운 메뉴 기능
+        function initUserDropdown() {
+            const dropdownToggle = document.getElementById('userDropdownToggle');
+            const dropdownMenu = document.getElementById('userDropdownMenu');
+            
+            if (!dropdownToggle || !dropdownMenu) return;
+            
+            // 드롭다운 토글 클릭 이벤트
+            dropdownToggle.addEventListener('click', function(e) {
+                // "님, 환영합니다" 부분을 클릭했을 때는 드롭다운을 열지 않음
+                if (e.target.classList.contains('user-greet')) {
+                    return;
+                }
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const isOpen = dropdownMenu.classList.contains('show');
+                
+                if (isOpen) {
+                    closeDropdown();
+                } else {
+                    openDropdown();
+                }
+            });
+            
+            // 문서 클릭 시 드롭다운 닫기
+            document.addEventListener('click', function(e) {
+                if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    closeDropdown();
+                }
+            });
+            
+            // ESC 키로 드롭다운 닫기
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeDropdown();
+                }
+            });
+            
+            function openDropdown() {
+                dropdownMenu.classList.add('show');
+                dropdownToggle.classList.add('active');
+            }
+            
+            function closeDropdown() {
+                dropdownMenu.classList.remove('show');
+                dropdownToggle.classList.remove('active');
+            }
+        }
+
+        // 사용자 정보 로드 및 UI 업데이트
+        function loadUserInfo() {
+            const userInfo = localStorage.getItem('user');
+            const authButtons = document.getElementById('authButtons');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            if (userInfo) {
+                // 로그인된 상태
+                const user = JSON.parse(userInfo);
+                
+                // 인증 버튼 숨기고 사용자 드롭다운 표시
+                if (authButtons) authButtons.style.display = 'none';
+                if (userDropdown) userDropdown.style.display = 'flex';
+                
+                // 사용자 정보 업데이트
+                const userAvatar = document.getElementById('userAvatar');
+                const userNameText = document.getElementById('userNameText');
+                
+                if (userAvatar) {
+                    let profilePicture = user.picture || 'https://via.placeholder.com/32';
+                    if (profilePicture.includes('googleusercontent.com') && profilePicture.includes('=s96-c')) {
+                        profilePicture = profilePicture.replace('=s96-c','=s200-c');
+                    }
+                    userAvatar.src = profilePicture;
+                }
+                
+                if (userNameText) {
+                    userNameText.textContent = user.name ? user.name : '사용자';
+                }
+                
+                // 드롭다운 메뉴 초기화
+                initUserDropdown();
+            } else {
+                // 로그인되지 않은 상태
+                if (authButtons) authButtons.style.display = 'flex';
+                if (userDropdown) userDropdown.style.display = 'none';
+            }
+        }
+
+        // 로그아웃 함수
+        function logout() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.disableAutoSelect();
+            }
+            localStorage.removeItem('user');
+            localStorage.removeItem('authProvider');
+            window.location.href = 'login.html';
+        }
+
+        // 페이지 로드 시 사용자 정보 확인
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserInfo();
+        });
+    </script>
 </body>
 </html> 

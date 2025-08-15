@@ -136,49 +136,20 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 로그인 중...';
             submitBtn.disabled = true;
             
-            const loginData = {
-				email: email,
-				password: password
-			};
-			
-			try{
-				fetch('/BackEnd/LoginService', {
-				   method: 'POST',
-				   headers: {
-				      'Content-Type': 'application/json',
-				   },
-				   body: JSON.stringify(loginData),
-			})
-			
-			.then(function(response) {
-			            return response.json();
-			        })
-			        .then(function(data) {
-			            console.log('서버 응답:', data);
-
-			            if (data.success) {
-			                console.log('로그인 성공:', data);
-			                showNotification(data.message || '로그인에 성공했습니다!', 'success');
-
-			                setTimeout(function() {
-			                    window.location.href = data.redirectUrl || 'main.html';
-			                }, 1500);
-			            } else {
-			                console.log('로그인 실패:', data);
-			                showNotification(data.message || '로그인에 실패했습니다.', 'error');
-			                
-			                submitBtn.innerHTML = originalText;
-			                submitBtn.disabled = false;
-			            }
-			        })
-			        .catch(function(error) {
-			            console.error('로그인 에러:', error);
-			            showNotification('로그인 중 오류가 발생했습니다.', 'error');
-
-			            submitBtn.innerHTML = originalText;
-			            submitBtn.disabled = false;
-			        });	
-            
+            // Simulate API call
+            setTimeout(() => {
+                // Here you would typically make an API call to your backend
+                console.log('Login attempt:', { email, password, remember });
+                
+                // Simulate successful login
+                showNotification('로그인에 성공했습니다!', 'success');
+                
+                // Redirect to dashboard or main page
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+                
+            }, 2000);
         });
     }
 

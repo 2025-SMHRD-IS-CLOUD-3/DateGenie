@@ -6,6 +6,71 @@
     xmlns:xml="http://www.w3.org/XML/1998/namespace"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
-  <display-name>Archetype Created Web Application</display-name>
+  <display-name>DateGenie Web Application</display-name>
+
+  <!-- 인코딩 필터: 모든 요청/응답 UTF-8 강제 -->
+  <filter>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>org.apache.catalina.filters.SetCharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+    <init-param>
+      <param-name>forceEncoding</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!-- 서블릿 매핑 -->
+  <servlet>
+    <servlet-name>LoginService</servlet-name>
+    <servlet-class>com.smhrd.controller.LoginService</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LoginService</servlet-name>
+    <url-pattern>/login</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>JoinService</servlet-name>
+    <servlet-class>com.smhrd.controller.JoinService</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>JoinService</servlet-name>
+    <url-pattern>/join</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>LogoutService</servlet-name>
+    <servlet-class>com.smhrd.controller.LogoutService</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LogoutService</servlet-name>
+    <url-pattern>/logout</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>UpdateService</servlet-name>
+    <servlet-class>com.smhrd.controller.UpdateService</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UpdateService</servlet-name>
+    <url-pattern>/update</url-pattern>
+  </servlet-mapping>
+
+  <!-- 세션 타임아웃 30분 -->
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+
+  <!-- 기본 진입 파일 설정 -->
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
 </web-app>
 
