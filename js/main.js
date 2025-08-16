@@ -266,4 +266,33 @@
         // 필요 시 색상 전환 효과 활성화
         // initColorTransition();
     });
+
+    // 공통 로그아웃 함수 (전역으로 노출)
+    window.logout = function() {
+        const authProvider = localStorage.getItem('authProvider');
+        
+        // 구글 로그아웃
+        if (typeof google !== 'undefined' && google.accounts) {
+            google.accounts.id.disableAutoSelect();
+        }
+        
+        // 카카오 로그아웃
+        if (authProvider === 'kakao' && window.KakaoAuth && typeof window.KakaoAuth.logout === 'function') {
+            window.KakaoAuth.logout();
+        } else {
+            // 카카오가 아니거나 카카오 SDK가 없는 경우 직접 처리
+            localStorage.removeItem('user');
+            localStorage.removeItem('authProvider');
+            
+            if (window.showNotification) {
+                window.showNotification('로그아웃되었습니다.', 'success');
+            }
+            
+            // 로그인 페이지로 리다이렉트
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 500);
+        }
+    };
+
 })();
