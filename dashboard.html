@@ -566,7 +566,15 @@
 		function loadUserInfo() {
             const userInfo = localStorage.getItem('user');
             const authProvider = localStorage.getItem('authProvider');
-			if (!userInfo) { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html'; return; }
+			if (!userInfo) { 
+			// GitHub Pages 환경 지원
+			if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
+				window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html';
+			} else {
+				window.location.href = 'login.html';
+			}
+			return; 
+		}
                 const user = JSON.parse(userInfo);
 			let profilePicture = user.picture || 'https://via.placeholder.com/88';
 			if (profilePicture.includes('googleusercontent.com') && profilePicture.includes('=s96-c')) { profilePicture = profilePicture.replace('=s96-c','=s200-c'); }

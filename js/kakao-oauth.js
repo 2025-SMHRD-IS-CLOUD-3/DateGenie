@@ -68,7 +68,16 @@
         console.log('카카오 SDK 상태: 정상');
         console.log('현재 도메인:', window.location.origin);
         
-        const redirectUri = window.location.origin + '/auth/kakao/callback.html';
+        // GitHub Pages와 로컬 환경 모두 지원
+        let redirectUri;
+        if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
+            redirectUri = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/auth/kakao/callback.html';
+        } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            redirectUri = window.location.origin + '/auth/kakao/callback.html';
+        } else {
+            // 기타 환경 (예: 다른 도메인)
+            redirectUri = window.location.origin + '/DateGenie/auth/kakao/callback.html';
+        }
         console.log('리다이렉트 URI:', redirectUri);
         
         // 카카오 인가 코드 요청 URL 생성
