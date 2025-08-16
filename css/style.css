@@ -1329,6 +1329,48 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
     line-height: 1.6;
 }
 
+.social-links {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #24292e;
+    color: white;
+    text-decoration: none;
+    border: none;
+}
+
+.social-links a i,
+.social-links a svg {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+/* 각 소셜 미디어별 고유 색상 */
+.social-links a[aria-label="GitHub"] {
+    background: #24292e;
+    color: white;
+}
+
+.social-links a[aria-label="YouTube"] {
+    background: #ff0000;
+    color: white;
+}
+
+.social-links a[aria-label="Instagram"] {
+    background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+    color: white;
+}
+
 
 .footer-links {
     display: grid;
@@ -1579,4 +1621,20 @@ body.dark-mode .footer-legal a {
 
 body.dark-mode .footer-legal a:hover {
     color: #ec4899;
+}
+
+/* 다크 모드에서도 각 소셜 미디어별 고유 색상 유지 */
+body.dark-mode .social-links a[aria-label="GitHub"] {
+    background: #24292e;
+    color: white;
+}
+
+body.dark-mode .social-links a[aria-label="YouTube"] {
+    background: #ff0000;
+    color: white;
+}
+
+body.dark-mode .social-links a[aria-label="Instagram"] {
+    background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+    color: white;
 } 
