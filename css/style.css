@@ -89,30 +89,30 @@ button, input, select, textarea { font-family: inherit; }
 
 /* 다크모드 스타일 */
 body.dark-mode {
-    background-color: #1a1a1a;
-    color: #ffffff;
+    background-color: #0f0f0f;
+    color: #f8fafc;
 }
 
 body.dark-mode .navbar {
-    background: rgba(26, 26, 26, 0.95) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(15, 15, 15, 0.95) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 body.dark-mode .nav-logo a {
-    color: #ffffff;
+    color: #f8fafc;
 }
 
 body.dark-mode .nav-menu a {
-    color: #ffffff;
+    color: #e2e8f0;
 }
 
 body.dark-mode .nav-btn-login {
-    color: #cccccc;
+    color: #cbd5e1;
 }
 
 body.dark-mode .nav-btn-login:hover {
     color: #ec4899;
-    background: rgba(236, 72, 153, 0.2);
+    background: rgba(236, 72, 153, 0.15);
 }
 
 body.dark-mode .nav-menu + .nav-auth-buttons .nav-btn-login {
@@ -125,103 +125,103 @@ body.dark-mode .nav-menu + .nav-auth-buttons .nav-btn-login:hover {
 }
 
 body.dark-mode .glow-card {
-    background: rgba(40, 40, 40, 0.95);
-    color: #ffffff;
+    background: rgba(30, 30, 30, 0.95);
+    color: #f8fafc;
 }
 
 body.dark-mode .glow-card h3 {
-    color: #ffffff;
+    color: #f8fafc;
 }
 
 body.dark-mode .glow-card p {
-    color: #cccccc;
+    color: #cbd5e1;
 }
 
 body.dark-mode .glow-card:hover {
-    box-shadow: 0 15px 30px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 15px 30px rgba(255, 255, 255, 0.08);
 }
 
 body.dark-mode .pricing {
-    background: #2a2a2a;
+    background: #0a0a0a;
 }
 
 body.dark-mode .pricing-card {
-    background: #333333;
-    color: #ffffff;
+    background: #1e1e1e;
+    color: #f8fafc;
 }
 
 body.dark-mode .pricing-card h3 {
-    color: #ffffff;
+    color: #f8fafc;
 }
 
 body.dark-mode .pricing-card p {
-    color: #cccccc;
+    color: #cbd5e1;
 }
 
 body.dark-mode .pricing-features li {
-    color: #cccccc;
+    color: #cbd5e1;
 }
 
 body.dark-mode .faq {
-    background: #1a1a1a;
+    background: #0f0f0f;
 }
 
 body.dark-mode .faq-item {
-    background: #333333;
+    background: #1e1e1e;
 }
 
 body.dark-mode .faq-question {
-    background: #2a2a2a;
+    background: #262626;
 }
 
 body.dark-mode .faq-question h3 {
-    color: #ffffff;
+    color: #f8fafc;
 }
 
 body.dark-mode .faq-answer p {
-    color: #cccccc;
+    color: #cbd5e1;
 }
 
 body.dark-mode .section-header h2 {
-    color: #ffffff;
+    color: #f8fafc;
 }
 
 body.dark-mode .section-header p {
-    color: #cccccc;
+    color: #cbd5e1;
 }
 
 /* 다크모드에서 안 보이는 텍스트들 수정 */
 body.dark-mode .hero-description {
-    color: #e5e5e5;
+    color: #cbd5e1;
 }
 
 body.dark-mode .hero-badge {
-    color: #e5e5e5;
-    border-color: rgba(124, 58, 237, 0.5);
+    color: #e2e8f0;
+    border-color: rgba(124, 58, 237, 0.4);
 }
 
 body.dark-mode .stat-label {
-    color: #cccccc;
+    color: #94a3b8;
 }
 
 /* Hero 섹션 다크모드 수정 */
 body.dark-mode .hero {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 25%, #1e1e1e 50%, #2d2d2d 75%, #1a1a1a 100%);
-    color: #ffffff;
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #0a0a0a 50%, #1e1e1e 75%, #0f0f0f 100%);
+    color: #f8fafc;
 }
 
 body.dark-mode .hero-title {
-    color: #ffffff;
+    color: #f8fafc;
 }
 
 body.dark-mode .stat-number {
-    color: #ffffff;
+    color: #f8fafc;
 }
 
 body.dark-mode .gradient-text {
     color: #ec4899;
     text-shadow: 
-        0 0 10px rgba(236, 72, 153, 0.3),
+        0 0 15px rgba(236, 72, 153, 0.4),
         0 0 20px rgba(236, 72, 153, 0.2);
 }
 
@@ -247,27 +247,27 @@ body.dark-mode .btn-secondary:hover {
 }
 
 body.dark-mode .features {
-    background: #1a1a1a;
+    background: #0f0f0f;
 }
 
 body.dark-mode .faq-question:hover {
-    background: #3a3a3a;
+    background: #2a2a2a;
 }
 
 body.dark-mode .faq-question i {
-    color: #cccccc;
+    color: #94a3b8;
 }
 
 body.dark-mode .pricing-header p {
-    color: #cccccc;
+    color: #cbd5e1;
 }
 
 body.dark-mode .period {
-    color: #cccccc;
+    color: #94a3b8;
 }
 
 body.dark-mode .pricing-badge {
-    color: #ffffff;
+    color: #f8fafc;
 }
 
 body.dark-mode .amount {
@@ -696,6 +696,9 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
     }
 }
 
+}
+
+
 .hero-content {
     position: relative;
     z-index: 2;
@@ -1085,7 +1088,7 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
 
 /* FAQ Section */
 .faq {
-    padding: 5rem 0;
+    padding: 3rem 0 1rem 0;
     background: white;
 }
 
@@ -1580,53 +1583,77 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
 
 /* Footer 다크 모드 */
 body.dark-mode .site-footer {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-    border-top: 1px solid rgba(236, 72, 153, 0.2);
-    color: #e2e8f0;
+    background: #000000;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
 }
 
 body.dark-mode .site-footer::before {
     background: 
-        radial-gradient(circle at 20% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
-        linear-gradient(45deg, rgba(252, 231, 243, 0.05) 0%, rgba(253, 242, 248, 0.05) 25%, rgba(243, 232, 255, 0.05) 50%, rgba(233, 213, 255, 0.05) 75%);
+        radial-gradient(circle at 20% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+        linear-gradient(45deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.05) 25%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.05) 75%);
 }
 
 body.dark-mode .footer-logo {
-    color: #e2e8f0;
+    color: #ffffff;
+}
+
+body.dark-mode .footer-logo i {
+    color: #ec4899;
 }
 
 body.dark-mode .footer-description {
-    color: #94a3b8;
+    color: #cccccc;
 }
 
 body.dark-mode .footer-section h4 {
-    color: #e2e8f0;
+    color: #ffffff;
 }
 
 body.dark-mode .footer-section a {
-    color: #94a3b8;
+    color: #cccccc;
 }
 
 body.dark-mode .footer-section a:hover {
     color: #ec4899;
 }
 
-body.dark-mode .tech-item {
-    background: rgba(236, 72, 153, 0.15);
-    color: #94a3b8;
+body.dark-mode .menu-item {
+    color: #cccccc;
+}
+
+body.dark-mode .menu-item:hover {
+    color: #ec4899;
+}
+
+body.dark-mode .tech-category {
+    color: #ffffff;
+    border-bottom-color: rgba(236, 72, 153, 0.3);
+}
+
+body.dark-mode .tech-item.frontend {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
+    color: #60a5fa;
+}
+
+body.dark-mode .tech-item.backend {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #34d399;
 }
 
 body.dark-mode .footer-bottom {
-    border-top: 1px solid rgba(236, 72, 153, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 body.dark-mode .footer-legal {
-    color: #94a3b8;
+    color: #cccccc;
 }
 
 body.dark-mode .footer-legal a {
-    color: #94a3b8;
+    color: #cccccc;
 }
 
 body.dark-mode .footer-legal a:hover {
