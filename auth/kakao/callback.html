@@ -94,7 +94,11 @@
             // 5초 후 로그인 페이지로 리다이렉트
             setTimeout(() => {
                 try {
-                    window.location.href = '../../login.html';
+                    if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
+                        window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html';
+                    } else {
+                        window.location.href = '../../login.html';
+                    }
                 } catch (error) {
                     window.location.href = window.location.origin + '/login.html';
                 }
@@ -109,7 +113,11 @@
             // 1.5초 후 메인 페이지로 리다이렉트
             setTimeout(() => {
                 try {
-                    window.location.href = '../../index.html';
+                    if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
+                        window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/index.html';
+                    } else {
+                        window.location.href = '../../index.html';
+                    }
                 } catch (error) {
                     window.location.href = window.location.origin + '/index.html';
                 }
@@ -160,7 +168,9 @@
                     body: new URLSearchParams({
                         grant_type: 'authorization_code',
                         client_id: KAKAO_APP_KEY,
-                        redirect_uri: window.location.origin + '/auth/kakao/callback.html',
+                        redirect_uri: window.location.hostname === '2025-smhrd-is-cloud-3.github.io' ? 
+                                     'https://2025-smhrd-is-cloud-3.github.io/DateGenie/auth/kakao/callback.html' :
+                                     window.location.origin + '/auth/kakao/callback.html',
                         code: code
                     })
                 })
