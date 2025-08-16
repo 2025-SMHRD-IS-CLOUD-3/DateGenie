@@ -50,6 +50,12 @@ class GoogleOAuth {
         const googleBtn = document.getElementById('googleLoginBtn');
         console.log('Setting up Google login button:', googleBtn);
         if (googleBtn) {
+            // 이미 설정되었는지 확인
+            if (googleBtn.dataset.setupComplete === 'true') {
+                console.log('Google login button already set up');
+                return;
+            }
+            
             // 원래 구글 로그인 버튼 모양으로 복원
             googleBtn.innerHTML = `
                 <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
@@ -63,12 +69,15 @@ class GoogleOAuth {
                 구글로 로그인
             `;
             
-            // 클릭 이벤트 추가
-            googleBtn.addEventListener('click', (e) => {
+            // 클릭 이벤트 추가 (한 번만)
+            const clickHandler = (e) => {
                 e.preventDefault();
                 console.log('Google login button clicked');
                 this.startGoogleLogin();
-            });
+            };
+            
+            googleBtn.addEventListener('click', clickHandler);
+            googleBtn.dataset.setupComplete = 'true';
         }
     }
 
@@ -95,20 +104,16 @@ class GoogleOAuth {
         }
         
         this.isProcessing = true;
+        this.showLoadingState();
         
         try {
-            google.accounts.id.prompt((notification) => {
-                console.log('Google One Tap notification:', notification);
-                this.isProcessing = false;
-                
-                if (notification.isNotDisplayed() || notification.isSkippedMoment() || notification.isDismissedMoment()) {
-                    console.log('One Tap not proceeding, falling back to token client');
-                    this.loginWithTokenClient();
-                }
-            });
+            // Google Token Client 사용
+            console.log('Using Google Token Client...');
+            this.loginWithTokenClient();
         } catch (error) {
-            console.error('Google One Tap login failed:', error);
+            console.error('Google login failed:', error);
             this.isProcessing = false;
+            this.hideLoadingState();
             this.showNotification('구글 로그인 중 오류가 발생했습니다.', 'error');
         }
     }
@@ -138,25 +143,36 @@ class GoogleOAuth {
     loginWithTokenClient() {
         try {
             if (!google || !google.accounts || !google.accounts.oauth2) {
-                throw new Error('Google OAuth2 token client not available');
+                console.error('Google OAuth2 token client not available');
+                this.isProcessing = false;
+                this.hideLoadingState();
+                this.showNotification('구글 로그인 서비스를 불러올 수 없습니다.', 'error');
+                return;
             }
-            this.isProcessing = true;
-            this.showLoadingState();
+            
+            console.log('Initializing Google Token Client...');
             const tokenClient = google.accounts.oauth2.initTokenClient({
                 client_id: this.clientId,
                 scope: this.scope, // 'openid email profile'
                 prompt: 'consent',
                 callback: async (tokenResponse) => {
+                    console.log('Google Token Client callback received');
                     try {
                         if (!tokenResponse || !tokenResponse.access_token) {
                             throw new Error('No access token returned');
                         }
+                        
+                        console.log('Fetching user info from Google...');
                         // 액세스 토큰으로 유저 정보 조회
                         const resp = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
                             headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
                         });
+                        
                         if (!resp.ok) throw new Error('Failed to fetch user info');
+                        
                         const u = await resp.json();
+                        console.log('User info received:', u);
+                        
                         const userData = {
                             id: u.sub,
                             email: u.email,
@@ -165,6 +181,8 @@ class GoogleOAuth {
                             provider: 'google',
                             verified: u.email_verified
                         };
+                        
+                        this.isProcessing = false; // 성공 시 처리 완료
                         this.handleSuccessfulLogin(userData);
                     } catch (err) {
                         console.error('Token flow userinfo error:', err);
@@ -174,6 +192,8 @@ class GoogleOAuth {
                     }
                 }
             });
+            
+            console.log('Requesting access token...');
             tokenClient.requestAccessToken();
         } catch (e) {
             console.error('Token client init error:', e);
@@ -242,7 +262,9 @@ class GoogleOAuth {
         localStorage.setItem('user', JSON.stringify(userData));
         localStorage.setItem('authProvider', 'google');
         this.showNotification('구글 로그인에 성공했습니다!', 'success');
-        setTimeout(() => { window.location.href = window.location.origin + '/dashboard.html'; }, 1500);
+        // 환경에 따라 적절한 경로로 리다이렉트
+        const redirectUrl = this.getUploadPageUrl();
+        setTimeout(() => { window.location.href = redirectUrl; }, 1500);
     }
 
     handleLoginError(message) {
@@ -293,6 +315,24 @@ class GoogleOAuth {
         }
     }
 
+    getUploadPageUrl() {
+        // 환경 감지
+        const hostname = window.location.hostname;
+        const isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || window.location.protocol === 'file:';
+        const isGitHubPages = hostname === '2025-smhrd-is-cloud-3.github.io';
+        
+        if (isLocal) {
+            // 로컬 개발환경: 현재 origin + /upload.html
+            return window.location.origin + '/upload.html';
+        } else if (isGitHubPages) {
+            // GitHub Pages: DateGenie 프로젝트 경로 포함
+            return 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/upload.html';
+        } else {
+            // 기타 프로덕션 환경
+            return window.location.origin + '/upload.html';
+        }
+    }
+
     parseJwt(token) {
         try {
             const base64Url = token.split('.')[1];
@@ -321,6 +361,24 @@ class GoogleOAuth {
             };
             this.handleSuccessfulLogin(mockUserData);
         }, 1000);
+    }
+}
+
+function getUploadPageUrl() {
+    // 환경 감지
+    const hostname = window.location.hostname;
+    const isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || window.location.protocol === 'file:';
+    const isGitHubPages = hostname === '2025-smhrd-is-cloud-3.github.io';
+    
+    if (isLocal) {
+        // 로컬 개발환경: 현재 origin + /upload.html
+        return window.location.origin + '/upload.html';
+    } else if (isGitHubPages) {
+        // GitHub Pages: DateGenie 프로젝트 경로 포함
+        return 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/upload.html';
+    } else {
+        // 기타 프로덕션 환경
+        return window.location.origin + '/upload.html';
     }
 }
 
@@ -355,16 +413,17 @@ async function handleGoogleCallback() {
             localStorage.setItem('user', JSON.stringify(realUserData));
             localStorage.setItem('authProvider', 'google');
             showNotification('구글 로그인에 성공했습니다!', 'success');
-            setTimeout(() => { window.location.href = window.location.origin + '/dashboard.html'; }, 1500);
+            const redirectUrl = getUploadPageUrl();
+            setTimeout(() => { window.location.href = redirectUrl; }, 1500);
             
         } catch (error) {
             console.error('Error getting user info:', error);
             showNotification('사용자 정보를 가져오는 중 오류가 발생했습니다.', 'error');
-            setTimeout(() => { window.location.href = '/login.html'; }, 2000);
+            setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html'; }, 2000);
         }
     } else {
         // 코드가 없으면 로그인 페이지로 리디렉션
-        setTimeout(() => { window.location.href = '/login.html'; }, 1000);
+        setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html'; }, 1000);
     }
 }
 

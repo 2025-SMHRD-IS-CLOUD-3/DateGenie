@@ -138,25 +138,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (form) {
     form.addEventListener('submit', function(e){
-	  e.preventDefault();
-	
-	  console.log("2단계: 유효성 검사 시작");	
-      
-	  let isValid = true;
+      e.preventDefault();
+      let isValid = true;
 
       if (!validateEmail(emailInput.value.trim())) { showError(emailInput,'올바른 이메일을 입력해주세요.'); isValid=false; }
       if (!validateNickname(nicknameInput.value.trim())) { showError(nicknameInput,'닉네임은 2~20자, 한글/영문/숫자/_(언더스코어)만 가능합니다.'); isValid=false; }
       if (!validatePassword(passwordInput.value)) { showError(passwordInput,'비밀번호는 8~64자, 대/소문자·숫자·특수문자 중 3종 이상 포함해야 합니다.'); isValid=false; }
       if (confirmPasswordInput.value !== passwordInput.value) { showError(confirmPasswordInput,'비밀번호가 일치하지 않습니다.'); isValid=false; }
-      if (!agreeInput.checked) { alert('약관에 동의해주세요.'); return;/*isValid=false;*/ }
-		
-	  /*
+      if (!agreeInput.checked) { showNotification('약관에 동의해주세요.', 'error'); isValid=false; }
+
       if (!isValid) return;
-	  */
-	  
-	       
-	  // preventDefault()로 막았던 기본 제출을 다시 실행
-	  form.submit();
+
+      const submitBtn = form.querySelector('.signup-btn');
+      const original = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 가입 중...';
+      submitBtn.disabled = true;
+
+      setTimeout(() => {
+        console.log('Signup attempt:', {
+          email: emailInput.value.trim(),
+          nickname: nicknameInput.value.trim()
+        });
+        showNotification('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.', 'success');
+        setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+      }, 1500);
     });
   }
 });
