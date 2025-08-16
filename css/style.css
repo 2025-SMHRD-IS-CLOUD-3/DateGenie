@@ -1336,7 +1336,7 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
 }
 
 .social-links a {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 40px;
@@ -1346,13 +1346,23 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
     color: white;
     text-decoration: none;
     border: none;
+    text-align: center;
+    line-height: 40px;
+    box-sizing: border-box;
 }
 
-.social-links a i,
-.social-links a svg {
+.social-links a i {
     font-size: 18px;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+}
+
+.social-links a svg {
     width: 18px;
     height: 18px;
+    fill: currentColor;
+    flex-shrink: 0;
 }
 
 /* 각 소셜 미디어별 고유 색상 */
@@ -1637,4 +1647,6 @@ body.dark-mode .social-links a[aria-label="YouTube"] {
 body.dark-mode .social-links a[aria-label="Instagram"] {
     background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
     color: white;
-} 
+}
+
+ 
