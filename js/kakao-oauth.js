@@ -15,34 +15,32 @@
     
     // 카카오 SDK 초기화
     function initKakaoSDK() {
-        console.log('카카오 SDK 초기화 시도...');
-        console.log('앱 키:', KAKAO_APP_KEY);
+
+
         
         try {
             if (window.Kakao) {
-                console.log('카카오 SDK 객체 확인됨');
+
                 
                 if (!Kakao.isInitialized()) {
-                    console.log('카카오 SDK 초기화 중...');
+
                     Kakao.init(KAKAO_APP_KEY);
-                    console.log('카카오 SDK 초기화 완료');
-                    console.log('초기화 상태:', Kakao.isInitialized());
+
+
                 } else {
-                    console.log('카카오 SDK가 이미 초기화됨');
+
                 }
                 
                 // 카카오 SDK 버전 확인
                 if (Kakao.VERSION) {
-                    console.log('카카오 SDK 버전:', Kakao.VERSION);
+
                 }
                 
             } else {
-                console.error('카카오 SDK가 로드되지 않았습니다.');
                 alert('카카오 SDK 로딩 실패. 네트워크를 확인해주세요.');
                 return false;
             }
         } catch (error) {
-            console.error('카카오 SDK 초기화 실패:', error);
             alert('카카오 SDK 초기화 실패: ' + error.message);
             return false;
         }
@@ -51,24 +49,22 @@
 
     // 카카오 로그인 함수 (리다이렉트 방식)
     function loginWithKakao() {
-        console.log('카카오 로그인 시도 시작...');
+
         
         if (!window.Kakao) {
-            console.error('카카오 SDK가 로드되지 않았습니다.');
             alert('카카오 SDK 로딩 오류입니다. 페이지를 새로고침해주세요.');
             return;
         }
         
         if (!Kakao.isInitialized()) {
-            console.error('카카오 SDK가 초기화되지 않았습니다.');
             alert('카카오 SDK 초기화 오류입니다. 앱 키를 확인해주세요.');
             return;
         }
 
-        console.log('카카오 SDK 상태: 정상');
-        console.log('현재 도메인:', window.location.origin);
+
+
         
-        // GitHub Pages와 로컬 환경 모두 지원
+        // GitHub Pages와 로컬 환경 모두 지원 - 등록된 콜백 URI 사용
         let redirectUri;
         if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
             redirectUri = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/auth/kakao/callback.html';
@@ -78,7 +74,7 @@
             // 기타 환경 (예: 다른 도메인)
             redirectUri = window.location.origin + '/DateGenie/auth/kakao/callback.html';
         }
-        console.log('리다이렉트 URI:', redirectUri);
+
         
         // 카카오 인가 코드 요청 URL 생성
         const kakaoAuthUrl = 'https://kauth.kakao.com/oauth/authorize?' + 
@@ -87,8 +83,8 @@
             '&response_type=code' +
             '&scope=profile_nickname,profile_image,account_email';
         
-        console.log('카카오 인증 URL:', kakaoAuthUrl);
-        console.log('카카오 로그인 페이지로 리다이렉트...');
+
+
         
         // 카카오 로그인 페이지로 리다이렉트
         window.location.href = kakaoAuthUrl;
@@ -101,17 +97,16 @@
         }
         
         const accessToken = Kakao.Auth.getAccessToken();
-        console.log('카카오 액세스 토큰:', accessToken);
+
         
         return !!accessToken;
     }
 
     // 카카오 로그아웃 함수
     function logoutKakao() {
-        console.log('카카오 로그아웃 시도...');
+
         
         if (!window.Kakao || !Kakao.isInitialized()) {
-            console.warn('카카오 SDK가 초기화되지 않았습니다.');
             // 로컬 스토리지만 정리
             localStorage.removeItem('user');
             localStorage.removeItem('authProvider');
@@ -121,7 +116,7 @@
         const accessToken = Kakao.Auth.getAccessToken();
         if (accessToken) {
             Kakao.Auth.logout(function() {
-                console.log('카카오 로그아웃 완료');
+
                 localStorage.removeItem('user');
                 localStorage.removeItem('authProvider');
                 
@@ -131,7 +126,7 @@
             });
         } else {
             // 토큰이 없으면 로컬 스토리지만 정리
-            console.log('카카오 액세스 토큰이 없음, 로컬 스토리지만 정리');
+
             localStorage.removeItem('user');
             localStorage.removeItem('authProvider');
         }
@@ -144,6 +139,7 @@
         logout: logoutKakao,
         checkStatus: checkKakaoLoginStatus
     };
+
 
     // DOM이 로드되면 초기화
     if (document.readyState === 'loading') {

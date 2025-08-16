@@ -21,7 +21,3 @@ window.APP_CONFIG = {
     : 'http://127.0.0.1:5500/auth/google/callback.html'
 };
 
-// 설정 확인 로그
-console.log('Environment:', isProduction ? 'Production' : 'Development');
-console.log('Hostname:', window.location.hostname);
-console.log('Redirect URI:', window.APP_CONFIG.redirectUri);

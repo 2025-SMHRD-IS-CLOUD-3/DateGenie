@@ -209,7 +209,7 @@
             <!-- User Dropdown Menu (로그인 후 표시) -->
             <div class="user-dropdown" id="userDropdown" style="display: none;">
                 <div class="user-info" id="userDropdownToggle">
-                    <img src="https://via.placeholder.com/32" alt="프로필" class="user-avatar" id="userAvatar">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iNCIgeT0iNCI+CjxwYXRoIGQ9Ik0xMiAxMmE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhtMCA2YTggOCAwIDEgMCAwIDguMDA2djBhOCA4IDAgMCAwIDAtLjAwNnoiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cjwvc3ZnPgo=" alt="프로필" class="user-avatar" id="userAvatar">
                     <span class="user-name">
                         <span id="userNameText" class="user-name-text">사용자</span><span class="user-greet">님 환영합니다</span>
                     </span>
@@ -320,7 +320,7 @@
     <script src="js/login.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
     <script src="js/google-oauth.js"></script>
-    <script src="js/kakao-oauth.js"></script>
+    <script src="js/kakao-oauth.js?v=2"></script>
     <script>
         // 사용자 드롭다운 메뉴 기능
         function initUserDropdown() {
@@ -392,7 +392,7 @@
                 const userNameText = document.getElementById('userNameText');
                 
                 if (userAvatar) {
-                    let profilePicture = user.picture || 'https://via.placeholder.com/32';
+                    let profilePicture = user.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iNCIgeT0iNCI+CjxwYXRoIGQ9Ik0xMiAxMmE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhtMCA2YTggOCAwIDEgMCAwIDguMDA2djBhOCA4IDAgMCAwIDAtLjAwNnoiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cjwvc3ZnPgo=';
                     if (profilePicture.includes('googleusercontent.com') && profilePicture.includes('=s96-c')) {
                         profilePicture = profilePicture.replace('=s96-c','=s200-c');
                     }
@@ -429,31 +429,21 @@
             // 카카오 로그인 버튼 이벤트 리스너
             const kakaoLoginBtn = document.getElementById('kakaoLoginBtn');
             if (kakaoLoginBtn) {
-                console.log('카카오 로그인 버튼 이벤트 리스너 등록됨');
                 
                 kakaoLoginBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('카카오 로그인 버튼 클릭됨');
                     
                     // 디버깅 정보 출력
-                    console.log('window.Kakao 존재:', !!window.Kakao);
-                    console.log('window.KakaoAuth 존재:', !!window.KakaoAuth);
                     
                     if (window.Kakao) {
-                        console.log('카카오 SDK 초기화 상태:', window.Kakao.isInitialized());
                     }
                     
                     if (window.KakaoAuth && typeof window.KakaoAuth.login === 'function') {
-                        console.log('KakaoAuth.login 함수 호출');
                         window.KakaoAuth.login();
                     } else {
-                        console.error('카카오 인증 모듈이 로드되지 않았습니다.');
-                        console.log('KakaoAuth 객체:', window.KakaoAuth);
                         alert('카카오 로그인 모듈 로딩 실패. 페이지를 새로고침해주세요.');
                     }
                 });
-            } else {
-                console.error('카카오 로그인 버튼을 찾을 수 없습니다.');
             }
         });
     </script>

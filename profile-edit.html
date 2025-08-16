@@ -279,7 +279,7 @@
             <!-- User Dropdown Menu -->
             <div class="user-dropdown">
                 <div class="user-info" id="userDropdown">
-                    <img src="https://via.placeholder.com/32" alt="프로필" class="user-avatar" id="userAvatar">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iNCIgeT0iNCI+CjxwYXRoIGQ9Ik0xMiAxMmE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhtMCA2YTggOCAwIDEgMCAwIDguMDA2djBhOCA4IDAgMCAwIDAtLjAwNnoiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cjwvc3ZnPgo=" alt="프로필" class="user-avatar" id="userAvatar">
                     <span class="user-name">
                         <span id="userNameText" class="user-name-text">사용자</span><span class="user-greet">님 환영합니다!</span>
                     </span>
@@ -351,7 +351,7 @@
                 
                                  <div class="avatar-upload">
                      <div class="avatar-preview">
-                         <img id="avatarPreview" src="https://via.placeholder.com/120" alt="프로필 미리보기">
+                         <img id="avatarPreview" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNjAiIHI9IjYwIiBmaWxsPSIjZjNmNGY2Ii8+Cjxzdmcgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHg9IjIwIiB5PSIyMCI+CjxwYXRoIGQ9Ik0xMiAxMmE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhtMCA2YTggOCAwIDEgMCAwIDguMDA2djBhOCA4IDAgMCAwIDAtLjAwNnoiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cjwvc3ZnPgo=" alt="프로필 미리보기">
                      </div>
                      <button type="button" class="btn-ghost" onclick="document.getElementById('avatarInput').click()">
                          <i class="fas fa-camera"></i> 프로필 사진 변경
@@ -410,13 +410,30 @@
 
                  function loadUserInfo() {
              const userInfo = localStorage.getItem('user');
+             
              if (!userInfo) { 
-                 window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html'; 
+                 window.location.href = 'login.html'; 
                  return; 
              }
              
              const user = JSON.parse(userInfo);
-             let profilePicture = user.picture || 'https://via.placeholder.com/120';
+             
+             // 누락된 필드가 있으면 추가하고 localStorage 업데이트
+             let updated = false;
+             if (!user.hasOwnProperty('bio')) {
+                 user.bio = '';
+                 updated = true;
+             }
+             if (!user.hasOwnProperty('phone')) {
+                 user.phone = '';
+                 updated = true;
+             }
+             
+             if (updated) {
+                 localStorage.setItem('user', JSON.stringify(user));
+             }
+             
+             let profilePicture = user.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNjAiIHI9IjYwIiBmaWxsPSIjZjNmNGY2Ii8+Cjxzdmcgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHg9IjIwIiB5PSIyMCI+CjxwYXRoIGQ9Ik0xMiAxMmE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhtMCA2YTggOCAwIDEgMCAwIDguMDA2djBhOCA4IDAgMCAwIDAtLjAwNnoiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cjwvc3ZnPgo=';
              if (profilePicture.includes('googleusercontent.com') && profilePicture.includes('=s96-c')) {
                  profilePicture = profilePicture.replace('=s96-c','=s200-c');
              }
@@ -425,15 +442,21 @@
              const userAvatar = document.getElementById('userAvatar');
              const userNameText = document.getElementById('userNameText');
              const avatarPreview = document.getElementById('avatarPreview');
+             
              if (userAvatar) userAvatar.src = profilePicture;
              if (userNameText) { userNameText.textContent = user.name ? user.name : '사용자'; }
              if (avatarPreview) avatarPreview.src = profilePicture;
 
              // 폼 필드에 기존 정보 채우기
-             document.getElementById('name').value = user.name || '';
-             document.getElementById('email').value = user.email || '';
-             document.getElementById('bio').value = user.bio || '';
-             document.getElementById('phone').value = user.phone || '';
+             const nameField = document.getElementById('name');
+             const emailField = document.getElementById('email');
+             const bioField = document.getElementById('bio');
+             const phoneField = document.getElementById('phone');
+             
+             if (nameField) nameField.value = user.name || '';
+             if (emailField) emailField.value = user.email || '';
+             if (bioField) bioField.value = user.bio || '';
+             if (phoneField) phoneField.value = user.phone || '';
          }
 
         // 드롭다운 메뉴 초기화
@@ -530,21 +553,16 @@
             const updatedUser = { ...user, ...formData };
             localStorage.setItem('user', JSON.stringify(updatedUser));
 
-            // 사용자 이름 업데이트
-            const userNameText = document.getElementById('userNameText');
-            if (userNameText) {
-                userNameText.textContent = formData.name || '사용자';
-            }
-
             alert('회원정보가 성공적으로 수정되었습니다!');
             
             // 현재 화면에서 프로필 사진과 사용자 이름 업데이트
             const userAvatar = document.getElementById('userAvatar');
+            const userNameText = document.getElementById('userNameText');
+            
             if (userAvatar && formData.picture) {
                 userAvatar.src = formData.picture;
             }
             
-            const userNameText = document.getElementById('userNameText');
             if (userNameText) {
                 userNameText.textContent = formData.name || '사용자';
             }

@@ -107,22 +107,16 @@
         }
 
         function showSuccess(userName) {
-            document.getElementById('spinner').style.display = 'none';
-            document.getElementById('title').textContent = '로그인 성공!';
-            document.getElementById('message').textContent = `${userName}님, 환영합니다!`;
-            
-            // 1.5초 후 메인 페이지로 리다이렉트
-            setTimeout(() => {
-                try {
-                    if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
-                        window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/index.html';
-                    } else {
-                        window.location.href = '../../index.html';
-                    }
-                } catch (error) {
-                    window.location.href = window.location.origin + '/index.html';
+            // 로그인 성공 후 바로 마이 페이지로 리다이렉트
+            try {
+                if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
+                    window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/profile-edit.html';
+                } else {
+                    window.location.href = '../../profile-edit.html';
                 }
-            }, 1500);
+            } catch (error) {
+                window.location.href = window.location.origin + '/profile-edit.html';
+            }
         }
 
         function processKakaoCallback() {
@@ -236,19 +230,30 @@
             const kakaoUserData = {
                 id: 'kakao_user_' + Date.now(),
                 name: '카카오 사용자',
-                email: 'kakao@user.com',
-                picture: 'https://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_640x640.jpg',
+                email: '',
+                picture: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iMTYiIHk9IjE2Ij4KPHBhdGggZD0iTTEyIDEyYTQgNCAwIDEgMCAwLTggNCA0IDAgMCAwIDAgOG0wIDZhOCA4IDAgMSAwIDAgOC4wMDZ2MGE4IDggMCAwIDAgMC0uMDA2eiIgZmlsbD0iIzljYTNhZiIvPgo8L3N2Zz4KPC9zdmc+Cg==',
                 provider: 'kakao',
                 loginTime: new Date().toISOString(),
                 authCode: code,
-                verified: true
+                verified: true,
+                bio: '',
+                phone: ''
             };
             
             // localStorage에 저장
             localStorage.setItem('user', JSON.stringify(kakaoUserData));
             localStorage.setItem('authProvider', 'kakao');
             
-            showSuccess(kakaoUserData.name);
+            // 바로 파일 업로드 페이지로 리다이렉트
+            try {
+                if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
+                    window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/upload.html';
+                } else {
+                    window.location.href = '../../upload.html';
+                }
+            } catch (error) {
+                window.location.href = window.location.origin + '/upload.html';
+            }
         }
 
         function handleLoginSuccess(userInfo) {
@@ -265,9 +270,11 @@
                     email: (kakaoAccount && kakaoAccount.email) ? kakaoAccount.email : '',
                     picture: (profile && (profile.profile_image_url || profile.thumbnail_image_url)) ? 
                              (profile.profile_image_url || profile.thumbnail_image_url) : 
-                             'https://via.placeholder.com/96',
+                             'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iMTYiIHk9IjE2Ij4KPHBhdGggZD0iTTEyIDEyYTQgNCAwIDEgMCAwLTggNCA0IDAgMCAwIDAgOG0wIDZhOCA4IDAgMSAwIDAgOC4wMDZ2MGE4IDggMCAwIDAgMC0uMDA2eiIgZmlsbD0iIzljYTNhZiIvPgo8L3N2Zz4KPC9zdmc+Cg==',
                     provider: 'kakao',
-                    loginTime: new Date().toISOString()
+                    loginTime: new Date().toISOString(),
+                    bio: '',
+                    phone: ''
                 };
 
 
@@ -275,7 +282,16 @@
                 localStorage.setItem('user', JSON.stringify(userData));
                 localStorage.setItem('authProvider', 'kakao');
 
-                showSuccess(userData.name);
+                // 바로 파일 업로드 페이지로 리다이렉트
+                try {
+                    if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
+                        window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/upload.html';
+                    } else {
+                        window.location.href = '../../upload.html';
+                    }
+                } catch (error) {
+                    window.location.href = window.location.origin + '/upload.html';
+                }
 
             } catch (error) {
                 showError('사용자 정보 저장 중 오류가 발생했습니다: ' + error.message);
