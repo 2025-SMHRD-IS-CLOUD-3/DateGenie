@@ -10,20 +10,28 @@
         <script>(function(){try{document.documentElement.classList.add('wf-hide-body')}catch(e){}})();</script>
         <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin>
         <link rel="preload" as="font" href="https://fastly.jsdelivr.net/gh/projectnoonnu/2507-1@1.0/SkyblessingInjeFontTTF.woff" type="font/woff" crossorigin>
-        <link rel="preload" as="font" href="https://fastly.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/SacheonUju-Regular.woff2" type="font/woff2" crossorigin>
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
         <script>
             (function(){
-              var d=document.documentElement; var revealed=false; function reveal(){ if(revealed) return; revealed=true; d.classList.remove('wf-hide-body'); }
+              var d=document.documentElement; var revealed=false; 
+              function reveal(){ 
+                if(revealed) return; 
+                revealed=true; 
+                d.classList.remove('wf-hide-body'); 
+              }
+              
+              // 최대 2초 후 강제 표시
+              setTimeout(reveal, 2000);
+              
               try{
                 if(document.fonts && document.fonts.load){
                   Promise.race([
-                    document.fonts.load('1em Pretendard'),
+                    document.fonts.load('1em Pretendard').catch(function(){ return Promise.resolve(); }),
                     document.fonts.ready,
-                    new Promise(function(r){ setTimeout(r,1200); })
+                    new Promise(function(r){ setTimeout(r,800); })
                   ]).then(reveal).catch(reveal);
                 } else { setTimeout(reveal, 300); }
               }catch(e){ reveal(); }
@@ -219,15 +227,19 @@
             <!-- User Dropdown Menu (로그인 후 표시) -->
             <div class="user-dropdown" id="userDropdown" style="display: none;">
                 <div class="user-info" id="userDropdownToggle">
-                    <img src="https://via.placeholder.com/32" alt="프로필" class="user-avatar" id="userAvatar">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iNCIgeT0iNCI+CjxwYXRoIGQ9Ik0xMiAxMmE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhtMCA2YTggOCAwIDEgMCAwIDguMDA2djBhOCA4IDAgMCAwIDAtLjAwNnoiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cjwvc3ZnPgo=" alt="프로필" class="user-avatar" id="userAvatar">
                     <span class="user-name">
                         <span id="userNameText" class="user-name-text">사용자</span><span class="user-greet">님 환영합니다</span>
                     </span>
                 </div>
                 <div class="dropdown-menu" id="userDropdownMenu">
+                    <a href="upload.html" class="dropdown-item">
+                        <i class="fas fa-upload"></i>
+                        <span>파일 업로드</span>
+                    </a>
                     <a href="dashboard.html" class="dropdown-item">
                         <i class="fas fa-tachometer-alt"></i>
-                        <span>마이 페이지</span>
+                        <span>마이페이지</span>
                     </a>
                     <a href="profile-edit.html" class="dropdown-item">
                         <i class="fas fa-user"></i>
@@ -717,7 +729,7 @@
                 const userNameText = document.getElementById('userNameText');
                 
                 if (userAvatar) {
-                    let profilePicture = user.picture || 'https://via.placeholder.com/32';
+                    let profilePicture = user.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iNCIgeT0iNCI+CjxwYXRoIGQ9Ik0xMiAxMmE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhtMCA2YTggOCAwIDEgMCAwIDguMDA2djBhOCA4IDAgMCAwIDAtLjAwNnoiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cjwvc3ZnPgo=';
                     if (profilePicture.includes('googleusercontent.com') && profilePicture.includes('=s96-c')) {
                         profilePicture = profilePicture.replace('=s96-c','=s200-c');
                     }

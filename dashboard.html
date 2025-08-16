@@ -13,7 +13,7 @@
     <style>
 		/* 레이아웃: 상단바 + 사이드바 + 메인 패널 */
 		.dashboard-shell {
-            min-height: 100vh;
+            min-height: calc(100vh - var(--navbar-height));
             padding-top: var(--navbar-height);
 			background: transparent; /* 배경은 전체 페이지 레이어에서 처리 */
 			/* 상단 .nav-container(최대 1200px)와 정렬 맞춤 */
@@ -270,13 +270,12 @@
 
 		/* 다크 모드 보완 */
 		body.dark-mode.dashboard-page::before { 
-			background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 40%, #0a0a0a 100%); 
+			background: linear-gradient(135deg, #0f0f12 0%, #16161b 40%, #12121a 100%); 
 		}
 		
 		body.dark-mode .panel { 
-			background: rgba(30, 30, 30, 0.95); 
-			box-shadow: 0 10px 30px rgba(0,0,0,.5); 
-			border: 1px solid rgba(255,255,255,.05);
+			background: rgba(34,34,34,0.95); 
+			box-shadow: 0 10px 30px rgba(0,0,0,.45); 
 		}
 		
 		body.dark-mode .quick-card, 
@@ -287,7 +286,7 @@
 		}
 		
 		body.dark-mode .panel-title { 
-			color: #f8fafc; 
+			color: #e5e7eb; 
 		}
 		
 		body.dark-mode .welcome h1 { 
@@ -315,6 +314,10 @@
 		body.dark-mode .btn-ghost:hover {
 			background: rgba(124,58,237,.15);
 		}
+
+		body.dark-mode .avatar {
+			box-shadow: 0 6px 16px rgba(139,92,246,.25);
+		}
 		
 		body.dark-mode .dropzone { 
 			background: rgba(124,58,237,.15); 
@@ -326,14 +329,13 @@
 		}
 		
 		body.dark-mode .sidebar-nav { 
-			background: rgba(30,30,30,0.95); 
-			box-shadow: 0 10px 30px rgba(0,0,0,.5); 
-			border: 1px solid rgba(255,255,255,.05);
+			background: rgba(34,34,34,0.95); 
+			box-shadow: 0 10px 30px rgba(0,0,0,.45); 
 		}
 		
 		body.dark-mode .sidebar-nav h3 { 
-			color: #f8fafc; 
-			border-bottom-color: rgba(255,255,255,.15); 
+			color: #e5e7eb; 
+			border-bottom-color: rgba(255,255,255,.1); 
 		}
 		
 		body.dark-mode .nav-link { 
@@ -421,6 +423,10 @@
                     </span>
                 </div>
                 <div class="dropdown-menu" id="userDropdownMenu">
+                    <a href="upload.html" class="dropdown-item">
+                        <i class="fas fa-upload"></i>
+                        <span>파일 업로드</span>
+                    </a>
                     <a href="dashboard.html" class="dropdown-item">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>마이페이지</span>
@@ -449,15 +455,15 @@
             <h3>서비스</h3>
             <ul class="nav-list">
                 <li class="nav-item">
-                    <a href="dashboard.html" class="nav-link active">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>마이 페이지</span>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="upload.html" class="nav-link">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <span>파일 업로드</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link active">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>마이 페이지</span>
                     </a>
                 </li>
             </ul>

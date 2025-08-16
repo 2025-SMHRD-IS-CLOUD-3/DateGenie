@@ -12,7 +12,7 @@
     <style>
 		/* 업로드 페이지 전용 스타일 */
 		.upload-shell {
-            min-height: 100vh;
+            min-height: calc(100vh - var(--navbar-height));
             padding-top: var(--navbar-height);
 			background: transparent;
             max-width: 1200px;
@@ -307,17 +307,21 @@
                 <div class="user-info" id="userDropdownToggle">
                     <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iNCIgeT0iNCI+CjxwYXRoIGQ9Ik0xMiAxMmE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhtMCA2YTggOCAwIDEgMCAwIDguMDA2djBhOCA4IDAgMCAwIDAtLjAwNnoiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cjwvc3ZnPgo=" alt="프로필" class="user-avatar" id="userAvatar">
                     <span class="user-name">
-                        <span id="userNameText" class="user-name-text">사용자</span><span class="user-greet">님 환영합니다</span>
+                        <span id="userNameText" class="user-name-text">사용자</span><span class="user-greet">님 환영합니다!</span>
                     </span>
                 </div>
                 <div class="dropdown-menu" id="userDropdownMenu">
-                    <a href="profile-edit.html" class="dropdown-item">
-                        <i class="fas fa-user"></i>
-                        <span>회원정보 수정</span>
+                    <a href="upload.html" class="dropdown-item">
+                        <i class="fas fa-upload"></i>
+                        <span>파일 업로드</span>
                     </a>
                     <a href="dashboard.html" class="dropdown-item">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>마이페이지</span>
+                    </a>
+                    <a href="profile-edit.html" class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        <span>회원정보 수정</span>
                     </a>
                     <a href="settings.html" class="dropdown-item">
                         <i class="fas fa-cog"></i>
@@ -339,15 +343,15 @@
             <h3>서비스</h3>
             <ul class="nav-list">
                 <li class="nav-item">
-                    <a href="dashboard.html" class="nav-link">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>마이 페이지</span>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="upload.html" class="nav-link active">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <span>파일 업로드</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>마이 페이지</span>
                     </a>
                 </li>
             </ul>

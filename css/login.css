@@ -1,13 +1,4 @@
-/* Typography: Pretendard (modern, clean Korean font) + SacheonUju (elegant logo) */
-
-/* SacheonUju Font */
-@font-face {
-    font-family: 'SacheonUju-Regular';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/SacheonUju-Regular.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
+/* Typography: Pretendard (modern, clean Korean font) + Skyblessing Inje (elegant logo) */
 
 /* Skyblessing Inje (하늘내린 인제체) */
 @font-face {
@@ -15,14 +6,14 @@
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2507-1@1.0/SkyblessingInjeFontTTF.woff') format('woff');
     font-weight: normal;
     font-style: normal;
-    font-display: block;
+    font-display: swap;
 }
 
 /* Typography variables and global rendering tweaks */
 :root {
     --font-body: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
     --font-display: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-    --font-logo: 'SkyblessingInjeFontTTF', serif;
+    --font-logo: 'SkyblessingInjeFontTTF', 'Times New Roman', 'Apple SD Gothic Neo', 'Noto Sans KR', serif;
     --navbar-height: 64px;
 }
 
