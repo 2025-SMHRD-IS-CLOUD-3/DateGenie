@@ -1338,7 +1338,8 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
     margin-top: 20px;
 }
 
-.social-links a {
+/* 브랜드 섹션의 소셜 링크 (기존 스타일 유지) */
+.footer-brand .social-links a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1354,32 +1355,60 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
     box-sizing: border-box;
 }
 
-.social-links a i {
+.footer-brand .social-links a i {
     font-size: 18px;
     line-height: 1;
     margin: 0;
     padding: 0;
 }
 
-.social-links a svg {
+.footer-brand .social-links a svg {
     width: 18px;
     height: 18px;
     fill: currentColor;
     flex-shrink: 0;
 }
 
-/* 각 소셜 미디어별 고유 색상 */
-.social-links a[aria-label="GitHub"] {
+/* footer-bottom의 심플한 소셜 링크 */
+.footer-bottom .social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    background: transparent;
+    color: #64748b;
+    text-decoration: none;
+    border: 1px solid #e2e8f0;
+}
+
+.footer-bottom .social-links a i {
+    font-size: 18px;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+}
+
+.footer-bottom .social-links a svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
+/* 브랜드 섹션 각 소셜 미디어별 고유 색상 */
+.footer-brand .social-links a[aria-label="GitHub"] {
     background: #24292e;
     color: white;
 }
 
-.social-links a[aria-label="YouTube"] {
+.footer-brand .social-links a[aria-label="YouTube"] {
     background: #ff0000;
     color: white;
 }
 
-.social-links a[aria-label="Instagram"] {
+.footer-brand .social-links a[aria-label="Instagram"] {
     background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
     color: white;
 }
@@ -1522,6 +1551,13 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
     gap: 16px;
     font-size: 0.9rem;
     color: #64748b;
+    flex: 1;
+}
+
+.footer-bottom .social-links {
+    display: flex;
+    gap: 12px;
+    margin: 0;
 }
 
 .footer-legal a {
@@ -1568,6 +1604,11 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
     .footer-legal {
         flex-direction: column;
         gap: 8px;
+        flex: none;
+    }
+    
+    .footer-bottom .social-links {
+        justify-content: center;
     }
 }
 
@@ -1660,18 +1701,25 @@ body.dark-mode .footer-legal a:hover {
     color: #ec4899;
 }
 
-/* 다크 모드에서도 각 소셜 미디어별 고유 색상 유지 */
-body.dark-mode .social-links a[aria-label="GitHub"] {
+/* 다크모드 - footer-bottom 소셜 링크 */
+body.dark-mode .footer-bottom .social-links a {
+    background: transparent;
+    color: #94a3b8;
+    border-color: #374151;
+}
+
+/* 다크 모드에서도 브랜드 섹션 각 소셜 미디어별 고유 색상 유지 */
+body.dark-mode .footer-brand .social-links a[aria-label="GitHub"] {
     background: #24292e;
     color: white;
 }
 
-body.dark-mode .social-links a[aria-label="YouTube"] {
+body.dark-mode .footer-brand .social-links a[aria-label="YouTube"] {
     background: #ff0000;
     color: white;
 }
 
-body.dark-mode .social-links a[aria-label="Instagram"] {
+body.dark-mode .footer-brand .social-links a[aria-label="Instagram"] {
     background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
     color: white;
 }
