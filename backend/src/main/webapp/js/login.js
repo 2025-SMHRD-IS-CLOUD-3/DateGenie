@@ -137,19 +137,56 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.disabled = true;
             
             // Simulate API call
-            setTimeout(() => {
-                // Here you would typically make an API call to your backend
-                console.log('Login attempt:', { email, password, remember });
-                
-                // Simulate successful login
-                showNotification('로그인에 성공했습니다!', 'success');
-                
-                // Redirect to dashboard or main page
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1500);
-                
-            }, 2000);
+			const loginData = {
+			    email: email,
+			    password: password
+			};
+			
+			// fetch 요청
+			fetch('/BackEnd/LoginService', {
+			    method: 'POST',
+			    headers: {
+			        'Content-Type': 'application/json',
+			    },
+			    body: JSON.stringify(loginData),
+			})
+			.then(function(response) {
+			    return response.json();
+			})
+			.then(function(data) {
+			    console.log('서버 응답:', data);
+
+			    if (data.success) {
+			        console.log('로그인 성공:', data);
+			        
+			        // 사용자 정보 localStorage에 저장
+			        if (data.userInfo) {
+			            localStorage.setItem('user', JSON.stringify(data.userInfo));
+			            console.log('localStorage 저장 완료');
+			        }
+			        
+			        showNotification(data.message || '로그인에 성공했습니다!', 'success');
+
+			        setTimeout(function() {
+			            window.location.href = data.redirectUrl || 'index.html';
+			        }, 1500);
+			    } else {
+			        console.log('로그인 실패:', data);
+			        showNotification(data.message || '로그인에 실패했습니다.', 'error');
+			        
+			        submitBtn.innerHTML = originalText;
+			        submitBtn.disabled = false;
+			    }
+			})
+			.catch(function(error) {
+			    console.error('로그인 에러:', error);
+			    showNotification('로그인 중 오류가 발생했습니다.', 'error');
+
+			    submitBtn.innerHTML = originalText;
+			    submitBtn.disabled = false;
+			});
+			
+			
         });
     }
 

@@ -245,7 +245,7 @@
                     <p>간단한 정보를 입력하고 AI 기반 연애 분석 서비스를 시작해보세요</p>
                 </div>
 
-                <form class="signup-form" id="signupForm" novalidate>
+                <form class="signup-form" id="signupForm" action="JoinService" method="POST" novalidate>
                     <div class="form-group">
                         <label for="email">이메일</label>
                         <div class="input-wrapper">
@@ -266,7 +266,7 @@
                         <label for="password">비밀번호</label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="password" name="password" required>
+                            <input type="password" id="password" name="pw" required>
                             <button type="button" class="toggle-password" aria-label="비밀번호 보기 토글">
                                 <i class="fas fa-eye"></i>
                             </button>
@@ -277,7 +277,7 @@
                         <label for="confirmPassword">비밀번호 확인</label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                            <input type="password" id="confirmPassword" name="checkPW" required>
                             <button type="button" class="toggle-password" aria-label="비밀번호 보기 토글">
                                 <i class="fas fa-eye"></i>
                             </button>
