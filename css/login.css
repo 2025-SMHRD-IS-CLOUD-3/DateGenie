@@ -35,7 +35,7 @@ body {
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, #fce7f3 0%, #fdf2f8 25%, #f3e8ff 50%, #e9d5ff 75%, #fce7f3 100%);
-    padding: calc(var(--navbar-height) + 1rem) 0 2rem;
+    padding: calc(var(--navbar-height) + 1rem) 0 6rem;
     /* 배경 색 변환으로 인한 버튼/브랜드 색상 변화를 방지 */
     animation: none;
     color: #1e1b4b;

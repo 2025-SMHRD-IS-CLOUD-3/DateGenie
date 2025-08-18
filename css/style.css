@@ -1268,15 +1268,25 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
     }
 }
 
-/* Footer Styles */
+/* Modern Minimal Footer Styles */
 .site-footer {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
-    border-top: 1px solid rgba(236, 72, 153, 0.1);
-    color: #1e293b;
-    padding: 60px 0 30px 0;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    color: #374151;
+    padding: 48px 0 24px 0;
     margin-top: 80px;
     position: relative;
-    overflow: hidden;
+}
+
+/* Auth pages footer spacing fix - eliminate white space above footer */
+.navbar.auth ~ section + .site-footer {
+    margin-top: 0;
+}
+
+/* Additional fallback for pages with single content sections before footer */
+.login-section + .site-footer,
+.signup-section + .site-footer {
+    margin-top: 0;
 }
 
 .site-footer::before {
@@ -1312,9 +1322,9 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #1e293b;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #111827;
 }
 
 .footer-logo i {
@@ -1323,10 +1333,11 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
 }
 
 .footer-description {
-    color: #64748b;
-    font-size: 1.1rem;
+    color: #6b7280;
+    font-size: 0.95rem;
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.5;
+    font-weight: 400;
 }
 
 .social-links {
@@ -1377,7 +1388,7 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
     background: transparent;
     color: #64748b;
     text-decoration: none;
-    border: 1px solid #e2e8f0;
+    border: none;
 }
 
 .footer-bottom .social-links a i {
@@ -1473,14 +1484,25 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
 /* 기술 스택 그리드 */
 .tech-grid {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* 모바일에서는 세로 배치 */
+@media (max-width: 768px) {
+    .tech-grid {
+        flex-direction: column;
+        gap: 16px;
+    }
 }
 
 .tech-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    flex: 1;
+    min-width: 120px;
 }
 
 .tech-category {
@@ -1532,35 +1554,79 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
     box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
 }
 
+/* AI 카테고리 스타일 */
+.tech-item.ai {
+    background: rgba(147, 51, 234, 0.1);
+    border-color: rgba(147, 51, 234, 0.3);
+    color: #7c3aed;
+}
+
+.tech-item.ai:hover {
+    background: rgba(147, 51, 234, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(147, 51, 234, 0.2);
+}
+
+/* Remove old footer-nav styles - replaced with new structure above */
+
 .footer-bottom {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 30px;
-    border-top: 1px solid rgba(236, 72, 153, 0.15);
-    position: relative;
-    z-index: 1;
+    padding-top: 24px;
+    border-top: 1px solid #e5e7eb;
 }
 
 .footer-legal {
     display: flex;
     align-items: center;
     gap: 16px;
-    font-size: 0.9rem;
-    color: #64748b;
-    flex: 1;
+    font-size: 0.875rem;
+    color: #9ca3af;
+    flex-wrap: wrap;
 }
 
-.footer-bottom .social-links {
+.footer-social {
     display: flex;
     gap: 12px;
-    margin: 0;
+    align-items: center;
+}
+
+.footer-social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #f9fafb;
+    color: #6b7280;
+    text-decoration: none;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.footer-social a:hover {
+    background: #ec4899;
+    color: white;
+    border-color: #ec4899;
+    transform: translateY(-1px);
+}
+
+.footer-social a i {
+    font-size: 16px;
+}
+
+.footer-social a svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
 }
 
 .footer-legal a {
-    color: #64748b;
+    color: #9ca3af;
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color 0.2s ease;
 }
 
 .footer-legal a:hover {
@@ -1579,12 +1645,31 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
         grid-template-columns: 1fr;
         gap: 30px;
     }
+    
+    /* Reduce footer margin on tablet for better spacing */
+    .site-footer {
+        margin-top: 60px;
+    }
+    
+    /* Keep auth pages with no margin */
+    .navbar.auth ~ section + .site-footer,
+    .login-section + .site-footer,
+    .signup-section + .site-footer {
+        margin-top: 0;
+    }
 }
 
 @media (max-width: 768px) {
     .site-footer {
         padding: 40px 0 20px 0;
-        margin-top: 60px;
+        margin-top: 40px; /* Reduced for mobile */
+    }
+    
+    /* Maintain auth pages override on mobile */
+    .navbar.auth ~ section + .site-footer,
+    .login-section + .site-footer,
+    .signup-section + .site-footer {
+        margin-top: 0;
     }
     
     .footer-links {
@@ -1621,9 +1706,9 @@ body.dark-mode .nebula-overlay { opacity: 0.16; }
 
 /* Footer 다크 모드 */
 body.dark-mode .site-footer {
-    background: #000000;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    color: #ffffff;
+    background: #111827;
+    border-top: 1px solid #374151;
+    color: #e5e7eb;
 }
 
 body.dark-mode .site-footer::before {
@@ -1634,7 +1719,7 @@ body.dark-mode .site-footer::before {
 }
 
 body.dark-mode .footer-logo {
-    color: #ffffff;
+    color: #f9fafb;
 }
 
 body.dark-mode .footer-logo i {
@@ -1642,7 +1727,7 @@ body.dark-mode .footer-logo i {
 }
 
 body.dark-mode .footer-description {
-    color: #cccccc;
+    color: #9ca3af;
 }
 
 body.dark-mode .footer-section h4 {
@@ -1682,27 +1767,69 @@ body.dark-mode .tech-item.backend {
     color: #34d399;
 }
 
+body.dark-mode .tech-item.ai {
+    background: rgba(147, 51, 234, 0.2);
+    border-color: rgba(147, 51, 234, 0.4);
+    color: #a78bfa;
+}
+
 body.dark-mode .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+body.dark-mode .footer-nav-primary a {
+    color: #e5e7eb;
+}
+
+body.dark-mode .footer-nav-primary a:hover {
+    color: #ec4899;
+}
+
+body.dark-mode .footer-nav-legal a {
+    color: #9ca3af;
+}
+
+body.dark-mode .footer-nav-legal a:hover {
+    color: #ec4899;
+}
+
+body.dark-mode .nav-separator {
+    color: #6b7280;
+}
+
+body.dark-mode .footer-bottom {
+    border-top: 1px solid #374151;
+}
+
 body.dark-mode .footer-legal {
-    color: #cccccc;
+    color: #6b7280;
 }
 
 body.dark-mode .footer-legal a {
-    color: #cccccc;
+    color: #6b7280;
 }
 
 body.dark-mode .footer-legal a:hover {
     color: #ec4899;
 }
 
+body.dark-mode .footer-social a {
+    background: #1f2937;
+    color: #9ca3af;
+    border-color: #374151;
+}
+
+body.dark-mode .footer-social a:hover {
+    background: #ec4899;
+    color: white;
+    border-color: #ec4899;
+}
+
 /* 다크모드 - footer-bottom 소셜 링크 */
 body.dark-mode .footer-bottom .social-links a {
     background: transparent;
     color: #94a3b8;
-    border-color: #374151;
+    border: none;
 }
 
 /* 다크 모드에서도 브랜드 섹션 각 소셜 미디어별 고유 색상 유지 */

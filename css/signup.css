@@ -15,7 +15,7 @@ body { font-family: var(--font-body); }
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, #fce7f3 0%, #fdf2f8 25%, #f3e8ff 50%, #e9d5ff 75%, #fce7f3 100%);
-    padding: calc(var(--navbar-height) + 1rem) 0 2rem;
+    padding: calc(var(--navbar-height) + 1rem) 0 6rem;
     /* 카카오 버튼 등 브랜드 색상 유지 위해 배경 애니메이션 비활성 */
     animation: none;
     color: #1e1b4b;
