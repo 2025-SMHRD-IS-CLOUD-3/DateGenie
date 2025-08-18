@@ -14,7 +14,7 @@ class GoogleOAuth {
 
     init() {
         if (!this.clientId) {
-            console.warn('Google OAuth clientId is missing. Falling back to mock login in dev.');
+
             this.setupManualGoogleLogin();
             return;
         }
@@ -23,7 +23,6 @@ class GoogleOAuth {
         if (typeof google !== 'undefined' && google.accounts) {
             this.initializeGoogleOAuth();
         } else {
-            console.log('Google OAuth library not loaded yet, waiting...');
             // 라이브러리가 로드될 때까지 대기
             let checkGoogle = setInterval(() => {
                 if (typeof google !== 'undefined' && google.accounts) {
@@ -48,8 +47,14 @@ class GoogleOAuth {
 
     setupGoogleLoginButton() {
         const googleBtn = document.getElementById('googleLoginBtn');
-        console.log('Setting up Google login button:', googleBtn);
+
         if (googleBtn) {
+            // 이미 설정되었는지 확인
+            if (googleBtn.dataset.setupComplete === 'true') {
+
+                return;
+            }
+            
             // 원래 구글 로그인 버튼 모양으로 복원
             googleBtn.innerHTML = `
                 <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
@@ -63,22 +68,25 @@ class GoogleOAuth {
                 구글로 로그인
             `;
             
-            // 클릭 이벤트 추가
-            googleBtn.addEventListener('click', (e) => {
+            // 클릭 이벤트 추가 (한 번만)
+            const clickHandler = (e) => {
                 e.preventDefault();
-                console.log('Google login button clicked');
+
                 this.startGoogleLogin();
-            });
+            };
+            
+            googleBtn.addEventListener('click', clickHandler);
+            googleBtn.dataset.setupComplete = 'true';
         }
     }
 
     setupManualGoogleLogin() {
         const googleBtn = document.getElementById('googleLoginBtn');
-        console.log('Setting up manual Google login button:', googleBtn);
+
         if (googleBtn) {
             googleBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log('Manual Google login button clicked');
+
                 // 실제 구글 로그인 사용
                 this.startManualGoogleLogin();
             });
@@ -86,40 +94,36 @@ class GoogleOAuth {
     }
 
     startGoogleLogin() {
-        console.log('Starting Google login...');
+
         
         // 이미 진행 중인 요청이 있는지 확인
         if (this.isProcessing) {
-            console.log('Google login already in progress');
+
             return;
         }
         
         this.isProcessing = true;
+        this.showLoadingState();
         
         try {
-            google.accounts.id.prompt((notification) => {
-                console.log('Google One Tap notification:', notification);
-                this.isProcessing = false;
-                
-                if (notification.isNotDisplayed() || notification.isSkippedMoment() || notification.isDismissedMoment()) {
-                    console.log('One Tap not proceeding, falling back to token client');
-                    this.loginWithTokenClient();
-                }
-            });
+            // Google Token Client 사용
+
+            this.loginWithTokenClient();
         } catch (error) {
-            console.error('Google One Tap login failed:', error);
+
             this.isProcessing = false;
-            this.showNotification('구글 로그인 중 오류가 발생했습니다.', 'error');
+            this.hideLoadingState();
+
         }
     }
 
     startManualGoogleLogin() {
-        console.log('Starting manual Google login...');
-        console.log('Client ID:', this.clientId);
-        console.log('Redirect URI:', this.redirectUri);
+
+
+
         
         if (!this.clientId) {
-            console.error('No clientId configured. Using mock login for development.');
+
             // 개발 환경에서는 모의 로그인 사용
             this.mockGoogleLogin();
             return;
@@ -129,7 +133,7 @@ class GoogleOAuth {
         try {
             this.loginWithTokenClient();
         } catch (error) {
-            console.error('Manual login error:', error);
+
             // 에러 발생 시 모의 로그인으로 대체
             this.mockGoogleLogin();
         }
@@ -138,25 +142,36 @@ class GoogleOAuth {
     loginWithTokenClient() {
         try {
             if (!google || !google.accounts || !google.accounts.oauth2) {
-                throw new Error('Google OAuth2 token client not available');
+
+                this.isProcessing = false;
+                this.hideLoadingState();
+
+                return;
             }
-            this.isProcessing = true;
-            this.showLoadingState();
+            
+
             const tokenClient = google.accounts.oauth2.initTokenClient({
                 client_id: this.clientId,
                 scope: this.scope, // 'openid email profile'
                 prompt: 'consent',
                 callback: async (tokenResponse) => {
+
                     try {
                         if (!tokenResponse || !tokenResponse.access_token) {
                             throw new Error('No access token returned');
                         }
+                        
+
                         // 액세스 토큰으로 유저 정보 조회
                         const resp = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
                             headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
                         });
+                        
                         if (!resp.ok) throw new Error('Failed to fetch user info');
+                        
                         const u = await resp.json();
+
+                        
                         const userData = {
                             id: u.sub,
                             email: u.email,
@@ -165,21 +180,25 @@ class GoogleOAuth {
                             provider: 'google',
                             verified: u.email_verified
                         };
+                        
+                        this.isProcessing = false; // 성공 시 처리 완료
                         this.handleSuccessfulLogin(userData);
                     } catch (err) {
-                        console.error('Token flow userinfo error:', err);
-                        this.showNotification('구글 사용자 정보를 가져오지 못했습니다.', 'error');
+
+
                         this.isProcessing = false;
                         this.hideLoadingState();
                     }
                 }
             });
+            
+
             tokenClient.requestAccessToken();
         } catch (e) {
-            console.error('Token client init error:', e);
+
             // 최후의 수단으로 리다이렉트 코드 플로우
             const authUrl = this.buildAuthUrl();
-            console.log('Fallback to OAuth URL:', authUrl);
+
             window.location.href = authUrl;
             this.isProcessing = false;
             this.hideLoadingState();
@@ -205,7 +224,7 @@ class GoogleOAuth {
         
         // ID 토큰에서 사용자 정보 추출
         const userInfo = this.parseJwt(response.credential);
-        console.log('Google user info:', userInfo);
+
         
         // 실제 사용자 데이터로 처리
         const userData = {
@@ -233,21 +252,26 @@ class GoogleOAuth {
                 throw new Error('Token verification failed');
             }
         } catch (error) {
-            console.error('Token verification error:', error);
+
             this.handleLoginError('구글 로그인 중 오류가 발생했습니다.');
         }
     }
 
     handleSuccessfulLogin(userData) {
-        localStorage.setItem('user', JSON.stringify(userData));
+        // bio와 phone 필드 추가
+        const completeUserData = {
+            ...userData,
+            bio: userData.bio || '',
+            phone: userData.phone || ''
+        };
+        
+        localStorage.setItem('user', JSON.stringify(completeUserData));
         localStorage.setItem('authProvider', 'google');
-        this.showNotification('구글 로그인에 성공했습니다!', 'success');
-        setTimeout(() => { window.location.href = window.location.origin + '/dashboard.html'; }, 1500);
+        // 파일 업로드 페이지로 바로 리다이렉트
+        window.location.href = 'upload.html';
     }
 
     handleLoginError(message) {
-        console.error('Google login error:', message);
-        this.showNotification(message, 'error');
         this.hideLoadingState();
     }
 
@@ -279,7 +303,7 @@ class GoogleOAuth {
 
     showNotification(message, type = 'info') {
         if (typeof showNotification === 'function') {
-            showNotification(message, type);
+
         } else {
             const notification = document.createElement('div');
             notification.className = `notification notification-${type}`;
@@ -293,6 +317,24 @@ class GoogleOAuth {
         }
     }
 
+    getUploadPageUrl() {
+        // 환경 감지
+        const hostname = window.location.hostname;
+        const isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || window.location.protocol === 'file:';
+        const isGitHubPages = hostname === '2025-smhrd-is-cloud-3.github.io';
+        
+        if (isLocal) {
+            // 로컬 개발환경: 현재 origin + /upload.html
+            return window.location.origin + '/upload.html';
+        } else if (isGitHubPages) {
+            // GitHub Pages: DateGenie 프로젝트 경로 포함
+            return 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/upload.html';
+        } else {
+            // 기타 프로덕션 환경
+            return window.location.origin + '/upload.html';
+        }
+    }
+
     parseJwt(token) {
         try {
             const base64Url = token.split('.')[1];
@@ -302,13 +344,13 @@ class GoogleOAuth {
             }).join(''));
             return JSON.parse(jsonPayload);
         } catch (e) {
-            console.error('Error parsing JWT:', e);
+
             return null;
         }
     }
 
     mockGoogleLogin() {
-        console.log('Using mock Google login for development');
+
         this.showLoadingState();
         setTimeout(() => {
             const mockUserData = {
@@ -324,20 +366,38 @@ class GoogleOAuth {
     }
 }
 
+function getUploadPageUrl() {
+    // 환경 감지
+    const hostname = window.location.hostname;
+    const isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || window.location.protocol === 'file:';
+    const isGitHubPages = hostname === '2025-smhrd-is-cloud-3.github.io';
+    
+    if (isLocal) {
+        // 로컬 개발환경: 현재 origin + /upload.html
+        return window.location.origin + '/upload.html';
+    } else if (isGitHubPages) {
+        // GitHub Pages: DateGenie 프로젝트 경로 포함
+        return 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/upload.html';
+    } else {
+        // 기타 프로덕션 환경
+        return window.location.origin + '/upload.html';
+    }
+}
+
 async function handleGoogleCallback() {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
     const error = urlParams.get('error');
     
     if (error) {
-        console.error('Google OAuth error:', error);
-        showNotification('구글 로그인 중 오류가 발생했습니다.', 'error');
+
+
         setTimeout(() => { window.location.href = '/login.html'; }, 2000);
         return;
     }
     
     if (code) {
-        console.log('Google OAuth code received:', code);
+
         
         try {
             // 실제 구글 API를 사용하여 사용자 정보 가져오기
@@ -349,27 +409,29 @@ async function handleGoogleCallback() {
                 name: userInfo.name,
                 picture: userInfo.picture,
                 provider: 'google',
-                verified: userInfo.verified_email
+                verified: userInfo.verified_email,
+                bio: '',
+                phone: ''
             };
             
             localStorage.setItem('user', JSON.stringify(realUserData));
             localStorage.setItem('authProvider', 'google');
-            showNotification('구글 로그인에 성공했습니다!', 'success');
-            setTimeout(() => { window.location.href = window.location.origin + '/dashboard.html'; }, 1500);
+            // 파일 업로드 페이지로 바로 리다이렉트
+            window.location.href = 'upload.html';
             
         } catch (error) {
-            console.error('Error getting user info:', error);
-            showNotification('사용자 정보를 가져오는 중 오류가 발생했습니다.', 'error');
-            setTimeout(() => { window.location.href = '/login.html'; }, 2000);
+
+
+            setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html'; }, 2000);
         }
     } else {
         // 코드가 없으면 로그인 페이지로 리디렉션
-        setTimeout(() => { window.location.href = '/login.html'; }, 1000);
+        setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html'; }, 1000);
     }
 }
 
 async function exchangeCodeForUserInfo(code) {
-    console.log('Code exchange not supported on client-side without server');
+
     // 클라이언트에서는 client_secret 없이 토큰 교환이 불가능
     // 대신 실제 사용자 데이터를 시뮬레이션하거나 One Tap 사용 권장
     

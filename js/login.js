@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Simulate API call
             setTimeout(() => {
                 // Here you would typically make an API call to your backend
-                console.log('Login attempt:', { email, password, remember });
+
                 
                 // Simulate successful login
                 showNotification('로그인에 성공했습니다!', 'success');
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Simulate social login
             setTimeout(() => {
-                console.log(`${provider} 로그인 시도`);
+
                 showNotification(`${provider} 로그인을 시도합니다...`, 'info');
                 
                 // Reset button
