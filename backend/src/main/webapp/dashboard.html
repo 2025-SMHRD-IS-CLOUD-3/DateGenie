@@ -527,7 +527,6 @@
 				<div class="list">
 					<div class="list-item"><div class="left"><i class="fas fa-id-card"></i> 이름</div><div id="profileName">-</div></div>
 					<div class="list-item"><div class="left"><i class="fas fa-envelope"></i> 이메일</div><div id="profileEmail">-</div></div>
-					<div class="list-item"><div class="left"><i class="fas fa-phone"></i> 전화번호</div><div id="profilePhone">-</div></div>
 					<div class="list-item"><div class="left"><i class="fas fa-calendar"></i> 가입일</div><div id="profileJoinDate">-</div></div>
 					<div class="list-item"><div class="left"><i class="fas fa-chart-line"></i> 분석 횟수</div><div id="profileAnalysisCount">-</div></div>
                     </div>
@@ -658,12 +657,34 @@
 			
 			// 기존 요소들 업데이트
 			document.getElementById('avatar').src = profilePicture;
-			document.getElementById('displayName').textContent = user.name || '사용자';
+			document.getElementById('displayName').textContent = user.nickname || '사용자';
 			document.getElementById('displayEmail').textContent = user.email || '';
-			document.getElementById('profileName').textContent = user.name || '-';
+			document.getElementById('profileName').textContent = user.nickname || '-';
 			document.getElementById('profileEmail').textContent = user.email || '-';
 			
-			// 전화번호 표시 (하이픈 자동 추가)
+			console.log("기본 정보 업데이트 완료");
+		    
+			// 가입일 표시 부분
+		    console.log("=== 가입일 처리 시작 ===");
+		    const joinDateElement = document.getElementById('profileJoinDate');
+		    console.log("joinDateElement 찾기 결과:", joinDateElement);
+		    console.log("user.joinDate 값:", user.joinDate);
+		    
+		    if (joinDateElement) {
+		        if (user.joinDate) {
+		            console.log("✅ user.joinDate가 존재:", user.joinDate);
+		            joinDateElement.textContent = user.joinDate;
+		            console.log("가입일 설정 완료. 새로운 textContent:", joinDateElement.textContent);
+		        } else {
+		            console.log("❌ user.joinDate가 없음");
+		            joinDateElement.textContent = '-';
+		        }
+		    } else {
+		        console.log("❌ profileJoinDate 요소를 찾을 수 없음");
+		    }
+			
+			
+			/* // 전화번호 표시 (하이픈 자동 추가)
 			const phoneElement = document.getElementById('profilePhone');
 			if (phoneElement) {
 				const phone = user.phone || '';
@@ -672,13 +693,13 @@
 				} else {
 					phoneElement.textContent = '-';
 				}
-			}
+			} */
 			
 			// 드롭다운 메뉴 사용자 정보 업데이트
 			const userAvatar = document.getElementById('userAvatar');
 			const userNameText = document.getElementById('userNameText');
 			if (userAvatar) userAvatar.src = profilePicture;
-			if (userNameText) { userNameText.textContent = user.name ? user.name : '사용자'; }
+			if (userNameText) { userNameText.textContent = user.nickname ? user.nickname : '사용자'; }
 		}
 
 		function initSidebarLinks() {

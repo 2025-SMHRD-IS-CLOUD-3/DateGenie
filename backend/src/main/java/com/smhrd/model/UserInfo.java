@@ -14,6 +14,7 @@ public class UserInfo {
 	private String email;
 	private String pw;
 	private String nickname;
+	private String joinDate;
 	
 	// email, pw, tel, address를 하나로 묶어줄 수 있는
 	// 내가 만든 자료형(객체)
@@ -22,6 +23,7 @@ public class UserInfo {
 	// 2. 메서드(행위, 행동)
 	// getter, setter, 생성자 (4개의 필드 초기화 시키는 생성자)!
 	
+	 // 회원가입용 생성자 (joinDate는 DB에서 자동 처리)
 	public UserInfo(String email, String pw, String nickname) {
 		this.email = email;
 		this.pw = pw;
@@ -33,9 +35,13 @@ public class UserInfo {
 		this.pw = pw;
 	}
 	
-	// 로그인 요청 데이터
+	public UserInfo(String email, String pw, String nickname, String joinDate) {
+	    this.email = email;
+	    this.pw = pw;
+	    this.nickname = nickname;
+	    this.joinDate = joinDate;
+	}
 	
-	// 로그인 응답 데이터
 	
 
 }

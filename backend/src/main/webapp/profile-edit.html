@@ -368,26 +368,33 @@
                  </div>
 
                 <form id="profileForm">
+                    <!-- <div class="form-group">
+                        <label for="email" class="form-label">이메일</label>
+                        <input type="email" id="email" class="form-input" placeholder="이메일을 입력하세요" readonly>
+                        <small style="color: #6b7280; font-size: 0.875rem;">이메일은 변경할 수 없습니다.</small>
+                    </div> -->
+                    
                     <div class="form-group">
-                        <label for="name" class="form-label">이름</label>
+                        <label for="name" class="form-label">닉네임</label>
                         <input type="text" id="name" class="form-input" placeholder="이름을 입력하세요">
                     </div>
 
                     <div class="form-group">
-                        <label for="email" class="form-label">이메일</label>
-                        <input type="email" id="email" class="form-input" placeholder="이메일을 입력하세요" readonly>
-                        <small style="color: #6b7280; font-size: 0.875rem;">이메일은 변경할 수 없습니다.</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="bio" class="form-label">자기소개</label>
-                        <textarea id="bio" class="form-input form-textarea" placeholder="자기소개를 입력하세요"></textarea>
-                    </div>
-
-                    <div class="form-group">
+					    <label for="password" class="form-label">비밀번호</label>
+					    <input type="password" id="password" class="form-input" placeholder="새 비밀번호를 입력하세요" minlength="8" maxlength="64">
+					</div>
+					
+					<div class="form-group">
+					    <label for="confirmPassword" class="form-label">비밀번호 확인</label>
+					    <input type="password" id="confirmPassword" class="form-input" placeholder="비밀번호를 다시 입력하세요" minlength="8" maxlength="64">
+					</div>
+					
+                    <!-- <div class="form-group">
                         <label for="phone" class="form-label">전화번호</label>
                         <input type="tel" id="phone" class="form-input" placeholder="전화번호를 입력하세요">
-                    </div>
+                    </div> -->
+                    
+                    
 
                                          <div style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: flex-end;">
                          <a href="dashboard.html" class="cancel-link">
@@ -401,7 +408,7 @@
             </section>
         </main>
     </div>
-
+				
     <!-- Footer -->
     <footer class="site-footer">
         <div class="container">
@@ -479,6 +486,123 @@
 
     <script src="js/main.js"></script>
     <script>
+    
+               	
+	    function validateNickname(nickname) {
+	        // 2~20자, 한글/영문/숫자/언더스코어 허용, 공백/특수문자 불가
+	        return /^[A-Za-z0-9_가-힣]{2,20}$/.test((nickname||'').trim());
+	    }
+
+	    function validatePassword(password) {
+	        // 8~64자, 대문자/소문자/숫자/특수문자 중 3종류 이상 포함, 공백 불가
+	        if (!password || password.length < 8 || password.length > 64) return false;
+	        if (/\s/.test(password)) return false;
+	        const hasLower = /[a-z]/.test(password);
+	        const hasUpper = /[A-Z]/.test(password);
+	        const hasDigit = /\d/.test(password);
+	        const hasSymbol = /[^A-Za-z0-9]/.test(password);
+	        const kinds = [hasLower, hasUpper, hasDigit, hasSymbol].filter(Boolean).length;
+	        return kinds >= 3;
+	    }
+	
+	    function showError(input, message) {
+	        const wrapper = input.closest('.form-group');
+	        const existing = wrapper.querySelector('.error-message');
+	        if (existing) existing.remove();
+	        
+	        const msg = document.createElement('div');
+	        msg.className = 'error-message';
+	        msg.style.cssText = 'color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem;';
+	        msg.textContent = message;
+	        wrapper.appendChild(msg);
+	        
+	        input.style.borderColor = '#ef4444';
+	    }
+	
+	    function clearError(input) {
+	        const wrapper = input.closest('.form-group');
+	        const existing = wrapper.querySelector('.error-message');
+	        if (existing) existing.remove();
+	        input.style.borderColor = '#d1d5db';
+	    }
+	
+	    function showSuccess(input) {
+	        clearError(input);
+	        input.style.borderColor = '#10b981';
+	    }
+	    
+	 // 닉네임 유효성 검사
+	    document.getElementById('name').addEventListener('blur', function(){
+	        const nickname = this.value.trim();
+	        if (nickname && !validateNickname(nickname)) {
+	            return showError(this, '닉네임은 2~20자, 한글/영문/숫자/_(언더스코어)만 가능합니다.');
+	        }
+	        if (nickname) {
+	            showSuccess(this);
+	        } else {
+	            clearError(this);
+	        }
+	    });
+
+	    document.getElementById('name').addEventListener('input', function(){ 
+	        clearError(this); 
+	    });
+	
+	    // 비밀번호 실시간 유효성 검사
+	    document.getElementById('password').addEventListener('blur', function(){
+	        const password = this.value;
+	        if (password && !validatePassword(password)) {
+	            return showError(this, '비밀번호는 8~64자, 대/소문자·숫자·특수문자 중 3종 이상 포함해야 합니다.');
+	        }
+	        if (password) {
+	            showSuccess(this);
+	        } else {
+	            clearError(this);
+	        }
+	    });
+	
+	    document.getElementById('password').addEventListener('input', function(){ 
+	        clearError(this); 
+	        // 비밀번호 확인도 재검증
+	        const confirmPasswordInput = document.getElementById('confirmPassword');
+	        if (confirmPasswordInput.value) {
+	            validateConfirmPassword();
+	        }
+	    });
+	
+	    // 비밀번호 확인 유효성 검사
+	    function validateConfirmPassword() {
+	        const passwordInput = document.getElementById('password');
+	        const confirmPasswordInput = document.getElementById('confirmPassword');
+	        const password = passwordInput.value;
+	        const confirmPassword = confirmPasswordInput.value;
+	        
+	        if (!confirmPassword) {
+	            clearError(confirmPasswordInput);
+	            return;
+	        }
+	        if (!password) {
+	            showError(confirmPasswordInput, '먼저 비밀번호를 입력해주세요.');
+	            return false;
+	        }
+	        if (password && !validatePassword(password)) {
+	            showError(confirmPasswordInput, '비밀번호 조건을 먼저 충족해주세요.');
+	            return false;
+	        }
+	        if (password !== confirmPassword) {
+	            showError(confirmPasswordInput, '비밀번호가 일치하지 않습니다.');
+	            return false;
+	        }
+	        showSuccess(confirmPasswordInput);
+	        return true;
+	    }
+	
+	    document.getElementById('confirmPassword').addEventListener('blur', validateConfirmPassword);
+	    document.getElementById('confirmPassword').addEventListener('input', function(){ 
+	        clearError(this); 
+	    });
+
+    
         function logout() {
             if (typeof google !== 'undefined' && google.accounts) { google.accounts.id.disableAutoSelect(); }
             localStorage.removeItem('user');
@@ -608,11 +732,40 @@
         document.getElementById('profileForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const formData = {
-                name: document.getElementById('name').value,
-                bio: document.getElementById('bio').value,
-                phone: document.getElementById('phone').value
-            };
+            const nameField = document.getElementById('name');
+            const passwordField = document.getElementById('password');
+            const confirmPasswordField = document.getElementById('confirmPassword');
+            
+            const name = nameField.value.trim();
+            const password = passwordField.value;
+            const confirmPassword = confirmPasswordField.value;
+            
+            // 닉네임 검사
+            if (!name) {
+                showError(nameField, '닉네임을 입력해주세요.');
+                return;
+            }
+            
+            // 비밀번호가 입력된 경우에만 검사 (초반 유효성 검사 함수 재사용)
+            if (password) {
+                // 비밀번호 유효성 검사
+                if (!validatePassword(password)) {
+                    showError(passwordField, '비밀번호는 8~64자, 대/소문자·숫자·특수문자 중 3종 이상 포함해야 합니다.');
+                    return;
+                }
+                
+                // 비밀번호 확인 검사
+                if (!validateConfirmPassword()) {
+                    return; // validateConfirmPassword() 함수에서 이미 에러 메시지 표시됨
+                }
+            }
+            
+            const formData = { name };
+            
+            // 비밀번호가 입력된 경우에만 추가
+            if (password) {
+                formData.password = password;
+            }
 
             // 프로필 사진이 변경되었는지 확인
             const avatarPreview = document.getElementById('avatarPreview');
@@ -646,21 +799,24 @@
             }
         });
 
-        // 전화번호 입력 시 자동 하이픈 추가
-        document.getElementById('phone').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, ''); // 숫자만 추출
-            
-            // 11자리 휴대폰 번호인 경우
-            if (value.length === 11) {
-                value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-            }
-            // 10자리 휴대폰 번호인 경우
-            else if (value.length === 10) {
-                value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-            }
-            
-            e.target.value = value;
-        });
+        // 전화번호 입력 시 자동 하이픈 추가 (phone 필드가 있을 때만)
+        const phoneInput = document.getElementById('phone');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, ''); // 숫자만 추출
+                
+                // 11자리 휴대폰 번호인 경우
+                if (value.length === 11) {
+                    value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                }
+                // 10자리 휴대폰 번호인 경우
+                else if (value.length === 10) {
+                    value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                }
+                
+                e.target.value = value;
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', function(){
             loadUserInfo();

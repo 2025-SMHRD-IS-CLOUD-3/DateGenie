@@ -5,7 +5,7 @@ class GoogleOAuth {
         this.clientId = cfg.googleClientId || '';
         const defaultRedirect = (window.location.origin && window.location.origin !== 'null')
             ? window.location.origin + '/auth/google/callback'
-            : 'http://localhost:3000/auth/google/callback';
+            : 'http://localhost:8081/auth/google/callback';
         this.redirectUri = cfg.redirectUri || defaultRedirect;
         this.scope = 'email profile openid';
         this.isProcessing = false; // 요청 중복 방지 플래그

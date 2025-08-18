@@ -75,6 +75,13 @@ System.out.println("===== LoginService 호출됨 =====");
             if (result != null) {
                 System.out.println("=== 로그인 성공 처리 ===");
                 
+             // result 객체의 모든 필드 확인 (디버깅 추가)
+                System.out.println("result.getEmail(): " + result.getEmail());
+                System.out.println("result.getPw(): " + result.getPw());
+                System.out.println("result.getNickname(): " + result.getNickname());
+                System.out.println("result.getJoinDate(): " + result.getJoinDate()); // 이게 핵심!
+                System.out.println("result.toString(): " + result.toString());    
+                
                 // 세션 설정
                 HttpSession session = request.getSession();
                 session.setAttribute("loginMember", result);
