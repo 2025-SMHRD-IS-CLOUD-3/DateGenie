@@ -136,28 +136,137 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  // 폼 제출 처리 (일반 폼 제출)
   if (form) {
     form.addEventListener('submit', function(e){
-	  e.preventDefault();
-	
-	  console.log("2단계: 유효성 검사 시작");	
+      e.preventDefault();
       
-	  let isValid = true;
+      console.log('=== 회원가입 폼 제출 시작 ===');
+      
+      let isValid = true;
 
-      if (!validateEmail(emailInput.value.trim())) { showError(emailInput,'올바른 이메일을 입력해주세요.'); isValid=false; }
-      if (!validateNickname(nicknameInput.value.trim())) { showError(nicknameInput,'닉네임은 2~20자, 한글/영문/숫자/_(언더스코어)만 가능합니다.'); isValid=false; }
-      if (!validatePassword(passwordInput.value)) { showError(passwordInput,'비밀번호는 8~64자, 대/소문자·숫자·특수문자 중 3종 이상 포함해야 합니다.'); isValid=false; }
-      if (confirmPasswordInput.value !== passwordInput.value) { showError(confirmPasswordInput,'비밀번호가 일치하지 않습니다.'); isValid=false; }
-      if (!agreeInput.checked) { alert('약관에 동의해주세요.'); return;/*isValid=false;*/ }
-		
-	  /*
-      if (!isValid) return;
-	  */
+      // 폼 유효성 검사
+      const email = emailInput.value.trim();
+      const nickname = nicknameInput.value.trim();
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      if (!validateEmail(email)) { 
+        showError(emailInput,'올바른 이메일을 입력해주세요.'); 
+        isValid = false; 
+      }
+      
+      if (!validateNickname(nickname)) { 
+        showError(nicknameInput,'닉네임은 2~20자, 한글/영문/숫자/_(언더스코어)만 가능합니다.'); 
+        isValid = false; 
+      }
+      
+      if (!validatePassword(password)) { 
+        showError(passwordInput,'비밀번호는 8~64자, 대/소문자·숫자·특수문자 중 3종 이상 포함해야 합니다.'); 
+        isValid = false; 
+      }
+      
+      if (confirmPassword !== password) { 
+        showError(confirmPasswordInput,'비밀번호가 일치하지 않습니다.'); 
+        isValid = false; 
+      }
+      
+      if (!agreeInput.checked) { 
+        showNotification('약관에 동의해주세요.', 'error'); 
+        isValid = false; 
+      }
+
+      if (!isValid) {
+        console.log('폼 유효성 검사 실패');
+        return;
+      }
+
+      // 로딩 상태 표시
+      const submitBtn = form.querySelector('.signup-btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 가입 중...';
+      submitBtn.disabled = true;
+
+      console.log('서버로 폼 제출 시작');
+      console.log('전송 데이터:', {
+        email: email,
+        nickname: nickname,
+        password: password ? '****' : null
+      });
+
+      // 폼 action과 method 설정
+      form.action = '/BackEnd/JoinService';
+      form.method = 'POST';
 	  
-	       
-	  // preventDefault()로 막았던 기본 제출을 다시 실행
-	  form.submit();
+	  showNotification('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.', 'success');
+      
+      // 잠시 후 폼 제출 (로딩 애니메이션을 보여주기 위해)
+      setTimeout(function() {
+        form.submit(); // 일반 폼 제출
+      }, 500);
     });
   }
 });
 
+// Notification function
+if (typeof showNotification === 'undefined') {
+  function showNotification(message, type) {
+    type = type || 'info';
+    
+    const notification = document.createElement('div');
+    notification.className = 'notification notification-' + type;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(function() {
+      notification.classList.add('show');
+    }, 100);
+    
+    setTimeout(function() {
+      notification.classList.remove('show');
+      setTimeout(function() {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 300);
+    }, 5000);
+  }
+  
+  // Notification styles
+  if (!document.querySelector('#notification-styles')) {
+    const notificationStyles = `
+      .notification { 
+        position: fixed; 
+        top: 20px; 
+        right: 20px; 
+        padding: 1rem 1.5rem; 
+        border-radius: 8px; 
+        color: white; 
+        font-weight: 500; 
+        z-index: 10000; 
+        transform: translateX(100%); 
+        transition: transform 0.3s ease; 
+        max-width: 400px; 
+        word-wrap: break-word;
+      } 
+      .notification.show { 
+        transform: translateX(0); 
+      } 
+      .notification-info { 
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8); 
+      } 
+      .notification-success { 
+        background: linear-gradient(135deg, #10b981, #059669); 
+      } 
+      .notification-error { 
+        background: linear-gradient(135deg, #ef4444, #dc2626); 
+      }
+    `;
+    
+    const styleSheet = document.createElement('style');
+    styleSheet.id = 'notification-styles';
+    styleSheet.textContent = notificationStyles;
+    document.head.appendChild(styleSheet);
+  }
+}

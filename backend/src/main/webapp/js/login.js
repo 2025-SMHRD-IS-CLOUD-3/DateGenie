@@ -136,49 +136,57 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 로그인 중...';
             submitBtn.disabled = true;
             
-            const loginData = {
-				email: email,
-				password: password
+            // Simulate API call
+			const loginData = {
+			    email: email,
+			    password: password
 			};
 			
-			try{
-				fetch('/BackEnd/LoginService', {
-				   method: 'POST',
-				   headers: {
-				      'Content-Type': 'application/json',
-				   },
-				   body: JSON.stringify(loginData),
+			// fetch 요청
+			fetch('/BackEnd/LoginService', {
+			    method: 'POST',
+			    headers: {
+			        'Content-Type': 'application/json',
+			    },
+			    body: JSON.stringify(loginData),
 			})
-			
 			.then(function(response) {
-			            return response.json();
-			        })
-			        .then(function(data) {
-			            console.log('서버 응답:', data);
+			    return response.json();
+			})
+			.then(function(data) {
+			    console.log('서버 응답:', data);
 
-			            if (data.success) {
-			                console.log('로그인 성공:', data);
-			                showNotification(data.message || '로그인에 성공했습니다!', 'success');
+			    if (data.success) {
+			        console.log('로그인 성공:', data);
+			        
+			        // 사용자 정보 localStorage에 저장
+			        if (data.userInfo) {
+			            localStorage.setItem('user', JSON.stringify(data.userInfo));
+			            console.log('localStorage 저장 완료');
+			        }
+			        
+			        showNotification(data.message || '로그인에 성공했습니다!', 'success');
 
-			                setTimeout(function() {
-			                    window.location.href = data.redirectUrl || 'main.html';
-			                }, 1500);
-			            } else {
-			                console.log('로그인 실패:', data);
-			                showNotification(data.message || '로그인에 실패했습니다.', 'error');
-			                
-			                submitBtn.innerHTML = originalText;
-			                submitBtn.disabled = false;
-			            }
-			        })
-			        .catch(function(error) {
-			            console.error('로그인 에러:', error);
-			            showNotification('로그인 중 오류가 발생했습니다.', 'error');
+			        setTimeout(function() {
+			            window.location.href = data.redirectUrl || 'index.html';
+			        }, 1500);
+			    } else {
+			        console.log('로그인 실패:', data);
+			        showNotification(data.message || '로그인에 실패했습니다.', 'error');
+			        
+			        submitBtn.innerHTML = originalText;
+			        submitBtn.disabled = false;
+			    }
+			})
+			.catch(function(error) {
+			    console.error('로그인 에러:', error);
+			    showNotification('로그인 중 오류가 발생했습니다.', 'error');
 
-			            submitBtn.innerHTML = originalText;
-			            submitBtn.disabled = false;
-			        });	
-            
+			    submitBtn.innerHTML = originalText;
+			    submitBtn.disabled = false;
+			});
+			
+			
         });
     }
 

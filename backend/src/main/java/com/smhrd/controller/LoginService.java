@@ -83,7 +83,7 @@ System.out.println("===== LoginService 호출됨 =====");
                 responseData.put("success", true);
                 responseData.put("message", "로그인에 성공했습니다!");
                 responseData.put("userInfo", result);
-                responseData.put("redirectUrl", "main.html");
+                responseData.put("redirectUrl", "index.html");
                 
                 System.out.println("성공 응답 데이터 생성 완료");
                 System.out.println("로그인 성공 사용자: " + result.getEmail());

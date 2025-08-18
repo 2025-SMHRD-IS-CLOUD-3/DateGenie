@@ -84,7 +84,7 @@ public class JoinService extends HttpServlet {
 		        response.setCharacterEncoding("UTF-8");
 		        System.out.println("응답 설정 완료");
 		        
-		        response.getWriter().println("<script>alert('회원가입이 성공했습니다. 로그인창으로 이동합니다.'); location.href='login.html';</script>");
+		        response.sendRedirect("login.html");
 		        System.out.println("응답 전송 완료");
 		        
 		    } else {
