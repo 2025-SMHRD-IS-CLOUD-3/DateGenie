@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Genie - AI로 분석하는 연애 전략</title>
+    <link rel="icon" type="image/svg+xml" href="images/icon.svg">
+
+        <style>html.wf-hide-body body{visibility:hidden}</style>
+        <script>(function(){try{document.documentElement.classList.add('wf-hide-body')}catch(e){}})();</script>
+        <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin>
+        <link rel="preload" as="font" href="https://fastly.jsdelivr.net/gh/projectnoonnu/2507-1@1.0/SkyblessingInjeFontTTF.woff" type="font/woff" crossorigin>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+        <script>
+            (function(){
+              var d=document.documentElement; var revealed=false; 
+              function reveal(){ 
+                if(revealed) return; 
+                revealed=true; 
+                d.classList.remove('wf-hide-body'); 
+              }
+              
+              // 최대 2초 후 강제 표시
+              setTimeout(reveal, 2000);
+              
+              try{
+                if(document.fonts && document.fonts.load){
+                  Promise.race([
+                    document.fonts.load('1em Pretendard').catch(function(){ return Promise.resolve(); }),
+                    document.fonts.ready,
+                    new Promise(function(r){ setTimeout(r,800); })
+                  ]).then(reveal).catch(reveal);
+                } else { setTimeout(reveal, 300); }
+              }catch(e){ reveal(); }
+            })();
+        </script>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* User Dropdown Menu Styles */
+        .user-dropdown {
+            position: relative;
+            margin-left: auto;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            border: none;
+        }
+
+        .user-info:hover { transform: none; }
+        .user-info:hover .user-greet { transform: none; }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .user-name { color: #1f2937; font-size: 0.9rem; white-space: nowrap; }
+        .user-name-text { font-weight: 800; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 2px; cursor: pointer; }
+        .user-greet { cursor: default; text-decoration: none; }
+
+        .dropdown-arrow {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            transition: transform 0.2s ease;
+        }
+
+        .user-info.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #374151;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            background: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .dropdown-item i {
+            color: #6b7280;
+            width: 16px;
+        }
+
+        .dropdown-item.logout-btn:hover {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .dropdown-item.logout-btn:hover i {
+            color: #dc2626;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 0.5rem 0;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .user-name {
+                display: none;
+            }
+            .user-dropdown {
+                margin-left: 1rem;
+            }
+        }
+
+        /* 다크 모드 */
+        body.dark-mode .user-info { background: transparent; border-color: transparent; }
+        body.dark-mode .user-info:hover { background: transparent; }
+        body.dark-mode .user-name { color: white; }
+        body.dark-mode .user-name-text { color: white; }
+        body.dark-mode .user-greet { color: rgba(255, 255, 255, 0.8); }
+        body.dark-mode .dropdown-menu {
+            background: #2a2a2a;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        body.dark-mode .dropdown-item {
+            color: #e5e7eb;
+        }
+        body.dark-mode .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+        body.dark-mode .dropdown-divider {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+        <script>
+            (function(){
+              try {
+                var d = document.documentElement;
+                d.classList.add('wf-hide-logo');
+                var font = new FontFace('SkyblessingInjeFontTTF',
+                  'url(https://fastly.jsdelivr.net/gh/projectnoonnu/2507-1@1.0/SkyblessingInjeFontTTF.woff) format("woff")');
+                font.load().then(function(loaded){
+                  document.fonts.add(loaded);
+                  d.classList.remove('wf-hide-logo');
+                }).catch(function(){
+                  d.classList.remove('wf-hide-logo');
+                });
+                // 폴백 타이머(2초 후 강제 표시)
+                setTimeout(function(){ d.classList.remove('wf-hide-logo'); }, 2000);
+              } catch(e) { document.documentElement.classList.remove('wf-hide-logo'); }
+            })();
+        </script>
+    </head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="#" id="logoHomeLink" class="brand-logo" aria-label="Date Genie Home">
+                    <i class="fas fa-heart heart-icon" aria-hidden="true"></i>
+                    <span class="logo-text">Date Genie</span>
+                </a>
+            </div>
+            <!-- 모바일 햄버거 버튼 -->
+            <button class="hamburger" aria-label="메뉴 열기/닫기" aria-expanded="false" aria-controls="primaryMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="nav-menu" id="primaryMenu" aria-hidden="true">
+                <li><a href="#home">홈</a></li>
+                <li><a href="#features">기능</a></li>
+                <li><a href="#pricing">요금제</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <div class="nav-auth-buttons" id="authButtons">
+                <a href="login.html" class="nav-btn-login">로그인</a>
+                <a href="signup.html" class="nav-btn-signup">회원가입</a>
+            </div>
+            
+            <!-- User Dropdown Menu (로그인 후 표시) -->
+            <div class="user-dropdown" id="userDropdown" style="display: none;">
+                <div class="user-info" id="userDropdownToggle">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iNCIgeT0iNCI+CjxwYXRoIGQ9Ik0xMiAxMmE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhtMCA2YTggOCAwIDEgMCAwIDguMDA2djBhOCA4IDAgMCAwIDAtLjAwNnoiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cjwvc3ZnPgo=" alt="프로필" class="user-avatar" id="userAvatar">
+                    <span class="user-name">
+                        <span id="userNameText" class="user-name-text">사용자</span><span class="user-greet">님 환영합니다</span>
+                    </span>
+                </div>
+                <div class="dropdown-menu" id="userDropdownMenu">
+                    <a href="upload.html" class="dropdown-item">
+                        <i class="fas fa-upload"></i>
+                        <span>파일 업로드</span>
+                    </a>
+                    <a href="dashboard.html" class="dropdown-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>마이페이지</span>
+                    </a>
+                    <a href="profile-edit.html" class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        <span>회원정보 수정</span>
+                    </a>
+                    <a href="settings.html" class="dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        <span>설정</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>로그아웃</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <!-- Heartbeat Animation Background -->
+        <div class="heartbeat-container">
+            <svg class="heartbeat-line" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="heartbeatGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#ec4899;stop-opacity:0.8" />
+                        <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0.8" />
+                    </linearGradient>
+                </defs>
+                <path class="heartbeat-path" d="M0,100 L400,100 L420,50 L440,150 L460,20 L480,180 L500,100 L1200,100" 
+                      stroke="url(#heartbeatGradient)" 
+                      stroke-width="2.5" 
+                      fill="none" 
+                      stroke-linecap="round" 
+                      stroke-linejoin="round"/>
+            </svg>
+        </div>
+        
+        <!-- Nebula Genie Overlay -->
+        <div class="nebula-overlay" aria-hidden="true">
+            <div class="nebula-blob"></div>
+            <div class="nebula-stars">
+                <i style="left:10%;top:20%"></i>
+                <i class="s2" style="left:25%;top:35%"></i>
+                <i class="s3" style="left:40%;top:15%"></i>
+                <i style="left:60%;top:28%"></i>
+                <i class="s2" style="left:75%;top:18%"></i>
+                <i class="s3" style="left:85%;top:40%"></i>
+                <i style="left:20%;top:70%"></i>
+                <i class="s2" style="left:55%;top:75%"></i>
+                <i class="s3" style="left:72%;top:62%"></i>
+            </div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-heart"></i>
+                AI 기반 썸 분석
+            </div>
+            
+            <h1 class="hero-title">
+                <span class="gradient-text">AI 지능</span>으로 썸 관계를 <br>
+                분석해보세요
+            </h1>
+            
+            <p class="hero-description">
+                우리의 고급 AI가 카카오톡 대화와 통화 녹음을 분석하여 썸 관계의 발전 가능성을 정확하게 측정하고<br>
+                맞춤형 연애 전략을 제공합니다.
+            </p>
+            
+            <div class="hero-buttons">
+                <button class="btn-primary">
+                    대화 분석 시작하기
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn-secondary">
+                    분석 예시 보기
+                </button>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number text-3xl font-bold text-white mb-2">10K+</div>
+                    <div class="stat-label text-gray-400">분석 완료</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number text-3xl font-bold text-white mb-2">95%</div>
+                    <div class="stat-label text-gray-400">정확도</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number text-3xl font-bold text-white mb-2">24/7</div>
+                    <div class="stat-label text-gray-400">AI 분석</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>왜 Date Genie의 AI 썸 분석을 선택해야 할까요?</h2>
+                <p>우리의 최첨단 기술은 감정 분석, 대화 패턴 분석, 성격 유형 분석을 결합하여 
+                   당신의 썸 관계를 정확하게 분석합니다.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="glow-card" data-glow-color="purple">
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>대화 분석</h3>
+                        <p>카카오톡 대화 파일과 통화 녹음을 AI가 분석하여 
+                           감정 흐름과 썸 가능성을 정확하게 측정합니다.</p>
+                    </div>
+                </div>
+                
+                <div class="glow-card" data-glow-color="red">
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3>감정 분석</h3>
+                        <p>대화의 감정 흐름을 분석하여 최고 호감일을 자동 탐색하고 
+                           썸 가능성 점수를 0~100%로 정확하게 산출합니다.</p>
+                    </div>
+                </div>
+                
+                <div class="glow-card" data-glow-color="blue">
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>성격 분석</h3>
+                        <p>MBTI 기반으로 상대방의 성격을 분석하고 
+                           맞춤형 공략법과 고백 타이밍을 추천합니다.</p>
+                    </div>
+                </div>
+                
+                <div class="glow-card" data-glow-color="green">
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>커뮤니티 중심</h3>
+                        <p>의미 있는 연결을 위해 노력하는 같은 생각을 가진 
+                           개인들의 커뮤니티에 참여하세요.</p>
+                    </div>
+                </div>
+                
+                <div class="glow-card" data-glow-color="orange">
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3>검증된 결과</h3>
+                        <p>우리 플랫폼을 사용하는 사용자의 95%가 첫 달 내에 
+                           더 나은 연애 경험을 보고합니다.</p>
+                    </div>
+                </div>
+                
+                <div class="glow-card" data-glow-color="purple">
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <h3>24/7 지원</h3>
+                        <p>우리의 AI 기반 지원 시스템이 항상 사용 가능하여 
+                           연애 여정을 탐색하는 데 도움을 줍니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2>요금제 선택</h2>
+                <p>당신의 연애 목표에 맞는 완벽한 플랜을 선택하세요</p>
+            </div>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>무료</h3>
+                        <div class="price">
+                            <span class="amount">₩0</span>
+                            <span class="period">/월</span>
+                        </div>
+                        <p>기본 데이트 매칭 기능을 무료로 체험해보세요</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 기본 프로필 매칭</li>
+                        <li><i class="fas fa-check"></i> 5개 데이트 추천</li>
+                        <li><i class="fas fa-check"></i> 기본 호환성 분석</li>
+                        <li><i class="fas fa-check"></i> 기본 채팅 기능</li>
+                    </ul>
+                    <button class="btn-secondary">무료 시작하기</button>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">인기</div>
+                    <div class="pricing-header">
+                        <h3>프리미엄</h3>
+                        <div class="price">
+                            <span class="amount">₩29,900</span>
+                            <span class="period">/월</span>
+                        </div>
+                        <p>고급 AI 매칭과 개인화된 데이트 추천</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 고급 AI 매칭 알고리즘</li>
+                        <li><i class="fas fa-check"></i> 무제한 데이트 추천</li>
+                        <li><i class="fas fa-check"></i> 상세 호환성 분석</li>
+                        <li><i class="fas fa-check"></i> 1:1 데이트 코칭</li>
+                        <li><i class="fas fa-check"></i> 우선 매칭 서비스</li>
+                        <li><i class="fas fa-check"></i> 고급 필터링 옵션</li>
+                    </ul>
+                    <button class="btn-primary">프리미엄 시작하기</button>
+                </div>
+                
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>VIP</h3>
+                        <div class="price">
+                            <span class="amount">₩99,900</span>
+                            <span class="period">/월</span>
+                        </div>
+                        <p>최고급 데이트 서비스와 전담 매니저</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 모든 프리미엄 기능</li>
+                        <li><i class="fas fa-check"></i> 전담 데이트 코치</li>
+                        <li><i class="fas fa-check"></i> 맞춤형 데이트 계획</li>
+                        <li><i class="fas fa-check"></i> 우선 매칭 서비스</li>
+                        <li><i class="fas fa-check"></i> 24/7 전담 지원</li>
+                        <li><i class="fas fa-check"></i> VIP 데이트 이벤트 초대</li>
+                    </ul>
+                    <button class="btn-secondary">VIP 시작하기</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2>자주하는 질문</h2>
+                <p>Date Genie에 대해 궁금한 점들을 확인해보세요</p>
+            </div>
+            
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Date Genie는 어떻게 작동하나요?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Date Genie는 고급 AI 기술을 사용하여 당신의 데이트 선호도, 성격, 관심사를 분석합니다. 
+                           이를 바탕으로 가장 호환되는 데이트 파트너를 추천하고 개인화된 데이트 조언을 제공합니다.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>개인정보는 안전한가요?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>네, 당신의 개인정보는 최고 수준의 암호화로 보호됩니다. 
+                           우리는 GDPR과 한국 개인정보보호법을 준수하며, 
+                           데이터는 오직 서비스 개선과 매칭 목적으로만 사용됩니다.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>무료 플랜으로도 충분한가요?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>무료 플랜으로도 기본적인 분석과 매칭을 경험할 수 있습니다. 
+                           하지만 더 정확하고 상세한 분석을 원한다면 프리미엄 플랜을 추천합니다.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>AI 분석의 정확도는 어느 정도인가요?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>우리의 AI는 95%의 정확도를 보여주고 있습니다. 
+                           지속적인 학습과 개선을 통해 더욱 정확한 분석을 제공하고 있습니다.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>환불 정책은 어떻게 되나요?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>첫 30일 이내에는 100% 환불을 보장합니다. 
+                           서비스에 만족하지 못하시면 언제든지 연락해 주세요.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>고객 지원은 어떻게 받을 수 있나요?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>24/7 AI 챗봇 지원과 함께, 평일 오전 9시부터 오후 6시까지 
+                           전문 상담원이 실시간으로 도움을 드립니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <i class="fas fa-heart"></i>
+                        <span>Date Genie</span>
+                    </div>
+                    <p class="footer-description">AI로 분석하는 연애 전략</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-section">
+                        <h4>페이지</h4>
+                        <ul>
+                            <li><a href="index.html">홈</a></li>
+                            <li><a href="#features">기능</a></li>
+                            <li><a href="#pricing">요금제</a></li>
+                            <li><a href="#faq">FAQ</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4>기능</h4>
+                        <ul>
+                            <li><span class="menu-item">마이페이지</span></li>
+                            <li><span class="menu-item">파일 업로드</span></li>
+                            <li><span class="menu-item">회원정보 수정</span></li>
+                            <li><span class="menu-item">설정</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4>지원 & 도움말</h4>
+                        <ul>
+                            <li><a href="#faq">자주하는 질문</a></li>
+                            <li><a href="#support">고객센터</a></li>
+                            <li><a href="#guide">사용 가이드</a></li>
+                            <li><a href="#contact">문의하기</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <a href="terms.html">이용약관</a>
+                    <span aria-hidden="true">·</span>
+                    <a href="privacy.html">개인정보처리방침</a>
+                    <span aria-hidden="true">·</span>
+                    <span>© <span id="footerYear">2024</span> Date Genie. All rights reserved.</span>
+                </div>
+                <div class="social-links">
+                    <a href="https://github.com/2025-SMHRD-IS-CLOUD-3/DateGenie" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@%EC%A0%95%EA%B4%80%EC%98%81-v2i" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://www.instagram.com/kwanhh25/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.40s-.644-1.44-1.439-1.40z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 다크모드 토글 버튼 -->
+    <button class="dark-mode-toggle" id="darkModeToggle">
+        <i class="fas fa-sun sun-icon"></i>
+        <i class="fas fa-moon moon-icon"></i>
+    </button>
+
+    <script src="js/main.js"></script>
+    <script src="js/footer.js"></script>
+    <script>
+        // 사용자 드롭다운 메뉴 기능
+        function initUserDropdown() {
+            const dropdownToggle = document.getElementById('userDropdownToggle');
+            const dropdownMenu = document.getElementById('userDropdownMenu');
+            
+            if (!dropdownToggle || !dropdownMenu) return;
+            
+            // 드롭다운 토글 클릭 이벤트
+            dropdownToggle.addEventListener('click', function(e) {
+                // "님, 환영합니다" 부분을 클릭했을 때는 드롭다운을 열지 않음
+                if (e.target.classList.contains('user-greet')) {
+                    return;
+                }
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const isOpen = dropdownMenu.classList.contains('show');
+                
+                if (isOpen) {
+                    closeDropdown();
+                } else {
+                    openDropdown();
+                }
+            });
+            
+            // 문서 클릭 시 드롭다운 닫기
+            document.addEventListener('click', function(e) {
+                if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    closeDropdown();
+                }
+            });
+            
+            // ESC 키로 드롭다운 닫기
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeDropdown();
+                }
+            });
+            
+            function openDropdown() {
+                dropdownMenu.classList.add('show');
+                dropdownToggle.classList.add('active');
+            }
+            
+            function closeDropdown() {
+                dropdownMenu.classList.remove('show');
+                dropdownToggle.classList.remove('active');
+            }
+        }
+
+        // 사용자 정보 로드 및 UI 업데이트
+        function loadUserInfo() {
+            const userInfo = localStorage.getItem('user');
+            const authButtons = document.getElementById('authButtons');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            if (userInfo) {
+                // 로그인된 상태
+                const user = JSON.parse(userInfo);
+                
+                // 인증 버튼 숨기고 사용자 드롭다운 표시
+                if (authButtons) authButtons.style.display = 'none';
+                if (userDropdown) userDropdown.style.display = 'flex';
+                
+                // 사용자 정보 업데이트
+                const userAvatar = document.getElementById('userAvatar');
+                const userNameText = document.getElementById('userNameText');
+                
+                if (userAvatar) {
+                    let profilePicture = user.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iNCIgeT0iNCI+CjxwYXRoIGQ9Ik0xMiAxMmE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhtMCA2YTggOCAwIDEgMCAwIDguMDA2djBhOCA4IDAgMCAwIDAtLjAwNnoiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cjwvc3ZnPgo=';
+                    if (profilePicture.includes('googleusercontent.com') && profilePicture.includes('=s96-c')) {
+                        profilePicture = profilePicture.replace('=s96-c','=s200-c');
+                    }
+                    userAvatar.src = profilePicture;
+                }
+                
+                if (userNameText) {
+                    userNameText.textContent = user.name ? user.name : '사용자';
+                }
+                
+                // 드롭다운 메뉴 초기화
+                initUserDropdown();
+            } else {
+                // 로그인되지 않은 상태
+                if (authButtons) authButtons.style.display = 'flex';
+                if (userDropdown) userDropdown.style.display = 'none';
+            }
+        }
+
+        // 로그아웃 함수
+        function logout() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.disableAutoSelect();
+            }
+            localStorage.removeItem('user');
+            localStorage.removeItem('authProvider');
+            window.location.href = 'login.html';
+        }
+
+        // 페이지 로드 시 사용자 정보 확인
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserInfo();
+        });
+    </script>
+</body>
+</html> 
