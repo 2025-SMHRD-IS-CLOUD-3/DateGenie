@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.smhrd.db.SqlSessionManager;
+import com.smhrd.util.SecurityUtils;
 
 public class MemberDAO {
 	
@@ -17,40 +18,108 @@ public class MemberDAO {
 	SqlSessionFactory sqlSessionFactory = SqlSessionManager.getSqlSessionFactory();
 	// 2. 기능 단위로 메서드 작성
 	
-	// 2.1 회원가입 메서드 (join)
+	// 회원가입 메서드
 	public int join(UserInfo member) {
-	// JoinService에서 보낸 데이터 MavenMember를 받아오기
-		// openSession(true) --> 자동 auto commit
-		// ex) join을 통해서 DB에 데이터 저장하는 경우 수동으로 commit(x), 자동으로 commit됨
-		// 2.1.1 factory를 통해서 sqlsession 생성
 		SqlSession sqlsession = sqlSessionFactory.openSession(true);
-		// 2.1.2 sqlsession을 이용해서 db에서 기능 작업
-		// sqlsession.insert(statement, parameter);
-		//					(mapper내의 쿼리문의 id, 쿼리문 실행시에 필요한 데이터)
-		// insert 메서드의 리턴값 : insert 구문 실행시에 영향 받는 행의 개수!
-		int cnt = sqlsession.insert("join", member);
-		// 2.1.3 리턴값(결과값)으로 판단하기 위한 코드: servlet(JoinService)
-		// 		 결과값 리턴!!
-		System.out.println("결과 값 출력 : " + cnt);
-		//2.1.4 db 사용이 끝났기에 sqlSession 닫기
-		sqlsession.close();
+		int cnt = 0;
+		
+		try {
+			System.out.println("=== MemberDAO.join() 시작 ===");
+			System.out.println("가입 정보: " + member.getEmail() + ", " + member.getNickname());
+			
+			// Generate salt and hash password before storing
+			String salt = SecurityUtils.generateSalt();
+			String hashedPassword = SecurityUtils.hashPassword(member.getPw(), salt);
+			
+			// Update member object with hashed password and salt
+			member.setSalt(salt);
+			member.setPw(hashedPassword);
+			
+			System.out.println("패스워드 해싱 완료");
+			
+			cnt = sqlsession.insert("com.smhrd.db.UserInfo.join", member);
+			System.out.println("DB 삽입 결과: " + cnt);
+			
+		} catch (Exception e) {
+			System.out.println("MemberDAO.join() 에러: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			if (sqlsession != null) {
+				sqlsession.close();
+			}
+		}
+		
 		return cnt;
 	}
-	// login 기능 메서드
+	// 로그인 메서드
 	public UserInfo login(UserInfo loginMember) {
-		// 1. sqlSession 생성
-		SqlSession sqlsession = sqlSessionFactory.openSession(true);
-		// 2. sqlSession을 이용해서 메서드 실행
-		// 쿼리문 : select * from maven_member where id=? pw=?
-		//	-> 상단의 쿼리문 실행시에 매칭되는 데이터가 있다면 한 행의 데이터 출력(email,pw,tel, adress)
-		//	*리턴값을 설정해주기 위해서 자료형을 4개의 데이터를 하나로 묶을 수 있는 
-		//		Maven_member로 설정한다.
-		UserInfo sMember = sqlsession.selectOne("login", loginMember);
-		// 3. 리턴값 판별
-		// 4. sqlSession 닫기
-		sqlsession.close();
-		return sMember;
+		SqlSession sqlsession = sqlSessionFactory.openSession();
+		UserInfo result = null;
+		
+		try {
+			System.out.println("=== MemberDAO.login() 시작 ===");
+			System.out.println("로그인 시도: " + loginMember.getEmail());
+			
+			// Get user data by email only
+			UserInfo storedUser = sqlsession.selectOne("com.smhrd.db.UserInfo.login", loginMember);
+			
+			if (storedUser != null) {
+				// Verify password using stored hash and salt
+				String inputPassword = loginMember.getPw();
+				String storedHash = storedUser.getPw();
+				String storedSalt = storedUser.getSalt();
+				
+				if (SecurityUtils.verifyPassword(inputPassword, storedHash, storedSalt)) {
+					result = storedUser;
+					System.out.println("로그인 성공: " + result.getEmail() + ", " + result.getNickname());
+				} else {
+					System.out.println("로그인 실패: 비밀번호 불일치");
+				}
+			} else {
+				System.out.println("로그인 실패: 사용자 정보 없음");
+			}
+			
+		} catch (Exception e) {
+			System.out.println("MemberDAO.login() 에러: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			if (sqlsession != null) {
+				sqlsession.close();
+			}
+		}
+		
+		return result;
 	}
+	
+	// 이메일 중복 체크 메서드
+	public UserInfo checkEmailExists(String email) {
+		SqlSession sqlsession = sqlSessionFactory.openSession();
+		UserInfo result = null;
+		
+		try {
+			System.out.println("=== MemberDAO.checkEmailExists() 시작 ===");
+			System.out.println("중복 체크 이메일: " + email);
+			
+			result = sqlsession.selectOne("com.smhrd.db.UserInfo.checkEmail", email);
+			
+			if (result != null) {
+				System.out.println("이메일 중복: " + email);
+			} else {
+				System.out.println("이메일 사용 가능: " + email);
+			}
+			
+		} catch (Exception e) {
+			System.out.println("MemberDAO.checkEmailExists() 에러: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			if (sqlsession != null) {
+				sqlsession.close();
+			}
+		}
+		
+		return result;
+	}
+	
 	// update 기능 메서드
 	public int update(UserInfo updateMem) {
 		SqlSession sqlsession = sqlSessionFactory.openSession(true);

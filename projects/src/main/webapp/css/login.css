@@ -165,7 +165,7 @@ body {
 
 .input-wrapper input {
     width: 100%;
-    padding: 1rem 3.25rem 1rem 3rem;
+    padding: 1rem 3.5rem 1rem 3rem;
     border: 2px solid #e5e7eb;
     border-radius: 12px;
     font-size: 1rem;
@@ -189,7 +189,7 @@ body {
 
 .toggle-password {
     position: absolute;
-    right: 0.75rem;
+    right: 1rem;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -197,7 +197,6 @@ body {
     color: #666;
     cursor: pointer;
     z-index: 1;
-    transition: all 0.3s ease;
     padding: 0.25rem;
     border-radius: 6px;
     font-size: 1rem;
@@ -213,10 +212,6 @@ body {
 
 .toggle-password i { pointer-events: none; }
 
-.toggle-password:hover {
-    color: inherit;
-    background: transparent;
-}
 
 .form-options {
     display: flex;
@@ -545,10 +540,6 @@ body.dark-mode .toggle-password {
     color: #cccccc;
 }
 
-body.dark-mode .toggle-password:hover {
-    color: #ec4899;
-    background: rgba(236, 72, 153, 0.2);
-}
 
 body.dark-mode .checkbox-wrapper {
     color: #cccccc;

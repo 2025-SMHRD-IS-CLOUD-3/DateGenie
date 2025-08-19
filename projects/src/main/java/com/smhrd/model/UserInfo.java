@@ -3,45 +3,90 @@ package com.smhrd.model;
 import lombok.Data;
 
 @Data // getter, setter, toString
-		// 어노테이션 : 코드 사이에 특별한 의미, 기능을 수행하도록 하는 기술!
-		// 프로그램에 관한 데이터를 제공하고 코드에 정보를 추가하는 방법!
-		// --> 코드가 깔끔해지고 재사용이 가능하다!
 public class UserInfo {
-	// 1. 필드(데이터)
-	// *특정한 값(데이터)을 넣지 않고 해당 데이터가 들어갈 공간만 만든다.
-	// email, pw, tel, address
+    // Fields
+    private String email;
+    private String pw;
+    private String salt;  // Salt for password hashing
+    private String nickname;
+    private String joinDate;
 
-	private String email;
-	private String pw;
-	private String nickname;
-	private String joinDate;
-	
-	// email, pw, tel, address를 하나로 묶어줄 수 있는
-	// 내가 만든 자료형(객체)
-	// 연동할 DB의 컬럼명과 동일하게 필드값 설정!
+    // Signup constructor (joinDate handled by DB)
+    public UserInfo(String email, String pw, String salt, String nickname) {
+        this.email = email;
+        this.pw = pw;
+        this.salt = salt;
+        this.nickname = nickname;
+    }
+    
+    // Legacy constructor for compatibility (use with caution)
+    public UserInfo(String email, String pw, String nickname) {
+        this.email = email;
+        this.pw = pw;
+        this.nickname = nickname;
+    }
 
-	// 2. 메서드(행위, 행동)
-	// getter, setter, 생성자 (4개의 필드 초기화 시키는 생성자)!
-	
-	 // 회원가입용 생성자 (joinDate는 DB에서 자동 처리)
-	public UserInfo(String email, String pw, String nickname) {
-		this.email = email;
-		this.pw = pw;
-		this.nickname = nickname;
-	}
-
-	public UserInfo(String email, String pw) {
-		this.email = email;
-		this.pw = pw;
-	}
-	
-	public UserInfo(String email, String pw, String nickname, String joinDate) {
-	    this.email = email;
-	    this.pw = pw;
-	    this.nickname = nickname;
-	    this.joinDate = joinDate;
-	}
-	
-	
-
+    public UserInfo(String email, String pw) {
+        this.email = email;
+        this.pw = pw;
+    }
+    
+    public UserInfo(String email, String pw, String salt, String nickname, String joinDate) {
+        this.email = email;
+        this.pw = pw;
+        this.salt = salt;
+        this.nickname = nickname;
+        this.joinDate = joinDate;
+    }
+    
+    // Default constructor
+    public UserInfo() {}
+    
+    // Getter methods
+    public String getEmail() {
+        return email;
+    }
+    
+    public String getPw() {
+        return pw;
+    }
+    
+    public String getSalt() {
+        return salt;
+    }
+    
+    public String getNickname() {
+        return nickname;
+    }
+    
+    public String getJoinDate() {
+        return joinDate;
+    }
+    
+    // Setter methods
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public void setPw(String pw) {
+        this.pw = pw;
+    }
+    
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+    
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+    
+    public void setJoinDate(String joinDate) {
+        this.joinDate = joinDate;
+    }
+    
+    // toString method
+    @Override
+    public String toString() {
+        return "UserInfo [email=" + email + ", nickname=" + nickname + ", joinDate=" + joinDate + "]";
+    }
 }

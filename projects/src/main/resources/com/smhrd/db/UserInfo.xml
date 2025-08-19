@@ -3,13 +3,13 @@
 <mapper namespace="com.smhrd.db.UserInfo">
 
 	<insert id="join" parameterType="com.smhrd.model.UserInfo">
-		INSERT INTO USER_INFO (EMAIL, PW, NICKNAME, JOIN_DATE) VALUES(#{email}, #{pw}, #{nickname}, TRUNC(SYSDATE))
+		INSERT INTO USER_INFO (EMAIL, PW, SALT, NICKNAME, JOIN_DATE) VALUES(#{email}, #{pw}, #{salt}, #{nickname}, TRUNC(SYSDATE))
 	</insert>
 	
 	<select id="login" resultType="com.smhrd.model.UserInfo" parameterType="com.smhrd.model.UserInfo">
-		SELECT EMAIL, PW, NICKNAME, TO_CHAR(JOIN_DATE, 'YYYY-MM-DD') as joinDate 
+		SELECT EMAIL, PW, SALT, NICKNAME, TO_CHAR(JOIN_DATE, 'YYYY-MM-DD') as joinDate 
 		FROM USER_INFO 
-		WHERE EMAIL=#{email} AND PW=#{pw}
+		WHERE EMAIL=#{email}
 	</select>
 	
 	<update id="update" parameterType="com.smhrd.model.UserInfo">
@@ -18,6 +18,12 @@
 	
 	<select id="select" resultType="com.smhrd.model.UserInfo">
 		select * from USER_INFO
+	</select>
+	
+	<select id="checkEmail" resultType="com.smhrd.model.UserInfo" parameterType="String">
+		SELECT EMAIL, PW, SALT, NICKNAME, TO_CHAR(JOIN_DATE, 'YYYY-MM-DD') as joinDate 
+		FROM USER_INFO 
+		WHERE EMAIL=#{email}
 	</select>
 	
 </mapper>
