@@ -136,20 +136,52 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 로그인 중...';
             submitBtn.disabled = true;
             
-            // Simulate API call
-            setTimeout(() => {
-                // Here you would typically make an API call to your backend
-
+            // 실제 백엔드 API 호출
+            const loginData = {
+                email: email,
+                password: password
+            };
+            
+            fetch('LoginService', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                },
+                body: JSON.stringify(loginData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('네트워크 응답이 올바르지 않습니다.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
                 
-                // Simulate successful login
-                showNotification('로그인에 성공했습니다!', 'success');
+                if (data.success) {
+                    // 로그인 성공
+                    showNotification(data.message, 'success');
+                    
+                    // 서버에서 지정한 페이지로 리다이렉션
+                    setTimeout(() => {
+                        window.location.href = data.redirectUrl || 'upload.html';
+                    }, 1500);
+                } else {
+                    // 로그인 실패
+                    showNotification(data.message, 'error');
+                    showError(passwordInput, data.message);
+                }
+            })
+            .catch(error => {
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
                 
-                // Redirect to dashboard or main page
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1500);
-                
-            }, 2000);
+                console.error('로그인 요청 오류:', error);
+                showNotification('로그인 처리 중 오류가 발생했습니다.', 'error');
+            });
         });
     }
 

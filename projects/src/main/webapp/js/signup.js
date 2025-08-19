@@ -154,14 +154,58 @@ document.addEventListener('DOMContentLoaded', function() {
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 가입 중...';
       submitBtn.disabled = true;
 
-      setTimeout(() => {
-        console.log('Signup attempt:', {
-          email: emailInput.value.trim(),
-          nickname: nicknameInput.value.trim()
-        });
-        showNotification('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.', 'success');
-        setTimeout(() => { window.location.href = 'login.html'; }, 1500);
-      }, 1500);
+      // 실제 백엔드 API 호출
+      const formData = new URLSearchParams();
+      formData.append('email', emailInput.value.trim());
+      formData.append('pw', passwordInput.value);
+      formData.append('nickname', nicknameInput.value.trim());
+      
+      console.log('Signup attempt:', {
+        email: emailInput.value.trim(),
+        nickname: nicknameInput.value.trim()
+      });
+
+      fetch('JoinService', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('네트워크 응답이 올바르지 않습니다.');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Reset button
+        submitBtn.innerHTML = original;
+        submitBtn.disabled = false;
+        
+        console.log('Server JSON response:', data);
+        
+        if (data.success) {
+          // 회원가입 성공
+          showNotification(data.message, 'success');
+          
+          // 서버에서 제공된 리다이렉트 URL 사용
+          setTimeout(() => {
+            window.location.href = data.redirectUrl || 'login.html';
+          }, 1500);
+        } else {
+          // 회원가입 실패
+          showNotification(data.message, 'error');
+        }
+      })
+      .catch(error => {
+        // Reset button
+        submitBtn.innerHTML = original;
+        submitBtn.disabled = false;
+        
+        console.error('회원가입 요청 오류:', error);
+        showNotification('회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
+      });
     });
   }
 });

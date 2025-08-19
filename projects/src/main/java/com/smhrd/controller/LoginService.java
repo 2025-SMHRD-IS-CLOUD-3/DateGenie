@@ -90,7 +90,24 @@ System.out.println("===== LoginService 호출됨 =====");
                 responseData.put("success", true);
                 responseData.put("message", "로그인에 성공했습니다!");
                 responseData.put("userInfo", result);
-                responseData.put("redirectUrl", "index.html");
+                // 환경별 리다이렉션 URL 설정
+                String baseURL = request.getRequestURL().toString();
+                String redirectUrl;
+                String referer = request.getHeader("Referer");
+                
+                if (baseURL.contains("localhost") || baseURL.contains("127.0.0.1")) {
+                    // 로컬 환경 - Live Server (포트 5500)
+                    redirectUrl = "http://localhost:5500/projects/upload.html";
+                } else if (referer != null && referer.contains("github.io")) {
+                    // GitHub Pages 환경 - webapp 폴더 경로
+                    String githubPagesBase = referer.substring(0, referer.lastIndexOf("/") + 1);
+                    redirectUrl = githubPagesBase + "projects/src/main/webapp/upload.html";
+                } else {
+                    // 기타 프로덕션 환경
+                    redirectUrl = "upload.html";
+                }
+                
+                responseData.put("redirectUrl", redirectUrl);
                 
                 System.out.println("성공 응답 데이터 생성 완료");
                 System.out.println("로그인 성공 사용자: " + result.getEmail());

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.smhrd.model.MavenMember;
+import com.smhrd.model.UserInfo;
 import com.smhrd.model.MemberDAO;
 
 @WebServlet("/UpdateService")
@@ -30,7 +30,7 @@ public class UpdateService extends HttpServlet {
 		String address = request.getParameter("address");
 		
 		// 3. MemberDAO로 데이터 전송 전, 데이터 하나로 묶어주기
-		MavenMember updateMem = new MavenMember(email, pw, tel, address);
+		UserInfo updateMem = new UserInfo(email, pw, tel, address);
 		// 4. 회원정보 수정을 할 수 있는 MemberDAO의 update메서드 호출
 		MemberDAO dao = new MemberDAO();
 		int cnt = dao.update(updateMem);
