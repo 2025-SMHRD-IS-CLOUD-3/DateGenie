@@ -50,3 +50,4 @@ build/
 
 # Config files with sensitive data
 js/config-production.js
+/.metadata/
