@@ -24,8 +24,8 @@ import com.smhrd.model.EmailDAO;
 public class SendVerificationEmail extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	// SendGrid 설정 (실제 값으로 변경 필요)
-    private static final String SENDGRID_API_KEY = "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";
+	// SendGrid 설정
+    private static final String SENDGRID_API_KEY = System.getenv("SendGrid_API_KEY");
     private static final String FROM_EMAIL = "rkskek1101@gmail.com";
     private static final String FROM_NAME = "DateGenie";
 	
