@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.smhrd.model.UserInfo;
+import com.smhrd.model.EmailDAO;
 import com.smhrd.model.MemberDAO;
 
 @WebServlet("/JoinService")
@@ -38,32 +39,22 @@ public class JoinService extends HttpServlet {
 			    return;
 		}
 		
+		// 이메일 인증 확인 (추가된 부분)
+		EmailDAO emailDAO = new EmailDAO();
+		boolean isEmailVerified = emailDAO.isEmailVerified(email);
+		System.out.println("이메일 인증 상태 확인: " + isEmailVerified);
+		
+		if (!isEmailVerified) {
+			System.out.println("ERROR: 이메일 인증 미완료");
+			response.getWriter().println("<script>alert('이메일 인증을 완료해주세요. 이메일을 확인하시거나 인증메일을 다시 발송해주세요.'); history.back();</script>");
+			return;
+		}
+		
+		System.out.println("SUCCESS: 이메일 인증 완료됨. 회원가입 진행");
+		
 		
 		UserInfo joinMember = new UserInfo(email, pw, nickname);
 		
-		
-		// 5. DB 연결할 수 있도록 MemberDAO의 join메서드 호출
-		//	->join메서드를 사용하기 위해서 MemberDAO 객체 생성
-//		try {
-//			MemberDAO dao = new MemberDAO();
-//			int cnt = dao.join(joinMember);
-//			// 6. 결과값 처리
-//			if(cnt > 0) {
-//				// 회원가입 성공 시, 세션에 이메일 정보 저장
-//				HttpSession session = request.getSession();
-//				session.setAttribute("email", email);
-//				
-//				// 로그인 페이지로 리다이렉트
-//				response.getWriter().println("<script>alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.'); location.href='login.html';</script>");
-//			} else {
-//				// 회원가입 실패 시
-//				response.getWriter().println("<script>alert('회원가입에 실패하였습니다. 다시 시도해주세요.'); history.back();</script>");
-//			}
-//			
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			System.out.println("회원가입 오류발생!");
-//		}
 		
 		try {
 		    System.out.println("=== DB 저장 시작 ===");

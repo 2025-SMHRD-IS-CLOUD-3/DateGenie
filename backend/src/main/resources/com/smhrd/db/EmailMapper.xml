@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smhrd.db.EmailMapper">
+	
+    <!-- 이메일 인증 토큰 저장 -->
+    <insert id="saveVerificationToken" parameterType="map">
+        INSERT INTO email_verification (email, verification_token, expires_at, verified)
+        VALUES (#{email}, #{token}, #{expiresAt}, 0)
+    </insert>
+    
+    <!-- 이메일 인증 완료 여부 확인 -->
+    <select id="isEmailVerified" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM email_verification 
+        WHERE email = #{email} 
+        AND verified = 1
+        AND expires_at > SYSDATE
+    </select>
+    
+    <!-- 토큰으로 이메일 인증 처리 (verified를 1로 업데이트) -->
+    <update id="verifyEmailToken" parameterType="string">
+        UPDATE email_verification 
+        SET verified = 1 
+        WHERE verification_token = #{token} 
+        AND verified = 0 
+        AND expires_at > SYSDATE
+    </update>
+    
+    <!-- 토큰 유효성 확인 (존재하고 만료되지 않았는지) -->
+    <select id="isTokenValid" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM email_verification 
+        WHERE verification_token = #{token} 
+        AND verified = 0 
+        AND expires_at > SYSDATE
+    </select>
+    
+    <!-- 만료된 토큰들 삭제 (정리용) -->
+    <delete id="deleteExpiredTokens">
+        DELETE FROM email_verification 
+        WHERE expires_at &lt;= SYSDATE
+    </delete>	
+	
+	<!-- 토큰으로 이메일 주소 가져오기 -->
+	<select id="getEmailByToken" parameterType="String" resultType="String">
+        SELECT email
+        FROM email_verification
+        WHERE verification_token = #{token}
+    </select>
+</mapper>
