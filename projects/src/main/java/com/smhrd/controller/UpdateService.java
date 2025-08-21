@@ -41,7 +41,6 @@ public class UpdateService extends HttpServlet {
 			
 			response.sendRedirect("main.jsp");
 		}else {
-			System.out.println("정보 수정 실패");
 			response.sendRedirect("main.jsp");
 		}
 	}

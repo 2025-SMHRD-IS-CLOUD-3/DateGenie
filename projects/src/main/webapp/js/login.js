@@ -142,7 +142,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 password: password
             };
             
-            fetch('LoginService', {
+            // API 엔드포인트 결정 (fallback 포함)
+            const apiEndpoint = window.APP_CONFIG?.apiEndpoint || 'http://localhost:8081';
+            const loginUrl = `${apiEndpoint}/LoginService`;
+            
+            fetch(loginUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json; charset=UTF-8'
@@ -160,13 +164,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
                 
+                // 로그인 응답 처리
+                
                 if (data.success) {
                     // 로그인 성공
                     showNotification(data.message, 'success');
                     
+                    // 사용자 정보를 localStorage에 저장
+                    if (data.userInfo) {
+                        // 서버 응답을 frontend 형식으로 변환
+                        const userData = {
+                            id: data.userInfo.email,
+                            name: data.userInfo.nickname || data.userInfo.email,
+                            email: data.userInfo.email,
+                            picture: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iNCIgeT0iNCI+CjxwYXRoIGQ9Ik0xMiAxMmE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhtMCA2YTggOCAwIDEgMCAwIDguMDA2djBhOCA4IDAgMCAwIDAtLjAwNnoiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cjwvc3ZnPgo=',
+                            provider: 'email',
+                            loginTime: new Date().toISOString(),
+                            verified: true
+                        };
+                        localStorage.setItem('user', JSON.stringify(userData));
+                        localStorage.setItem('authProvider', 'email');
+                    }
+                    
+                    const finalUrl = data.redirectUrl || '/DateGenie/upload.html';
+                    
                     // 서버에서 지정한 페이지로 리다이렉션
                     setTimeout(() => {
-                        window.location.href = data.redirectUrl || 'upload.html';
+                        window.location.href = finalUrl;
                     }, 1500);
                 } else {
                     // 로그인 실패

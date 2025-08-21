@@ -1,53 +1,293 @@
-# Dependencies
+# ===============================================
+# DateGenie Project - Comprehensive .gitignore
+# Java Maven Web Application with MyBatis & Oracle DB
+# ===============================================
+
+# ============================================
+# Maven Build Artifacts
+# ============================================
+target/
+*.jar
+*.war
+*.ear
+*.class
+
+# Maven Wrapper
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/MavenWrapperDownloader.java
+
+# Maven build info
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# ============================================
+# IDE Configuration Files
+# ============================================
+
+# Eclipse
+.metadata
+.project
+.classpath
+.settings/
+.loadpath
+.recommenders
+.target
+.factorypath
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# ============================================
+# Security & Environment Configuration
+# ============================================
+
+# OAuth and API Configuration (contains sensitive client IDs)
+src/main/webapp/js/config.js
+src/main/webapp/js/config-production.js
+**/config.js
+**/config-production.js
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+*.env
+
+# Database configuration files
+database.properties
+db.properties
+connection.properties
+jdbc.properties
+
+# Security credentials
+*.p12
+*.jks
+*.keystore
+*.pem
+*.crt
+*.key
+*.pfx
+
+# OAuth tokens and sessions
+oauth-tokens.json
+session-storage/
+auth-cache/
+
+# MyBatis configuration with credentials
+**/mybatis-config.xml.local
+**/database-config.xml
+
+# ============================================
+# Server & Deployment Configuration
+# ============================================
+
+# Tomcat server configuration
+Servers/
+.metadata/.plugins/org.eclipse.wst.server.core/
+server.xml.local
+context.xml.local
+tomcat-users.xml.local
+
+# Application server logs
+*.log
+logs/
+catalina.out
+catalina.*.log
+localhost.*.log
+manager.*.log
+admin.*.log
+
+# Deployment artifacts
+*.war.deployed
+*.war.undeployed
+work/
+temp/
+
+# ============================================
+# Operating System Files
+# ============================================
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============================================
+# Development & Testing Files
+# ============================================
+
+# Test databases
+test.db
+*.sqlite
+*.sqlite3
+
+# Coverage reports
+coverage/
+*.lcov
+.nyc_output
+coverage.xml
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~.nib
+local.properties
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Package files
+*.tar.gz
+*.zip
+*.rar
+
+# ============================================
+# Frontend Build Artifacts (if applicable)
+# ============================================
+
+# Node.js (if frontend build tools are added)
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.npm
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Logs
-logs
-*.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# Temporary folders
-tmp/
-temp/
-
-# Build outputs
+# Frontend build outputs
 dist/
 build/
+.sass-cache/
+.cache/
 
-# Config files with sensitive data
-js/config-production.js
-/.metadata/
+# ============================================
+# Documentation & Analytics
+# ============================================
+
+# Documentation builds
+docs/_build/
+site/
+
+# Analytics
+.google-analytics/
+
+# ============================================
+# Custom Project Exclusions
+# ============================================
+
+# Exclude sensitive migration scripts
+**/migration/*_production.sql
+**/migration/*_prod.sql
+
+# Exclude local testing files
+**/test-data/
+**/*_test_local.*
+
+# Claude Code automation tools
+.playwright-mcp/
+
+# User-specific IDE settings
+*.userprefs
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# JetBrains Rider
+*.sln.iml
+
+# Visual Studio Code
+.history/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+
+# Emacs
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ============================================
+# End of .gitignore
+# ============================================

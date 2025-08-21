@@ -23,123 +23,75 @@ public class LoginService extends HttpServlet {
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-System.out.println("===== LoginService 호출됨 =====");
-        
-        try {
+try {
             // JSON 요청/응답 설정
-            System.out.println("=== 1단계: 응답 설정 시작 ===");
             request.setCharacterEncoding("UTF-8");
             response.setContentType("application/json; charset=UTF-8");
-            System.out.println("응답 설정 완료");
             
             // JSON 데이터 읽기
-            System.out.println("=== 2단계: JSON 데이터 읽기 시작 ===");
             BufferedReader reader = request.getReader();
             StringBuilder jsonString = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
                 jsonString.append(line);
             }
-            System.out.println("받은 JSON 데이터: " + jsonString.toString());
             
             // JSON 파싱
-            System.out.println("=== 3단계: JSON 파싱 시작 ===");
             Gson gson = new Gson();
             Map<String, String> loginData = gson.fromJson(jsonString.toString(), Map.class);
-            System.out.println("JSON 파싱 완료");
             
             String email = loginData.get("email");
             String pw = loginData.get("password");
             
-            System.out.println("파싱된 이메일: " + email);
-            System.out.println("파싱된 비밀번호: " + pw);
-            
-            // UserInfo 객체 생성
-            System.out.println("=== 4단계: UserInfo 객체 생성 ===");
+            // UserInfo 객체 생성 (로그인 검증용)
             UserInfo loginMember = new UserInfo(email, pw);
-            System.out.println("UserInfo 객체 생성 완료: " + loginMember);
             
             // DAO 생성 및 로그인 검증
-            System.out.println("=== 5단계: DB 로그인 검증 시작 ===");
             MemberDAO dao = new MemberDAO();
-            System.out.println("MemberDAO 객체 생성 완료");
-            
             UserInfo result = dao.login(loginMember);
-            System.out.println("dao.login() 실행 완료");
-            System.out.println("로그인 결과: " + result);
             
             // 응답 데이터 생성
-            System.out.println("=== 6단계: 응답 데이터 생성 ===");
             Map<String, Object> responseData = new HashMap<>();
             
             if (result != null) {
-                System.out.println("=== 로그인 성공 처리 ===");
-                
-             // result 객체의 모든 필드 확인 (디버깅 추가)
-                System.out.println("result.getEmail(): " + result.getEmail());
-                System.out.println("result.getPw(): " + result.getPw());
-                System.out.println("result.getNickname(): " + result.getNickname());
-                System.out.println("result.getJoinDate(): " + result.getJoinDate()); // 이게 핵심!
-                System.out.println("result.toString(): " + result.toString());    
-                
                 // 세션 설정
                 HttpSession session = request.getSession();
                 session.setAttribute("loginMember", result);
-                System.out.println("세션 설정 완료");
                 
                 responseData.put("success", true);
                 responseData.put("message", "로그인에 성공했습니다!");
                 responseData.put("userInfo", result);
                 // 환경별 리다이렉션 URL 설정
                 String baseURL = request.getRequestURL().toString();
-                String redirectUrl;
                 String referer = request.getHeader("Referer");
+                String redirectUrl;
                 
-                if (baseURL.contains("localhost") || baseURL.contains("127.0.0.1")) {
-                    // 로컬 환경 - Live Server (포트 5500)
-                    redirectUrl = "http://localhost:5500/projects/upload.html";
-                } else if (referer != null && referer.contains("github.io")) {
-                    // GitHub Pages 환경 - webapp 폴더 경로
-                    String githubPagesBase = referer.substring(0, referer.lastIndexOf("/") + 1);
-                    redirectUrl = githubPagesBase + "projects/src/main/webapp/upload.html";
-                } else {
-                    // 기타 프로덕션 환경
-                    redirectUrl = "upload.html";
-                }
+                // 환경별 리다이렉트 URL 설정
                 
+                // 서비스가 실행 중인 환경에 따라 결정 (referer가 아닌 실제 서버 위치 기준)
+                // 모든 환경에서 localhost:8081/DateGenie로 리다이렉트
+                redirectUrl = "http://localhost:8081/DateGenie/upload.html";
+                System.out.println("=== 로그인 성공 디버깅 ===");
+                System.out.println("로그인 결과: " + result);
+                System.out.println("세션 설정 사용자 ID: " + (result != null ? result.getEmail() : "null"));
+                System.out.println("최종 결정된 redirectUrl: " + redirectUrl);
                 responseData.put("redirectUrl", redirectUrl);
                 
-                System.out.println("성공 응답 데이터 생성 완료");
-                System.out.println("로그인 성공 사용자: " + result.getEmail());
-                
             } else {
-                System.out.println("=== 로그인 실패 처리 ===");
-                
                 responseData.put("success", false);
                 responseData.put("message", "이메일 또는 비밀번호가 일치하지 않습니다.");
-                
-                System.out.println("실패 응답 데이터 생성 완료");
             }
             
             // JSON 응답 전송
-            System.out.println("=== 7단계: JSON 응답 전송 ===");
             PrintWriter out = response.getWriter();
             String jsonResponse = gson.toJson(responseData);
-            System.out.println("전송할 JSON: " + jsonResponse);
             
             out.print(jsonResponse);
             out.flush();
-            System.out.println("JSON 응답 전송 완료");
             
         } catch (Exception e) {
-            System.out.println("=== ❌ 예외 발생 ===");
-            System.out.println("예외 위치: LoginService");
-            System.out.println("예외 메시지: " + e.getMessage());
-            e.printStackTrace();
-            
             try {
                 // 오류 응답
-                System.out.println("=== 오류 응답 생성 ===");
                 Map<String, Object> errorResponse = new HashMap<>();
                 errorResponse.put("success", false);
                 errorResponse.put("message", "로그인 처리 중 오류가 발생했습니다.");
@@ -149,14 +101,11 @@ System.out.println("===== LoginService 호출됨 =====");
                 Gson gson = new Gson();
                 out.print(gson.toJson(errorResponse));
                 out.flush();
-                System.out.println("오류 응답 전송 완료");
                 
             } catch (Exception ex) {
-                System.out.println("오류 응답 전송 중 추가 예외 발생: " + ex.getMessage());
+                // Silent handling - avoid additional logging
             }
-        }
-        
-        System.out.println("===== LoginService 종료 =====");	
+        }	
 		
 		
 		

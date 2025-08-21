@@ -165,7 +165,11 @@ document.addEventListener('DOMContentLoaded', function() {
         nickname: nicknameInput.value.trim()
       });
 
-      fetch('JoinService', {
+      // API 엔드포인트 결정 (fallback 포함)
+      const apiEndpoint = window.APP_CONFIG?.apiEndpoint || 'http://localhost:8081';
+      const joinUrl = `${apiEndpoint}/JoinService`;
+      
+      fetch(joinUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -191,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
           
           // 서버에서 제공된 리다이렉트 URL 사용
           setTimeout(() => {
-            window.location.href = data.redirectUrl || 'login.html';
+            window.location.href = data.redirectUrl || '/DateGenie/login.html';
           }, 1500);
         } else {
           // 회원가입 실패

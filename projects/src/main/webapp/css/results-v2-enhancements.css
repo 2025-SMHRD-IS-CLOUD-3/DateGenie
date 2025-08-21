@@ -1,0 +1,475 @@
+/**
+ * Results V2 Enhancements
+ * Additional styling for enhanced visual effects and polish
+ */
+
+/* Enhanced animations */
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.15);
+    }
+    50% {
+        box-shadow: 0 15px 40px rgba(236, 72, 153, 0.25);
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+/* Enhanced circular progress */
+.circular-progress {
+    position: relative;
+    animation: scaleIn 0.8s ease-out 0.5s both;
+}
+
+.circular-progress::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+    z-index: -1;
+    animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.circular-progress-text {
+    text-shadow: 0 2px 10px rgba(124, 58, 237, 0.3);
+    animation: scaleIn 0.8s ease-out 1.5s both;
+}
+
+/* Enhanced emotion bars */
+.emotion-bar {
+    animation: slideInFromLeft 0.6s ease-out both;
+}
+
+.emotion-bar:nth-child(1) { animation-delay: 0.8s; }
+.emotion-bar:nth-child(2) { animation-delay: 1.0s; }
+.emotion-bar:nth-child(3) { animation-delay: 1.2s; }
+.emotion-bar:nth-child(4) { animation-delay: 1.4s; }
+.emotion-bar:nth-child(5) { animation-delay: 1.6s; }
+
+.emotion-progress {
+    position: relative;
+    overflow: hidden;
+}
+
+.emotion-progress::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+    );
+    animation: shimmer 2s infinite;
+    animation-delay: 2s;
+}
+
+.emotion-progress-fill {
+    position: relative;
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    transition: width 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Enhanced sentence cards */
+.sentence-item {
+    animation: slideInFromRight 0.6s ease-out both;
+    position: relative;
+    overflow: hidden;
+}
+
+.sentence-item:nth-child(1) { animation-delay: 1.8s; }
+.sentence-item:nth-child(2) { animation-delay: 2.0s; }
+.sentence-item:nth-child(3) { animation-delay: 2.2s; }
+
+.sentence-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -4px;
+    width: 4px;
+    height: 0%;
+    background: linear-gradient(180deg, #7c3aed, #ec4899);
+    transition: height 0.8s ease-out;
+    animation-delay: inherit;
+}
+
+.sentence-item.animate-in::before {
+    height: 100%;
+}
+
+/* Enhanced personality traits */
+.trait-tag {
+    animation: scaleIn 0.4s ease-out both;
+    transition: all 0.3s ease;
+}
+
+.trait-tag:nth-child(1) { animation-delay: 2.4s; }
+.trait-tag:nth-child(2) { animation-delay: 2.5s; }
+.trait-tag:nth-child(3) { animation-delay: 2.6s; }
+.trait-tag:nth-child(4) { animation-delay: 2.7s; }
+.trait-tag:nth-child(5) { animation-delay: 2.8s; }
+.trait-tag:nth-child(6) { animation-delay: 2.9s; }
+
+.trait-tag:hover {
+    transform: translateY(-2px);
+    background: rgba(124, 58, 237, 0.2);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+}
+
+/* Enhanced advice cards */
+.advice-item {
+    animation: fadeInUp 0.6s ease-out both;
+    transition: all 0.3s ease;
+}
+
+.advice-item:nth-child(1) { animation-delay: 3.0s; }
+.advice-item:nth-child(2) { animation-delay: 3.2s; }
+.advice-item:nth-child(3) { animation-delay: 3.4s; }
+
+.advice-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced result cards */
+.result-card {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.result-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #7c3aed, transparent);
+    transition: left 0.6s ease;
+}
+
+.result-card:hover::before {
+    left: 100%;
+}
+
+.result-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Enhanced buttons */
+.btn-primary-v2, .btn-ghost-v2 {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-primary-v2::before,
+.btn-ghost-v2::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: all 0.5s ease;
+    transform: translate(-50%, -50%);
+}
+
+.btn-primary-v2:hover::before,
+.btn-ghost-v2:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-primary-v2:active,
+.btn-ghost-v2:active {
+    transform: translateY(1px);
+}
+
+/* Loading states */
+.loading-skeleton {
+    background: linear-gradient(
+        90deg,
+        #f0f0f0 25%,
+        #e0e0e0 50%,
+        #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+.loading-circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: linear-gradient(
+        45deg,
+        #f0f0f0,
+        #e0e0e0,
+        #f0f0f0
+    );
+    background-size: 400% 400%;
+    animation: shimmer 2s infinite;
+}
+
+.loading-bar {
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(
+        90deg,
+        #f0f0f0 25%,
+        #e0e0e0 50%,
+        #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+/* Enhanced accessibility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.high-contrast .result-card {
+    border: 2px solid #000;
+    background: #fff;
+}
+
+.high-contrast .circular-progress-text {
+    color: #000;
+    text-shadow: none;
+}
+
+.high-contrast .emotion-progress-fill {
+    background: #000;
+}
+
+.high-contrast .btn-primary-v2 {
+    background: #000;
+    color: #fff;
+    border: 2px solid #000;
+}
+
+.high-contrast .btn-ghost-v2 {
+    background: #fff;
+    color: #000;
+    border: 2px solid #000;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .result-card,
+    .emotion-bar,
+    .sentence-item,
+    .trait-tag,
+    .advice-item,
+    .circular-progress,
+    .circular-progress-text {
+        animation: none;
+    }
+    
+    .emotion-progress-fill {
+        transition: none;
+    }
+    
+    .circular-progress::before {
+        animation: none;
+    }
+    
+    .emotion-progress::before {
+        animation: none;
+    }
+}
+
+/* Print styles */
+@media print {
+    .results-v2-page {
+        background: white;
+    }
+    
+    .result-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .circular-progress svg {
+        print-color-adjust: exact;
+    }
+    
+    .btn-primary-v2,
+    .btn-ghost-v2 {
+        display: none;
+    }
+}
+
+/* Focus styles for better accessibility */
+.btn-primary-v2:focus,
+.btn-ghost-v2:focus {
+    outline: 3px solid #7c3aed;
+    outline-offset: 2px;
+}
+
+.trait-tag:focus {
+    outline: 2px solid #7c3aed;
+    outline-offset: 2px;
+}
+
+/* Enhanced dark mode */
+body.dark-mode .circular-progress::before {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2));
+}
+
+body.dark-mode .emotion-progress::before {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+}
+
+body.dark-mode .loading-skeleton,
+body.dark-mode .loading-circle,
+body.dark-mode .loading-bar {
+    background: linear-gradient(
+        90deg,
+        #2a2a2a 25%,
+        #3a3a3a 50%,
+        #2a2a2a 75%
+    );
+    background-size: 200% 100%;
+}
+
+/* Enhanced responsive design */
+@media (max-width: 480px) {
+    .circular-progress {
+        width: 160px;
+        height: 160px;
+    }
+    
+    .circular-progress-text {
+        font-size: 2.5rem;
+    }
+    
+    .result-card {
+        margin-bottom: 1rem;
+        padding: 1rem;
+    }
+    
+    .personality-traits {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 0.5rem;
+    }
+    
+    .trait-tag {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .results-v2-container {
+        max-width: 700px;
+    }
+    
+    .emotion-bars {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .personality-traits {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .results-v2-container {
+        max-width: 800px;
+    }
+    
+    .action-buttons {
+        flex-direction: row;
+        max-width: 500px;
+    }
+    
+    .emotion-bars {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+}
+
+/* Performance optimizations */
+.result-card {
+    will-change: transform;
+}
+
+.emotion-progress-fill {
+    will-change: width;
+}
+
+.circular-progress-fill {
+    will-change: stroke-dashoffset;
+}

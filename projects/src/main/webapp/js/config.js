@@ -9,6 +9,17 @@ const isDevelopment = window.location.hostname === 'localhost' ||
                      window.location.hostname === '127.0.0.1' ||
                      window.location.protocol === 'file:';
 
+// API 엔드포인트 결정
+let apiEndpoint;
+if (isDevelopment) {
+  apiEndpoint = 'http://localhost:8081/DateGenie';
+} else if (isProduction) {
+  apiEndpoint = window.location.origin;
+} else {
+  // GitHub Pages 또는 기타 환경 - 로컬 서버로 연결
+  apiEndpoint = 'http://localhost:8081/DateGenie';
+}
+
 window.APP_CONFIG = {
   // 개발 환경에서도 실제 클라이언트 ID 사용
   googleClientId: '659605189531-q456cob1mu23civhuu85mo8lsqrcnal1.apps.googleusercontent.com',
@@ -18,6 +29,9 @@ window.APP_CONFIG = {
     ? (window.location.hostname === 'kwangdss.github.io' 
        ? 'https://kwangdss.github.io/WebPT/auth/google/callback.html'
        : 'https://dategenie.shop/auth/google/callback.html')
-    : 'http://127.0.0.1:5500/auth/google/callback.html'
+    : 'http://127.0.0.1:5500/auth/google/callback.html',
+    
+  // 환경별 API 엔드포인트
+  apiEndpoint: apiEndpoint
 };
 

@@ -2,42 +2,25 @@ package com.smhrd.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Base64;
 
 /**
- * Security utility class for password hashing and validation
- * Uses SHA-256 with salt for secure password storage
+ * Security utility class for password hashing and validation (WITHOUT SALT)
+ * Uses SHA-256 for password hashing without salt as requested
  */
 public class SecurityUtils {
     
     private static final String HASH_ALGORITHM = "SHA-256";
-    private static final int SALT_LENGTH = 32;
-    private static final SecureRandom random = new SecureRandom();
     
     /**
-     * Generate a random salt for password hashing
-     * @return Base64 encoded salt string
-     */
-    public static String generateSalt() {
-        byte[] salt = new byte[SALT_LENGTH];
-        random.nextBytes(salt);
-        return Base64.getEncoder().encodeToString(salt);
-    }
-    
-    /**
-     * Hash a password with salt using SHA-256
+     * Hash a password without salt using SHA-256
      * @param password Plain text password
-     * @param salt Salt string
-     * @return Hashed password
+     * @return Hashed password as Base64 string
      */
-    public static String hashPassword(String password, String salt) {
+    public static String hashPasswordSimple(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
-            
-            // Combine password and salt
-            String saltedPassword = password + salt;
-            byte[] hashedBytes = md.digest(saltedPassword.getBytes("UTF-8"));
+            byte[] hashedBytes = md.digest(password.getBytes("UTF-8"));
             
             // Convert to Base64 string
             return Base64.getEncoder().encodeToString(hashedBytes);
@@ -48,15 +31,14 @@ public class SecurityUtils {
     }
     
     /**
-     * Verify a password against stored hash and salt
+     * Verify a password against stored hash (without salt)
      * @param password Plain text password to verify
      * @param storedHash Stored hashed password
-     * @param salt Salt used for hashing
      * @return true if password matches
      */
-    public static boolean verifyPassword(String password, String storedHash, String salt) {
+    public static boolean verifyPasswordSimple(String password, String storedHash) {
         try {
-            String hashedPassword = hashPassword(password, salt);
+            String hashedPassword = hashPasswordSimple(password);
             return hashedPassword.equals(storedHash);
         } catch (Exception e) {
             System.err.println("Password verification failed: " + e.getMessage());

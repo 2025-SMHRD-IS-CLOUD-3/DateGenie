@@ -7,34 +7,25 @@ public class UserInfo {
     // Fields
     private String email;
     private String pw;
-    private String salt;  // Salt for password hashing
     private String nickname;
     private String joinDate;
 
     // Signup constructor (joinDate handled by DB)
-    public UserInfo(String email, String pw, String salt, String nickname) {
-        this.email = email;
-        this.pw = pw;
-        this.salt = salt;
-        this.nickname = nickname;
-    }
-    
-    // Legacy constructor for compatibility (use with caution)
     public UserInfo(String email, String pw, String nickname) {
         this.email = email;
         this.pw = pw;
         this.nickname = nickname;
     }
+    
 
     public UserInfo(String email, String pw) {
         this.email = email;
         this.pw = pw;
     }
     
-    public UserInfo(String email, String pw, String salt, String nickname, String joinDate) {
+    public UserInfo(String email, String pw, String nickname, String joinDate) {
         this.email = email;
         this.pw = pw;
-        this.salt = salt;
         this.nickname = nickname;
         this.joinDate = joinDate;
     }
@@ -51,9 +42,6 @@ public class UserInfo {
         return pw;
     }
     
-    public String getSalt() {
-        return salt;
-    }
     
     public String getNickname() {
         return nickname;
@@ -72,9 +60,6 @@ public class UserInfo {
         this.pw = pw;
     }
     
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
     
     public void setNickname(String nickname) {
         this.nickname = nickname;

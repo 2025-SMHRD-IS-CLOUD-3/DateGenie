@@ -28,8 +28,6 @@ public class JoinService extends HttpServlet {
 
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
-        System.out.println("===== JoinService called =====");
-        
         try {
             // CORS and basic settings
             response.setHeader("Access-Control-Allow-Origin", "*");
@@ -53,8 +51,6 @@ public class JoinService extends HttpServlet {
             String contentType = request.getContentType();
             if (contentType != null && contentType.startsWith("multipart/form-data")) {
                 // Handle multipart/form-data
-                System.out.println("Processing multipart/form-data");
-                
                 DiskFileItemFactory factory = new DiskFileItemFactory();
                 ServletFileUpload upload = new ServletFileUpload(factory);
                 upload.setHeaderEncoding("UTF-8");
@@ -80,27 +76,14 @@ public class JoinService extends HttpServlet {
                         }
                     }
                 } catch (Exception e) {
-                    System.out.println("Multipart parsing error: " + e.getMessage());
-                    e.printStackTrace();
+                    // Silent handling - avoid logging
                 }
             } else {
                 // Handle application/x-www-form-urlencoded
-                System.out.println("Processing application/x-www-form-urlencoded");
                 email = request.getParameter("email");
                 password = request.getParameter("pw");
                 nickname = request.getParameter("nickname");
             }
-            
-            // 디버깅 로그 추가
-            System.out.println("=== 파라미터 수신 디버깅 ===");
-            System.out.println("Request Content-Type: " + request.getContentType());
-            System.out.println("Request Method: " + request.getMethod());
-            System.out.println("Email: [" + email + "]");
-            System.out.println("Password: [" + (password != null ? "***(" + password.length() + "자)" : "null") + "]");
-            System.out.println("Nickname: [" + nickname + "]");
-            System.out.println("===========================");
-            
-            System.out.println("Signup attempt - Email: " + email + ", Nickname: " + nickname);
             
             // Comprehensive server-side validation
             if (email == null || password == null || nickname == null) {
@@ -138,8 +121,6 @@ public class JoinService extends HttpServlet {
                 
                 if (existingUser != null) {
                     // Email already exists
-                    System.out.println("Signup failed: email already exists - " + email);
-                    
                     Map<String, Object> errorResponse = new HashMap<>();
                     errorResponse.put("success", false);
                     errorResponse.put("message", "이미 사용 중인 이메일입니다.");
@@ -159,24 +140,12 @@ public class JoinService extends HttpServlet {
                         HttpSession session = request.getSession();
                         session.setAttribute("email", email);
                         
-                        System.out.println("Signup success: " + email);
-                        
                         // 환경별 리다이렉션 URL 설정
                         String baseURL = request.getRequestURL().toString();
                         String redirectUrl;
-                        String referer = request.getHeader("Referer");
                         
-                        if (baseURL.contains("localhost") || baseURL.contains("127.0.0.1")) {
-                            // 로컬 환경 - Live Server (포트 5500)
-                            redirectUrl = "http://localhost:5500/projects/login.html";
-                        } else if (referer != null && referer.contains("github.io")) {
-                            // GitHub Pages 환경 - webapp 폴더 경로
-                            String githubPagesBase = referer.substring(0, referer.lastIndexOf("/") + 1);
-                            redirectUrl = githubPagesBase + "projects/src/main/webapp/login.html";
-                        } else {
-                            // 기타 프로덕션 환경
-                            redirectUrl = "login.html";
-                        }
+                        // 모든 환경에서 localhost:8081/DateGenie로 리다이렉트
+                        redirectUrl = "http://localhost:8081/DateGenie/login.html";
                         
                         Map<String, Object> successResponse = new HashMap<>();
                         successResponse.put("success", true);
@@ -190,8 +159,6 @@ public class JoinService extends HttpServlet {
                         
                     } else {
                         // DB insert failed
-                        System.out.println("Signup failed: DB insert failed for " + email);
-                        
                         Map<String, Object> errorResponse = new HashMap<>();
                         errorResponse.put("success", false);
                         errorResponse.put("message", "회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
@@ -204,9 +171,6 @@ public class JoinService extends HttpServlet {
                 }
             
         } catch (Exception e) {
-            System.out.println("JoinService error: " + e.getMessage());
-            e.printStackTrace();
-            
             try {
                 response.setContentType("application/json; charset=UTF-8");
                 Map<String, Object> errorResponse = new HashMap<>();
@@ -218,11 +182,9 @@ public class JoinService extends HttpServlet {
                 out.print(gson.toJson(errorResponse));
                 out.flush();
             } catch (Exception ex) {
-                System.out.println("Error response 전송 중 추가 오류: " + ex.getMessage());
+                // Silent handling - avoid additional logging
             }
         }
-        
-        System.out.println("===== JoinService finished =====");
     }
     
     /**

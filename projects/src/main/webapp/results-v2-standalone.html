@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>연애 분석 결과 - Date Genie</title>
+    <!-- All external dependencies removed for standalone version -->
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navbar-height: 70px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--navbar-height);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: #1f1d3a;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .heart-icon {
+            color: #ec4899;
+            font-size: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .section-icon {
+            color: #7c3aed;
+            font-size: 1.1rem;
+        }
+
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+
+        .user-name {
+            color: #1f2937;
+            font-size: 0.9rem;
+        }
+
+        .user-name-text {
+            font-weight: 600;
+        }
+
+        /* Main Results V2 Styles */
+        .results-v2-page {
+            background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 40%, #eef2ff 100%);
+            min-height: 100vh;
+            padding-top: var(--navbar-height);
+        }
+
+        .results-v2-container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 2rem;
+        }
+
+        /* Result Cards */
+        .result-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .result-card:nth-child(1) { animation-delay: 0.1s; }
+        .result-card:nth-child(2) { animation-delay: 0.3s; }
+        .result-card:nth-child(3) { animation-delay: 0.5s; }
+        .result-card:nth-child(4) { animation-delay: 0.7s; }
+        .result-card:nth-child(5) { animation-delay: 0.9s; }
+
+        /* Dating Possibility Chart */
+        .dating-possibility-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .dating-possibility-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1f1d3a;
+            margin-bottom: 2rem;
+        }
+
+        .circular-progress {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .circular-progress::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+            z-index: -1;
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        .circular-progress svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .circular-progress-bg {
+            fill: none;
+            stroke: #f3f4f6;
+            stroke-width: 8;
+        }
+
+        .circular-progress-fill {
+            fill: none;
+            stroke: url(#circularGradient);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 565.48;
+            stroke-dashoffset: 565.48;
+            transition: stroke-dashoffset 2s ease-in-out;
+        }
+
+        .circular-progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: 700;
+            color: #7c3aed;
+            text-shadow: 0 2px 10px rgba(124, 58, 237, 0.3);
+        }
+
+        .possibility-description {
+            color: #6b7280;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1f1d3a;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+
+        /* Emotion Bars */
+        .emotion-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .emotion-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .emotion-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .emotion-name {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .emotion-value {
+            color: #7c3aed;
+            font-weight: 600;
+        }
+
+        .emotion-progress {
+            height: 12px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .emotion-progress::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+            animation-delay: 2s;
+        }
+
+        .emotion-progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            border-radius: 6px;
+            width: 0%;
+            transition: width 1.5s ease-out;
+        }
+
+        /* Favorite Sentences */
+        .sentences-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .sentence-item {
+            background: rgba(124, 58, 237, 0.05);
+            border-left: 4px solid #7c3aed;
+            padding: 1rem;
+            border-radius: 8px;
+            font-style: italic;
+            color: #374151;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .sentence-source {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-style: normal;
+        }
+
+        /* Personality Traits */
+        .personality-traits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .trait-tag {
+            background: rgba(124, 58, 237, 0.1);
+            color: #7c3aed;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .trait-tag:hover {
+            transform: translateY(-2px);
+            background: rgba(124, 58, 237, 0.2);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+        }
+
+        /* Advice Cards */
+        .advice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .advice-item {
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            border-left: 4px solid #10b981;
+            transition: all 0.3s ease;
+        }
+
+        .advice-item.warning {
+            border-left-color: #f59e0b;
+        }
+
+        .advice-item.info {
+            border-left-color: #3b82f6;
+        }
+
+        .advice-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .advice-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e1b4b;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .advice-content {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Action Buttons */
+        .action-section {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .btn-primary-v2 {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            color: white;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.25);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary-v2:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 26px rgba(236, 72, 153, 0.32);
+        }
+
+        .btn-ghost-v2 {
+            background: transparent;
+            color: #7c3aed;
+            border: 2px solid rgba(124, 58, 237, 0.35);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-ghost-v2:hover {
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 10px 30px rgba(236, 72, 153, 0.15);
+            }
+            50% {
+                box-shadow: 0 15px 40px rgba(236, 72, 153, 0.25);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .results-v2-container {
+                max-width: 600px;
+                padding: 2rem;
+            }
+
+            .action-buttons {
+                flex-direction: row;
+                justify-content: center;
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .circular-progress {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .circular-progress-text {
+                font-size: 2.5rem;
+            }
+            
+            .result-card {
+                margin-bottom: 1rem;
+                padding: 1rem;
+            }
+            
+            .personality-traits {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 0.5rem;
+            }
+            
+            .trait-tag {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Screen Reader Only */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body class="results-v2-page">
+    <!-- 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="#" class="brand-logo" aria-label="Date Genie Home">
+                    <span class="heart-icon" aria-hidden="true">💖</span>
+                    <span class="logo-text">Date Genie</span>
+                </a>
+            </div>
+
+            <!-- User Info -->
+            <div class="user-dropdown">
+                <div class="user-info">
+                    <div class="user-avatar" aria-label="프로필">👤</div>
+                    <span class="user-name">
+                        <span class="user-name-text">사용자</span>님 환영합니다!
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 컨텐츠 -->
+    <div class="results-v2-container">
+        <!-- 1. 연애 가능성 -->
+        <div class="result-card dating-possibility-card">
+            <h1 class="dating-possibility-title">연애 가능성</h1>
+            <div class="circular-progress" id="circularProgress">
+                <svg viewBox="0 0 200 200">
+                    <defs>
+                        <linearGradient id="circularGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="100" cy="100" r="90" class="circular-progress-bg"></circle>
+                    <circle cx="100" cy="100" r="90" class="circular-progress-fill" id="progressCircle"></circle>
+                </svg>
+                <div class="circular-progress-text" id="progressText">0%</div>
+            </div>
+            <p class="possibility-description" id="possibilityDescription">
+                분석 결과, 상대방이 당신에게 호감을 가지고 있을 가능성이 높습니다.
+                긍정적인 신호들이 많이 발견되었네요!
+            </p>
+        </div>
+
+        <!-- 2. 감정 흐름 그래프 -->
+        <div class="result-card emotion-flow-card">
+            <h2 class="section-title">
+                <span class="section-icon">📊</span>
+                감정 흐름 그래프
+            </h2>
+            <div class="emotion-bars" id="emotionBars">
+                <!-- 동적으로 생성됨 -->
+            </div>
+        </div>
+
+        <!-- 3. 대표 호감 문장 -->
+        <div class="result-card favorite-sentences-card">
+            <h2 class="section-title">
+                <span class="section-icon">💬</span>
+                대표 호감 문장
+            </h2>
+            <div class="sentences-list" id="sentencesList">
+                <!-- 동적으로 생성됨 -->
+            </div>
+        </div>
+
+        <!-- 4. 상대방 님의 성격 -->
+        <div class="result-card personality-card">
+            <h2 class="section-title">
+                <span class="section-icon">👤</span>
+                상대방 님의 성격
+            </h2>
+            <p style="color: #6b7280; margin-bottom: 1rem;">
+                대화 패턴을 분석한 결과, 다음과 같은 성격 특징을 보입니다:
+            </p>
+            <div class="personality-traits" id="personalityTraits">
+                <!-- 동적으로 생성됨 -->
+            </div>
+        </div>
+
+        <!-- 5. 맞춤 조언 -->
+        <div class="result-card advice-card">
+            <h2 class="section-title">
+                <span class="section-icon">💡</span>
+                맞춤 조언
+            </h2>
+            <div class="advice-list" id="adviceList">
+                <!-- 동적으로 생성됨 -->
+            </div>
+        </div>
+
+        <!-- 액션 버튼 -->
+        <div class="action-section">
+            <div class="action-buttons">
+                <button class="btn-primary-v2" onclick="generateNewAnalysis()">
+                    <span>📤</span>
+                    새 분석 시작하기
+                </button>
+                <button class="btn-ghost-v2" onclick="showDetailedAnalysis()">
+                    <span>📈</span>
+                    상세 분석 보기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen Reader Announcements -->
+    <div class="sr-only" aria-live="polite" aria-atomic="true" id="srAnnouncer"></div>
+
+    <script>
+        // Mock Analysis Data Generator
+        function generateMockData() {
+            return {
+                datingPossibility: Math.floor(Math.random() * 40) + 40, // 40-80%
+                emotions: [
+                    { name: "호감 표현 빈도", value: Math.floor(Math.random() * 30) + 60 },
+                    { name: "감정 일치도", value: Math.floor(Math.random() * 25) + 55 },
+                    { name: "대화 균형도", value: Math.floor(Math.random() * 25) + 50 },
+                    { name: "반응 속도", value: Math.floor(Math.random() * 20) + 45 },
+                    { name: "긍정 전환률", value: Math.floor(Math.random() * 20) + 35 }
+                ],
+                favoriteSentences: [
+                    {
+                        text: "너와 이야기하면 시간이 어떻게 가는지 모르겠어",
+                        source: "대화 중 자주 나타나는 표현"
+                    },
+                    {
+                        text: "다음에는 우리 함께 가볼까?",
+                        source: "미래 계획에 대한 긍정적 언급"
+                    },
+                    {
+                        text: "너 정말 재밌는 사람이야",
+                        source: "상대방에 대한 직접적 호감 표현"
+                    }
+                ],
+                personality: ["외향적", "유머러스", "적극적", "배려심 많음", "솔직함", "계획적"],
+                advice: [
+                    {
+                        type: "positive",
+                        title: "지금이 기회입니다",
+                        content: "상대방이 당신에게 충분한 관심을 보이고 있습니다. 직접적인 만남을 제안해보는 것이 좋겠어요."
+                    },
+                    {
+                        type: "info",
+                        title: "대화 스타일 유지",
+                        content: "현재의 유머러스하고 자연스러운 대화 스타일을 계속 유지하세요. 상대방이 이런 분위기를 좋아합니다."
+                    },
+                    {
+                        type: "warning",
+                        title: "적절한 타이밍",
+                        content: "너무 급하게 관계를 발전시키려 하지 마세요. 자연스러운 흐름을 따라가는 것이 중요합니다."
+                    }
+                ]
+            };
+        }
+
+        // Results Manager Class
+        class ResultsV2Manager {
+            constructor() {
+                this.currentData = generateMockData();
+                this.init();
+            }
+
+            init() {
+                this.displayResults();
+                this.initializeAnimations();
+                this.setupAccessibility();
+            }
+
+            displayResults() {
+                this.updateDatingPossibility();
+                this.updateEmotionBars();
+                this.updateFavoriteSentences();
+                this.updatePersonality();
+                this.updateAdvice();
+            }
+
+            updateDatingPossibility() {
+                const percentage = this.currentData.datingPossibility;
+                const description = this.generatePossibilityDescription(percentage);
+                
+                document.getElementById('possibilityDescription').textContent = description;
+            }
+
+            generatePossibilityDescription(percentage) {
+                if (percentage >= 70) {
+                    return "분석 결과, 상대방이 당신에게 호감을 가지고 있을 가능성이 매우 높습니다. 적극적으로 다가가세요!";
+                } else if (percentage >= 50) {
+                    return "분석 결과, 상대방이 당신에게 호감을 가지고 있을 가능성이 높습니다. 긍정적인 신호들이 많이 발견되었네요!";
+                } else if (percentage >= 30) {
+                    return "분석 결과, 상대방이 당신에게 관심을 보이고 있습니다. 조금 더 시간을 두고 관계를 발전시켜보세요.";
+                } else {
+                    return "분석 결과, 아직 명확한 신호를 파악하기 어렵습니다. 더 많은 대화가 필요할 것 같아요.";
+                }
+            }
+
+            updateEmotionBars() {
+                const container = document.getElementById('emotionBars');
+                container.innerHTML = '';
+                
+                this.currentData.emotions.forEach((emotion, index) => {
+                    const barElement = this.createEmotionBar(emotion.name, emotion.value);
+                    container.appendChild(barElement);
+                });
+            }
+
+            createEmotionBar(name, value) {
+                const barContainer = document.createElement('div');
+                barContainer.className = 'emotion-bar';
+                
+                barContainer.innerHTML = `
+                    <div class="emotion-label">
+                        <span class="emotion-name">${name}</span>
+                        <span class="emotion-value">${value}</span>
+                    </div>
+                    <div class="emotion-progress">
+                        <div class="emotion-progress-fill" data-width="${value}"></div>
+                    </div>
+                `;
+                
+                return barContainer;
+            }
+
+            updateFavoriteSentences() {
+                const container = document.getElementById('sentencesList');
+                container.innerHTML = '';
+                
+                this.currentData.favoriteSentences.forEach(sentence => {
+                    const sentenceElement = document.createElement('div');
+                    sentenceElement.className = 'sentence-item';
+                    sentenceElement.innerHTML = `
+                        "${sentence.text}"
+                        <div class="sentence-source">${sentence.source}</div>
+                    `;
+                    container.appendChild(sentenceElement);
+                });
+            }
+
+            updatePersonality() {
+                const container = document.getElementById('personalityTraits');
+                container.innerHTML = '';
+                
+                this.currentData.personality.forEach(trait => {
+                    const traitElement = document.createElement('div');
+                    traitElement.className = 'trait-tag';
+                    traitElement.textContent = trait;
+                    container.appendChild(traitElement);
+                });
+            }
+
+            updateAdvice() {
+                const container = document.getElementById('adviceList');
+                container.innerHTML = '';
+                
+                this.currentData.advice.forEach(advice => {
+                    const adviceElement = document.createElement('div');
+                    adviceElement.className = `advice-item ${advice.type}`;
+                    
+                    adviceElement.innerHTML = `
+                        <div class="advice-title">
+                            <span>${this.getAdviceIcon(advice.type)}</span>
+                            ${advice.title}
+                        </div>
+                        <p class="advice-content">${advice.content}</p>
+                    `;
+                    
+                    container.appendChild(adviceElement);
+                });
+            }
+
+            initializeAnimations() {
+                // Start main animations after page load
+                setTimeout(() => {
+                    this.animateCircularProgress();
+                }, 1000);
+                
+                setTimeout(() => {
+                    this.animateEmotionBars();
+                }, 1500);
+            }
+
+            animateCircularProgress() {
+                const circle = document.getElementById('progressCircle');
+                const text = document.getElementById('progressText');
+                
+                if (!circle || !text) return;
+
+                const percentage = this.currentData.datingPossibility;
+                const circumference = 2 * Math.PI * 90; // r=90
+                const offset = circumference - (percentage / 100) * circumference;
+                
+                // Set initial state
+                circle.style.strokeDasharray = circumference;
+                circle.style.strokeDashoffset = circumference;
+                
+                // Animate progress
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = offset;
+                }, 100);
+
+                // Animate text counter
+                this.animateCounter(text, 0, percentage, 2000, '%');
+            }
+
+            animateEmotionBars() {
+                const bars = document.querySelectorAll('.emotion-progress-fill');
+                
+                bars.forEach((bar, index) => {
+                    const width = bar.getAttribute('data-width');
+                    setTimeout(() => {
+                        bar.style.width = width + '%';
+                    }, index * 200);
+                });
+            }
+
+            animateCounter(element, start, end, duration, suffix = '') {
+                let startTime = null;
+                
+                const animate = (currentTime) => {
+                    if (!startTime) startTime = currentTime;
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // Ease out cubic
+                    const easedProgress = 1 - Math.pow(1 - progress, 3);
+                    const currentValue = Math.round(start + (end - start) * easedProgress);
+                    
+                    element.textContent = currentValue + suffix;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    }
+                };
+                
+                requestAnimationFrame(animate);
+            }
+
+            getAdviceIcon(type) {
+                const icons = {
+                    'positive': '👍',
+                    'info': '💝',
+                    'warning': '⏰'
+                };
+                return icons[type] || '💡';
+            }
+
+            setupAccessibility() {
+                // Add screen reader announcements for animations
+                const srAnnouncer = document.getElementById('srAnnouncer');
+                
+                // Announce when animations complete
+                setTimeout(() => {
+                    const announcement = `분석 완료. 연애 가능성 ${this.currentData.datingPossibility}퍼센트입니다.`;
+                    srAnnouncer.textContent = announcement;
+                }, 3000);
+            }
+        }
+
+        // Button Actions
+        function generateNewAnalysis() {
+            // Regenerate data and refresh display
+            window.resultsManager.currentData = generateMockData();
+            window.resultsManager.displayResults();
+            window.resultsManager.initializeAnimations();
+            
+            // Show notification
+            alert('새로운 분석 결과가 생성되었습니다!');
+        }
+
+        function showDetailedAnalysis() {
+            alert('상세 분석 페이지로 이동합니다. (개발 중)');
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            window.resultsManager = new ResultsV2Manager();
+        });
+    </script>
+</body>
+</html>

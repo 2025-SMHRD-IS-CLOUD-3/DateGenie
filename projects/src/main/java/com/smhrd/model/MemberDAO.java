@@ -24,25 +24,16 @@ public class MemberDAO {
 		int cnt = 0;
 		
 		try {
-			System.out.println("=== MemberDAO.join() 시작 ===");
-			System.out.println("가입 정보: " + member.getEmail() + ", " + member.getNickname());
+			// Hash password without salt
+			String hashedPassword = SecurityUtils.hashPasswordSimple(member.getPw());
 			
-			// Generate salt and hash password before storing
-			String salt = SecurityUtils.generateSalt();
-			String hashedPassword = SecurityUtils.hashPassword(member.getPw(), salt);
-			
-			// Update member object with hashed password and salt
-			member.setSalt(salt);
+			// Update member object with hashed password
 			member.setPw(hashedPassword);
 			
-			System.out.println("패스워드 해싱 완료");
-			
 			cnt = sqlsession.insert("com.smhrd.db.UserInfo.join", member);
-			System.out.println("DB 삽입 결과: " + cnt);
 			
 		} catch (Exception e) {
-			System.out.println("MemberDAO.join() 에러: " + e.getMessage());
-			e.printStackTrace();
+			// Silent exception handling
 		} finally {
 			if (sqlsession != null) {
 				sqlsession.close();
@@ -57,31 +48,21 @@ public class MemberDAO {
 		UserInfo result = null;
 		
 		try {
-			System.out.println("=== MemberDAO.login() 시작 ===");
-			System.out.println("로그인 시도: " + loginMember.getEmail());
-			
 			// Get user data by email only
 			UserInfo storedUser = sqlsession.selectOne("com.smhrd.db.UserInfo.login", loginMember);
 			
 			if (storedUser != null) {
-				// Verify password using stored hash and salt
+				// Verify password using stored hash (without salt)
 				String inputPassword = loginMember.getPw();
 				String storedHash = storedUser.getPw();
-				String storedSalt = storedUser.getSalt();
 				
-				if (SecurityUtils.verifyPassword(inputPassword, storedHash, storedSalt)) {
+				if (SecurityUtils.verifyPasswordSimple(inputPassword, storedHash)) {
 					result = storedUser;
-					System.out.println("로그인 성공: " + result.getEmail() + ", " + result.getNickname());
-				} else {
-					System.out.println("로그인 실패: 비밀번호 불일치");
 				}
-			} else {
-				System.out.println("로그인 실패: 사용자 정보 없음");
 			}
 			
 		} catch (Exception e) {
-			System.out.println("MemberDAO.login() 에러: " + e.getMessage());
-			e.printStackTrace();
+			// Silent exception handling
 		} finally {
 			if (sqlsession != null) {
 				sqlsession.close();
@@ -97,20 +78,10 @@ public class MemberDAO {
 		UserInfo result = null;
 		
 		try {
-			System.out.println("=== MemberDAO.checkEmailExists() 시작 ===");
-			System.out.println("중복 체크 이메일: " + email);
-			
 			result = sqlsession.selectOne("com.smhrd.db.UserInfo.checkEmail", email);
 			
-			if (result != null) {
-				System.out.println("이메일 중복: " + email);
-			} else {
-				System.out.println("이메일 사용 가능: " + email);
-			}
-			
 		} catch (Exception e) {
-			System.out.println("MemberDAO.checkEmailExists() 에러: " + e.getMessage());
-			e.printStackTrace();
+			// Silent exception handling
 		} finally {
 			if (sqlsession != null) {
 				sqlsession.close();

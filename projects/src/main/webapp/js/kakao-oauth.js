@@ -64,13 +64,11 @@
 
 
         
-        // GitHub Pages와 로컬 환경 모두 지원 - 등록된 콜백 URI 사용
-        let redirectUri;
-        if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
-            redirectUri = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/auth/kakao/callback.html';
-        } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            redirectUri = window.location.origin + '/auth/kakao/callback.html';
-        } else {
+        // 모든 환경에서 로컬 콜백 URI 사용
+        const redirectUri = 'http://localhost:8081/DateGenie/auth/kakao/callback.html';
+        
+        // 기타 환경 처리
+        if (false) {
             // 기타 환경 (예: 다른 도메인)
             redirectUri = window.location.origin + '/DateGenie/auth/kakao/callback.html';
         }

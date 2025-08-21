@@ -95,13 +95,9 @@
             // 5초 후 로그인 페이지로 리다이렉트
             setTimeout(() => {
                 try {
-                    if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
-                        window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html';
-                    } else {
-                        window.location.href = '../../login.html';
-                    }
+                    window.location.href = '/DateGenie/login.html';
                 } catch (error) {
-                    window.location.href = window.location.origin + '/login.html';
+                    window.location.href = window.location.origin + '/DateGenie/login.html';
                 }
             }, 5000);
         }
@@ -109,13 +105,9 @@
         function showSuccess(userName) {
             // 로그인 성공 후 바로 마이 페이지로 리다이렉트
             try {
-                if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
-                    window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/profile-edit.html';
-                } else {
-                    window.location.href = '../../profile-edit.html';
-                }
+                window.location.href = '/DateGenie/profile-edit.html';
             } catch (error) {
-                window.location.href = window.location.origin + '/profile-edit.html';
+                window.location.href = window.location.origin + '/DateGenie/profile-edit.html';
             }
         }
 
@@ -163,9 +155,7 @@
                     body: new URLSearchParams({
                         grant_type: 'authorization_code',
                         client_id: KAKAO_APP_KEY,
-                        redirect_uri: window.location.hostname === '2025-smhrd-is-cloud-3.github.io' ? 
-                                     'https://2025-smhrd-is-cloud-3.github.io/DateGenie/auth/kakao/callback.html' :
-                                     window.location.origin + '/auth/kakao/callback.html',
+                        redirect_uri: 'http://localhost:8081/DateGenie/auth/kakao/callback.html',
                         code: code
                     })
                 })
@@ -246,13 +236,9 @@
             
             // 바로 파일 업로드 페이지로 리다이렉트
             try {
-                if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
-                    window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/upload.html';
-                } else {
-                    window.location.href = '../../upload.html';
-                }
+                window.location.href = '/DateGenie/upload.html';
             } catch (error) {
-                window.location.href = window.location.origin + '/upload.html';
+                window.location.href = window.location.origin + '/DateGenie/upload.html';
             }
         }
 
@@ -284,13 +270,9 @@
 
                 // 바로 파일 업로드 페이지로 리다이렉트
                 try {
-                    if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
-                        window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/upload.html';
-                    } else {
-                        window.location.href = '../../upload.html';
-                    }
+                    window.location.href = '/DateGenie/upload.html';
                 } catch (error) {
-                    window.location.href = window.location.origin + '/upload.html';
+                    window.location.href = window.location.origin + '/DateGenie/upload.html';
                 }
 
             } catch (error) {

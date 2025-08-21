@@ -279,7 +279,7 @@
     <nav class="navbar">
         <div class="nav-container" style="max-width: 1200px;">
             <div class="nav-logo">
-                <a href="index.html" class="brand-logo" aria-label="Date Genie Home">
+                <a href="/DateGenie/index.html" class="brand-logo" aria-label="Date Genie Home">
                     <i class="fas fa-heart heart-icon" aria-hidden="true"></i>
                     <span class="logo-text">Date Genie</span>
                 </a>
@@ -294,19 +294,19 @@
                     </span>
                 </div>
                 <div class="dropdown-menu" id="userDropdownMenu">
-                    <a href="upload.html" class="dropdown-item">
+                    <a href="/DateGenie/upload.html" class="dropdown-item">
                         <i class="fas fa-upload"></i>
                         <span>파일 업로드</span>
                     </a>
-                    <a href="dashboard.html" class="dropdown-item">
+                    <a href="/DateGenie/dashboard.html" class="dropdown-item">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>마이페이지</span>
                     </a>
-                    <a href="profile-edit.html" class="dropdown-item">
+                    <a href="/DateGenie/profile-edit.html" class="dropdown-item">
                         <i class="fas fa-user-edit"></i>
                         <span>회원정보 수정</span>
                     </a>
-                    <a href="settings.html" class="dropdown-item">
+                    <a href="/DateGenie/settings.html" class="dropdown-item">
                         <i class="fas fa-cog"></i>
                         <span>설정</span>
                     </a>
@@ -326,13 +326,13 @@
              <h3>서비스</h3>
              <ul class="nav-list">
                  <li class="nav-item">
-                     <a href="upload.html" class="nav-link">
+                     <a href="/DateGenie/upload.html" class="nav-link">
                          <i class="fas fa-cloud-upload-alt"></i>
                          <span>파일 업로드</span>
                      </a>
                  </li>
                  <li class="nav-item">
-                     <a href="dashboard.html" class="nav-link">
+                     <a href="/DateGenie/dashboard.html" class="nav-link">
                          <i class="fas fa-tachometer-alt"></i>
                          <span>마이 페이지</span>
                      </a>
@@ -342,13 +342,13 @@
              <h3>계정 관리</h3>
              <ul class="nav-list">
                  <li class="nav-item">
-                     <a href="profile-edit.html" class="nav-link">
+                     <a href="/DateGenie/profile-edit.html" class="nav-link">
                          <i class="fas fa-user-edit"></i>
                          <span>회원정보 수정</span>
                      </a>
                  </li>
                  <li class="nav-item">
-                     <a href="settings.html" class="nav-link active">
+                     <a href="/DateGenie/settings.html" class="nav-link active">
                          <i class="fas fa-cog"></i>
                          <span>설정</span>
                      </a>
@@ -505,7 +505,7 @@
                             <p>서비스 이용에 관한 약관을 확인합니다</p>
                         </div>
                     </div>
-                    <a href="terms.html" class="btn-ghost">
+                    <a href="/DateGenie/terms.html" class="btn-ghost">
                         <i class="fas fa-external-link-alt"></i> 보기
                     </a>
                 </div>
@@ -520,7 +520,7 @@
                             <p>개인정보 수집 및 이용에 관한 안내</p>
                         </div>
                     </div>
-                    <a href="privacy.html" class="btn-ghost">
+                    <a href="/DateGenie/privacy.html" class="btn-ghost">
                         <i class="fas fa-external-link-alt"></i> 보기
                     </a>
                 </div>
@@ -544,7 +544,7 @@
                     <div class="footer-section">
                         <h4>페이지</h4>
                         <ul>
-                            <li><a href="index.html">홈</a></li>
+                            <li><a href="/DateGenie/index.html">홈</a></li>
                             <li><a href="index.html#features">기능</a></li>
                             <li><a href="index.html#pricing">요금제</a></li>
                             <li><a href="index.html#faq">FAQ</a></li>
@@ -575,9 +575,9 @@
             
             <div class="footer-bottom">
                 <div class="footer-legal">
-                    <a href="terms.html">이용약관</a>
+                    <a href="/DateGenie/terms.html">이용약관</a>
                     <span aria-hidden="true">·</span>
-                    <a href="privacy.html">개인정보처리방침</a>
+                    <a href="/DateGenie/privacy.html">개인정보처리방침</a>
                     <span aria-hidden="true">·</span>
                     <span>© <span id="footerYear">2024</span> Date Genie. All rights reserved.</span>
                 </div>
@@ -609,13 +609,13 @@
             if (typeof google !== 'undefined' && google.accounts) { google.accounts.id.disableAutoSelect(); }
             localStorage.removeItem('user');
             localStorage.removeItem('authProvider');
-            window.location.href = 'login.html';
+            window.location.href = '/DateGenie/login.html';
         }
 
         function loadUserInfo() {
             const userInfo = localStorage.getItem('user');
             if (!userInfo) { 
-                window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html'; 
+                window.location.href = '/DateGenie/login.html'; 
                 return; 
             }
             
@@ -747,7 +747,7 @@
                 if (confirm('마지막 확인: 모든 데이터가 영구적으로 삭제됩니다. 계속하시겠습니까?')) {
                     localStorage.clear();
                     alert('계정이 삭제되었습니다.');
-                    window.location.href = 'login.html';
+                    window.location.href = '/DateGenie/login.html';
                 }
             }
         }

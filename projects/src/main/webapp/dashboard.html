@@ -407,7 +407,7 @@
     <nav class="navbar">
         <div class="nav-container" style="max-width: 1200px;">
             <div class="nav-logo">
-                <a href="index.html" class="brand-logo" aria-label="Date Genie Home">
+                <a href="/DateGenie/index.html" class="brand-logo" aria-label="Date Genie Home">
                     <i class="fas fa-heart heart-icon" aria-hidden="true"></i>
                     <span class="logo-text">Date Genie</span>
                 </a>
@@ -423,19 +423,19 @@
                     </span>
                 </div>
                 <div class="dropdown-menu" id="userDropdownMenu">
-                    <a href="upload.html" class="dropdown-item">
+                    <a href="/DateGenie/upload.html" class="dropdown-item">
                         <i class="fas fa-upload"></i>
                         <span>파일 업로드</span>
                     </a>
-                    <a href="dashboard.html" class="dropdown-item">
+                    <a href="/DateGenie/dashboard.html" class="dropdown-item">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>마이페이지</span>
                     </a>
-                    <a href="profile-edit.html" class="dropdown-item">
+                    <a href="/DateGenie/profile-edit.html" class="dropdown-item">
                         <i class="fas fa-user-edit"></i>
                         <span>회원정보 수정</span>
                     </a>
-                    <a href="settings.html" class="dropdown-item">
+                    <a href="/DateGenie/settings.html" class="dropdown-item">
                         <i class="fas fa-cog"></i>
                         <span>설정</span>
                     </a>
@@ -455,13 +455,13 @@
             <h3>서비스</h3>
             <ul class="nav-list">
                 <li class="nav-item">
-                    <a href="upload.html" class="nav-link">
+                    <a href="/DateGenie/upload.html" class="nav-link">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <span>파일 업로드</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="dashboard.html" class="nav-link active">
+                    <a href="/DateGenie/dashboard.html" class="nav-link active">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>마이 페이지</span>
                     </a>
@@ -471,13 +471,13 @@
             <h3>계정 관리</h3>
             <ul class="nav-list">
                 <li class="nav-item">
-                    <a href="profile-edit.html" class="nav-link">
+                    <a href="/DateGenie/profile-edit.html" class="nav-link">
                         <i class="fas fa-user-edit"></i>
                         <span>회원정보 수정</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="settings.html" class="nav-link">
+                    <a href="/DateGenie/settings.html" class="nav-link">
                         <i class="fas fa-cog"></i>
                         <span>설정</span>
                     </a>
@@ -505,7 +505,7 @@
 			<section id="analysis" class="panel" aria-labelledby="analysisTitle">
 				<div class="panel-header">
 					<div class="panel-title"><i class="fas fa-chart-line"></i><span id="analysisTitle">분석 결과</span></div>
-					<a href="upload.html" class="btn-primary" style="padding:.55rem .9rem;"><i class="fas fa-upload"></i> 업로드하기</a>
+					<a href="/DateGenie/upload.html" class="btn-primary" style="padding:.55rem .9rem;"><i class="fas fa-upload"></i> 업로드하기</a>
                 </div>
 				<div class="list">
 					<div class="list-item">
@@ -522,7 +522,7 @@
 			<section id="profile" class="panel" aria-labelledby="profileTitle">
 				<div class="panel-header">
 					<div class="panel-title"><i class="fas fa-user"></i><span id="profileTitle">내 정보</span></div>
-					<a href="profile-edit.html" class="btn-primary" style="padding:.55rem .9rem;"><i class="fas fa-pen"></i> 회원정보 수정</a>
+					<a href="/DateGenie/profile-edit.html" class="btn-primary" style="padding:.55rem .9rem;"><i class="fas fa-pen"></i> 회원정보 수정</a>
                         </div>
 				<div class="list">
 					<div class="list-item"><div class="left"><i class="fas fa-id-card"></i> 이름</div><div id="profileName">-</div></div>
@@ -553,7 +553,7 @@
                     <div class="footer-section">
                         <h4>페이지</h4>
                         <ul>
-                            <li><a href="index.html">홈</a></li>
+                            <li><a href="/DateGenie/index.html">홈</a></li>
                             <li><a href="index.html#features">기능</a></li>
                             <li><a href="index.html#pricing">요금제</a></li>
                             <li><a href="index.html#faq">FAQ</a></li>
@@ -584,9 +584,9 @@
             
             <div class="footer-bottom">
                 <div class="footer-legal">
-                    <a href="terms.html">이용약관</a>
+                    <a href="/DateGenie/terms.html">이용약관</a>
                     <span aria-hidden="true">·</span>
-                    <a href="privacy.html">개인정보처리방침</a>
+                    <a href="/DateGenie/privacy.html">개인정보처리방침</a>
                     <span aria-hidden="true">·</span>
                     <span>© <span id="footerYear">2024</span> Date Genie. All rights reserved.</span>
                 </div>
@@ -618,7 +618,7 @@
 			if (typeof google !== 'undefined' && google.accounts) { google.accounts.id.disableAutoSelect(); }
 			localStorage.removeItem('user');
 			localStorage.removeItem('authProvider');
-			window.location.href = 'login.html';
+			window.location.href = '/DateGenie/login.html';
 		}
 
         		// 전화번호 포맷팅 함수
@@ -644,14 +644,9 @@
             const userInfo = localStorage.getItem('user');
             const authProvider = localStorage.getItem('authProvider');
 			if (!userInfo) { 
-			// GitHub Pages 환경 지원
-			if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
-				window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html';
-			} else {
-				window.location.href = 'login.html';
+				window.location.href = '/DateGenie/login.html';
+				return; 
 			}
-			return; 
-		}
                 const user = JSON.parse(userInfo);
 			let profilePicture = user.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODgiIGhlaWdodD0iODgiIHZpZXdCb3g9IjAgMCA4OCA4OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDQiIGN5PSI0NCIgcj0iNDQiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iMTQiIHk9IjE0Ij4KPHBhdGggZD0iTTEyIDEyYTQgNCAwIDEgMCAwLTggNCA0IDAgMCAwIDAgOG0wIDZhOCA4IDAgMSAwIDAgOC4wMDZ2MGE4IDggMCAwIDAgMC0uMDA2eiIgZmlsbD0iIzljYTNhZiIvPgo8L3N2Zz4KPC9zdmc+Cg==';
 			if (profilePicture.includes('googleusercontent.com') && profilePicture.includes('=s96-c')) { profilePicture = profilePicture.replace('=s96-c','=s200-c'); }

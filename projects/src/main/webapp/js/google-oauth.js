@@ -268,7 +268,7 @@ class GoogleOAuth {
         localStorage.setItem('user', JSON.stringify(completeUserData));
         localStorage.setItem('authProvider', 'google');
         // 파일 업로드 페이지로 바로 리다이렉트
-        window.location.href = 'upload.html';
+        window.location.href = '/DateGenie/upload.html';
     }
 
     handleLoginError(message) {
@@ -321,17 +321,13 @@ class GoogleOAuth {
         // 환경 감지
         const hostname = window.location.hostname;
         const isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || window.location.protocol === 'file:';
-        const isGitHubPages = hostname === '2025-smhrd-is-cloud-3.github.io';
         
         if (isLocal) {
             // 로컬 개발환경: 현재 origin + /upload.html
             return window.location.origin + '/upload.html';
-        } else if (isGitHubPages) {
-            // GitHub Pages: DateGenie 프로젝트 경로 포함
-            return 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/upload.html';
         } else {
-            // 기타 프로덕션 환경
-            return window.location.origin + '/upload.html';
+            // 기타 환경 - 상대 경로 사용
+            return 'upload.html';
         }
     }
 
@@ -370,17 +366,13 @@ function getUploadPageUrl() {
     // 환경 감지
     const hostname = window.location.hostname;
     const isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || window.location.protocol === 'file:';
-    const isGitHubPages = hostname === '2025-smhrd-is-cloud-3.github.io';
     
     if (isLocal) {
         // 로컬 개발환경: 현재 origin + /upload.html
         return window.location.origin + '/upload.html';
-    } else if (isGitHubPages) {
-        // GitHub Pages: DateGenie 프로젝트 경로 포함
-        return 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/upload.html';
     } else {
-        // 기타 프로덕션 환경
-        return window.location.origin + '/upload.html';
+        // 기타 환경 - 상대 경로 사용
+        return 'upload.html';
     }
 }
 
@@ -417,16 +409,16 @@ async function handleGoogleCallback() {
             localStorage.setItem('user', JSON.stringify(realUserData));
             localStorage.setItem('authProvider', 'google');
             // 파일 업로드 페이지로 바로 리다이렉트
-            window.location.href = 'upload.html';
+            window.location.href = '/DateGenie/upload.html';
             
         } catch (error) {
 
 
-            setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html'; }, 2000);
+            setTimeout(() => { window.location.href = '/DateGenie/login.html'; }, 2000);
         }
     } else {
         // 코드가 없으면 로그인 페이지로 리디렉션
-        setTimeout(() => { window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html'; }, 1000);
+        setTimeout(() => { window.location.href = '/DateGenie/login.html'; }, 1000);
     }
 }
 

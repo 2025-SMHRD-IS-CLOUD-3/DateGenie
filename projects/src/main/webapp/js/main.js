@@ -260,12 +260,7 @@
 		if (startAnalysisBtn) {
 			startAnalysisBtn.addEventListener('click', function (e) {
 				e.preventDefault();
-				// GitHub Pages 환경 지원
-				if (window.location.hostname === '2025-smhrd-is-cloud-3.github.io') {
-					window.location.href = 'https://2025-smhrd-is-cloud-3.github.io/DateGenie/login.html';
-				} else {
-					window.location.href = window.location.origin + '/login.html';
-				}
+				window.location.href = '/DateGenie/login.html';
 			});
 		}
         // 필요 시 색상 전환 효과 활성화
@@ -295,7 +290,7 @@
             
             // 로그인 페이지로 리다이렉트
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = '/DateGenie/login.html';
             }, 500);
         }
     };
