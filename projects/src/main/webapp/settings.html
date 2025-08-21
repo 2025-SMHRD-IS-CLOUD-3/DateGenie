@@ -288,7 +288,7 @@
             <!-- User Dropdown Menu -->
             <div class="user-dropdown">
                 <div class="user-info" id="userDropdown">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iNCIgeT0iNCI+CjxwYXRoIGQ9Ik0xMiAxMmE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhtMCA2YTggOCAwIDEgMCAwIDguMDA2djBhOCA4IDAgMCAwIDAtLjAwNnoiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cjwvc3ZnPgo=" alt="프로필" class="user-avatar" id="userAvatar">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiNmM2Y0ZjYiLz4KPGNpcmNsZSBjeD0iMzIiIGN5PSIyNiIgcj0iMTAiIGZpbGw9IiM2YjczODAiLz4KPHBhdGggZD0iTTMyIDQ0Yy04IDAtMTUgNC0xNSAxMnYyaDMwdi0yYzAtOC03LTEyLTE1LTEyeiIgZmlsbD0iIzZiNzM4MCIvPgo8L3N2Zz4K" alt="프로필" class="user-avatar" id="userAvatar">
                     <span class="user-name">
                         <span id="userNameText" class="user-name-text">사용자</span><span class="user-greet">님 환영합니다!</span>
                     </span>
@@ -620,7 +620,7 @@
             }
             
             const user = JSON.parse(userInfo);
-            let profilePicture = user.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNmM2Y0ZjYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeD0iNCIgeT0iNCI+CjxwYXRoIGQ9Ik0xMiAxMmE0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhtMCA2YTggOCAwIDEgMCAwIDguMDA2djBhOCA4IDAgMCAwIDAtLjAwNnoiIGZpbGw9IiM5Y2EzYWYiLz4KPC9zdmc+Cjwvc3ZnPgo=';
+            let profilePicture = user.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiNmM2Y0ZjYiLz4KPGNpcmNsZSBjeD0iMzIiIGN5PSIyNiIgcj0iMTAiIGZpbGw9IiM2YjczODAiLz4KPHBhdGggZD0iTTMyIDQ0Yy04IDAtMTUgNC0xNSAxMnYyaDMwdi0yYzAtOC03LTEyLTE1LTEyeiIgZmlsbD0iIzZiNzM4MCIvPgo8L3N2Zz4K';
             if (profilePicture.includes('googleusercontent.com') && profilePicture.includes('=s96-c')) {
                 profilePicture = profilePicture.replace('=s96-c','=s200-c');
             }
