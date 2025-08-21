@@ -26,7 +26,7 @@ public class SendVerificationEmail extends HttpServlet {
 
 	// SendGrid 설정
     private static final String SENDGRID_API_KEY = System.getenv("SendGrid_API_KEY");
-    private static final String FROM_EMAIL = "rkskek1101@gmail.com";
+    private static final String FROM_EMAIL = "rkskek1101@gmail.com"; // 본인 이메일
     private static final String FROM_NAME = "DateGenie";
 	
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

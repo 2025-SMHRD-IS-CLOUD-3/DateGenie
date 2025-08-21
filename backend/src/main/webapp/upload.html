@@ -568,162 +568,283 @@
             }
         }
 
-		function initUpload() {
-			const dropzone = document.getElementById('dropzone');
-			const fileInput = document.getElementById('fileInput');
-			const uploadBar = document.getElementById('uploadProgress');
-			const analysisBar = document.getElementById('analysisProgress');
-			const uploadText = document.getElementById('uploadText');
-			const analysisText = document.getElementById('analysisText');
-			const fileList = document.getElementById('fileList');
-			const analyzeBtn = document.getElementById('analyzeBtn');
-			
-			let uploadedFiles = [];
+        function initUpload() {
+            // ===== ① 컨텍스트 루트 자동 감지 =====
+            const CTX = (() => {
+                const first = location.pathname.split('/')[1];
+                return first && !first.includes('.') ? '/' + first : '';
+            })();
 
-			if (!dropzone || !fileInput) return;
+            // ===== 설정 =====
+            const MAX_SIZE = 50 * 1024 * 1024; // 50MB
+            const ALLOW = new Set(['txt', 'csv', 'json', 'mp3', 'm4a', 'wav']);
 
-			// 드래그 앤 드롭 이벤트
-			dropzone.addEventListener('dragover', e => { 
-				e.preventDefault(); 
-				dropzone.classList.add('dragover'); 
-			});
-			dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-			dropzone.addEventListener('drop', e => { 
-				e.preventDefault(); 
-				dropzone.classList.remove('dragover'); 
-				if (e.dataTransfer.files.length) processFiles(e.dataTransfer.files); 
-			});
+            // ===== DOM 요소들 =====
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('fileInput');
+            const uploadBar = document.getElementById('uploadProgress');
+            const analysisBar = document.getElementById('analysisProgress');
+            const uploadText = document.getElementById('uploadText');
+            const analysisText = document.getElementById('analysisText');
 
-			// 파일 선택 이벤트
-			const dropzoneLabel = dropzone.querySelector('label');
-			if (dropzoneLabel) {
-				dropzoneLabel.addEventListener('click', () => fileInput.click());
-			}
-			fileInput.addEventListener('change', () => { 
-				if (fileInput.files.length) processFiles(fileInput.files); 
-			});
+            if (!dropzone || !fileInput) return;
 
-			function processFiles(files) {
-				Array.from(files).forEach(file => {
-					const fileItem = {
-						id: Date.now() + Math.random(),
-						name: file.name,
-						size: formatFileSize(file.size),
-						type: getFileType(file.name),
-						status: 'processing'
-					};
-					uploadedFiles.push(fileItem);
-				});
+            // ===== 유틸리티 함수들 =====
+            const extOf = (name = '') => (name.split('.').pop() || '').toLowerCase();
+            const fmtSize = (b = 0) => (b < 1024) ? b + ' B' : (b < 1048576) ? (b / 1024).toFixed(1) + ' KB' : (b / 1048576).toFixed(1) + ' MB';
+            const setProgress = (el, v) => {
+                if (el) {
+                    el.style.width = v + '%';
+                    el.setAttribute('aria-valuenow', v);
+                }
+            };
 
-				updateFileList();
-				simulateUpload();
-			}
+            // ===== 파일 검증 =====
+            function validateFiles(files) {
+                const valid = [];
+                for (const f of files) {
+                    const e = extOf(f.name);
+                    if (!ALLOW.has(e)) {
+                        showNotification(`업로드 실패: 허용되지 않은 파일 형식(${e})`, 'error');
+                        continue;
+                    }
+                    if (f.size > MAX_SIZE) {
+                        showNotification('업로드 실패: 파일이 너무 큽니다 (최대 50MB)', 'error');
+                        continue;
+                    }
+                    valid.push(f);
+                }
+                return valid;
+            }
 
-			function updateFileList() {
-				if (uploadedFiles.length === 0) {
-					fileList.innerHTML = `
-						<div style="text-align:center; color:#6b7280; padding:2rem;">
-							아직 업로드된 파일이 없습니다. 위에서 파일을 선택해주세요.
-						</div>
-					`;
-					analyzeBtn.style.display = 'none';
-					return;
-				}
+            // ===== 파일 업로드 및 분석 =====
+            async function processFiles(files) {
+                if (!files || !files.length) return;
+                
+                const validFiles = validateFiles(files);
+                if (!validFiles.length) return;
 
-				fileList.innerHTML = uploadedFiles.map(file => `
-					<div class="file-item">
-						<div class="left">
-							<div class="file-icon">
-								<i class="fas ${getFileIcon(file.type)}"></i>
-							</div>
-							<div class="file-info">
-								<h5>${file.name}</h5>
-								<p>${file.size} • ${file.type}</p>
-							</div>
-						</div>
-						<div class="file-status ${file.status}">${getStatusText(file.status)}</div>
-					</div>
-				`).join('');
+                try {
+                    // 1. 업로드 시작
+                    setProgress(uploadBar, 0);
+                    setProgress(analysisBar, 0);
+                    uploadText.textContent = '파일 읽는 중...';
+                    analysisText.textContent = '분석 대기 중...';
 
-				analyzeBtn.style.display = uploadedFiles.some(f => f.status === 'completed') ? 'inline-flex' : 'none';
-			}
+                    // 2. FormData 생성 및 파일 추가
+                    const formData = new FormData();
+                    validFiles.forEach(file => {
+                        formData.append('files', file, file.name);
+                    });
 
-			function simulateUpload() {
-				let up = 0, an = 0;
-				uploadText.textContent = '파일 업로드 중...';
-				
-				const upTimer = setInterval(() => {
-					up = Math.min(100, up + (6 + Math.random() * 12));
-					uploadBar.style.width = up + '%';
-					
-					if (up >= 100) {
-						clearInterval(upTimer);
-						uploadText.textContent = '업로드 완료!';
-						analysisText.textContent = 'AI 분석 중...';
-						
-						const anTimer = setInterval(() => {
-							an = Math.min(100, an + (4 + Math.random() * 9));
-							analysisBar.style.width = an + '%';
-							
-							if (an >= 100) {
-								clearInterval(anTimer);
-								analysisText.textContent = '분석 완료!';
-								
-								// 파일 상태 업데이트
-								uploadedFiles.forEach(file => file.status = 'completed');
-								updateFileList();
-								
-								if (window.showNotification) {
-									window.showNotification('파일 분석이 완료되었습니다!', 'success');
-								}
-							}
-						}, 200);
-					}
-				}, 150);
-			}
+                    // 3. 업로드 요청
+                    setProgress(uploadBar, 10);
+                    uploadText.textContent = '서버로 전송 중...';
 
-			function formatFileSize(bytes) {
-				if (bytes === 0) return '0 Bytes';
-				const k = 1024;
-				const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-				const i = Math.floor(Math.log(bytes) / Math.log(k));
-				return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-			}
+                    const uploadResponse = await fetch(CTX + '/api/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
 
-			function getFileType(filename) {
-				const ext = filename.split('.').pop().toLowerCase();
-				if (['txt', 'csv', 'json'].includes(ext)) return '카카오톡 대화';
-				if (['mp3', 'm4a', 'wav'].includes(ext)) return '통화 녹음';
-				return '알 수 없음';
-			}
+                    const uploadResult = await uploadResponse.json();
 
-			function getFileIcon(type) {
-				if (type === '카카오톡 대화') return 'fa-comments';
-				if (type === '통화 녹음') return 'fa-microphone';
-				return 'fa-file';
-			}
+                    if (!uploadResult.ok) {
+                        throw new Error(uploadResult.message || '업로드 실패');
+                    }
 
-			function getStatusText(status) {
-				switch(status) {
-					case 'processing': return '처리 중';
-					case 'completed': return '완료';
-					case 'error': return '오류';
-					default: return '대기';
-				}
-			}
+                    // 4. 업로드 완료
+                    setProgress(uploadBar, 100);
+                    uploadText.textContent = '업로드 완료!';
 
-			// 분석 시작 버튼
-			if (analyzeBtn) {
-				analyzeBtn.addEventListener('click', () => {
-					window.location.href = 'dashboard.html?from=upload';
-				});
-			}
-		}
+                    // 5. 분석 시작
+                    await startAnalysis(uploadResult.data);
 
-		document.addEventListener('DOMContentLoaded', function(){
+                } catch (error) {
+                    console.error('파일 처리 오류:', error);
+                    uploadText.textContent = `업로드 실패: ${error.message}`;
+                    analysisText.textContent = '분석 실패';
+                    showNotification(`실패: ${error.message}`, 'error');
+                }
+            }
+
+            // ===== 분석 시작 =====
+            async function startAnalysis(fileContents) {
+                try {
+                    setProgress(analysisBar, 10);
+                    analysisText.textContent = '분석 시작 중...';
+
+                    // 분석 시작 요청
+                    const analyzeResponse = await fetch(CTX + '/api/analyze', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+                        body: JSON.stringify({ fileContents })
+                    });
+
+                    const analyzeResult = await analyzeResponse.json();
+
+                    if (!analyzeResult.ok) {
+                        throw new Error(analyzeResult.message || '분석 시작 실패');
+                    }
+
+                    const jobId = analyzeResult.data.jobId;
+                    
+                    // 분석 진행률 추적
+                    await trackAnalysisProgress(jobId);
+
+                } catch (error) {
+                    console.error('분석 시작 오류:', error);
+                    analysisText.textContent = `분석 실패: ${error.message}`;
+                    showNotification(`분석 실패: ${error.message}`, 'error');
+                }
+            }
+
+            // ===== 분석 진행률 추적 =====
+            async function trackAnalysisProgress(jobId) {
+                let lastPercent = 0;
+                
+                const checkProgress = async () => {
+                    try {
+                        const response = await fetch(`${CTX}/api/analyze/progress?jobId=${encodeURIComponent(jobId)}&t=${Date.now()}`);
+                        const result = await response.json();
+
+                        if (!result.ok) {
+                            throw new Error(result.message || '진행률 조회 실패');
+                        }
+
+                        const percent = Math.max(lastPercent, result.data.percent || 0);
+                        const status = result.data.status;
+                        const message = result.data.message || '';
+
+                        setProgress(analysisBar, percent);
+                        analysisText.textContent = (status === 'done') 
+                            ? '분석 완료!' 
+                            : `${message}... ${percent}%`;
+
+                        lastPercent = percent;
+
+                        if (status === 'running') {
+                            // 0.5초 후 다시 확인
+                            setTimeout(checkProgress, 500);
+                        } else if (status === 'done') {
+                            // 분석 완료 - 결과 조회
+                            await getAnalysisResult(jobId);
+                        } else if (status === 'error') {
+                            throw new Error(message || '분석 중 오류 발생');
+                        }
+
+                    } catch (error) {
+                        console.error('진행률 확인 오류:', error);
+                        analysisText.textContent = `분석 실패: ${error.message}`;
+                        showNotification(`분석 실패: ${error.message}`, 'error');
+                    }
+                };
+
+                // 진행률 추적 시작
+                checkProgress();
+            }
+
+            // ===== 분석 결과 조회 =====
+            async function getAnalysisResult(jobId) {
+                try {
+                    const response = await fetch(`${CTX}/api/analyze/result?jobId=${encodeURIComponent(jobId)}`);
+                    const result = await response.json();
+
+                    if (result.ok) {
+                        console.log('분석 결과:', result.data);
+                        showNotification('분석이 완료되었습니다!', 'success');
+                        
+                        // 대시보드로 이동 (결과 확인)
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html?from=upload';
+                        }, 1500);
+                    } else {
+                        analysisText.textContent = '분석 완료 (결과 조회 실패)';
+                        showNotification('분석은 완료되었지만 결과 조회에 실패했습니다.', 'warning');
+                    }
+
+                } catch (error) {
+                    console.error('결과 조회 오류:', error);
+                    analysisText.textContent = '분석 완료 (결과 조회 실패)';
+                    showNotification('분석은 완료되었지만 결과 조회에 실패했습니다.', 'warning');
+                }
+            }
+
+            // ===== 알림 표시 함수 =====
+            function showNotification(message, type = 'info') {
+                // 기존 알림 시스템이 있다면 사용
+                if (window.showNotification) {
+                    window.showNotification(message, type);
+                    return;
+                }
+
+                // 간단한 알림 (기본 구현)
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'error' ? '#fee2e2' : type === 'success' ? '#dcfce7' : '#dbeafe'};
+                    color: ${type === 'error' ? '#dc2626' : type === 'success' ? '#166534' : '#1e40af'};
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    max-width: 300px;
+                    word-wrap: break-word;
+                `;
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                // 3초 후 제거
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3000);
+            }
+
+            // ===== 이벤트 리스너 설정 =====
+            
+            // 드래그 앤 드롭
+            ['dragenter', 'dragover'].forEach(evt =>
+                dropzone.addEventListener(evt, (ev) => {
+                    ev.preventDefault();
+                    dropzone.classList.add('dragover');
+                })
+            );
+
+            ['dragleave', 'drop'].forEach(evt =>
+                dropzone.addEventListener(evt, (ev) => {
+                    ev.preventDefault();
+                    dropzone.classList.remove('dragover');
+                })
+            );
+
+            dropzone.addEventListener('drop', (ev) => {
+                const files = ev.dataTransfer.files || [];
+                if (files.length) {
+                    processFiles(files);
+                }
+            });
+
+            // 파일 선택 버튼
+            const dropzoneLabel = dropzone.querySelector('label');
+            if (dropzoneLabel) {
+                dropzoneLabel.addEventListener('click', () => fileInput.click());
+            }
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    processFiles(e.target.files);
+                }
+                e.target.value = ''; // 같은 파일 재선택 가능
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function(){
             loadUserInfo();
-			initUpload();
-			initUserDropdown();
+            initUpload();
+            initUserDropdown();
         });
     </script>
     <script src="js/footer.js"></script>
