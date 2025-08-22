@@ -13,6 +13,8 @@ import javax.servlet.http.HttpSession;
 import com.smhrd.model.MemberDAO;
 import com.smhrd.model.UserInfo;
 import com.smhrd.util.SecurityUtils;
+import com.smhrd.service.EmailVerificationService;
+import com.smhrd.service.EmailVerificationService.VerificationResult;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -114,10 +116,17 @@ public class JoinService extends HttpServlet {
             }
             
             // All validations passed, proceed with registration
+            System.out.println("=== DEBUG: Starting registration process ===");
+            System.out.println("Email: " + email);
+            System.out.println("Nickname: " + nickname);
+            System.out.println("Password length: " + password.length());
+            
             MemberDAO dao = new MemberDAO();
                 
                 // Check if email already exists
+                System.out.println("=== DEBUG: Checking if email exists ===");
                 UserInfo existingUser = dao.checkEmailExists(email);
+                System.out.println("Existing user result: " + (existingUser != null ? "EXISTS" : "NOT_EXISTS"));
                 
                 if (existingUser != null) {
                     // Email already exists
@@ -132,25 +141,86 @@ public class JoinService extends HttpServlet {
                     
                 } else {
                     // Email is available, proceed with registration
+                    System.out.println("=== DEBUG: Creating new member ===");
                     UserInfo newMember = new UserInfo(email, password, nickname);
-                    int result = dao.join(newMember);
+                    System.out.println("Member created, attempting database insert...");
+                    
+                    int result = 0;
+                    try {
+                        result = dao.join(newMember);
+                        System.out.println("=== DEBUG: Database insert result: " + result + " ===");
+                    } catch (Exception dbEx) {
+                        System.err.println("=== Database Insert Error ===");
+                        System.err.println("Error: " + dbEx.getMessage());
+                        dbEx.printStackTrace();
+                        System.err.println("============================");
+                        
+                        Map<String, Object> errorResponse = new HashMap<>();
+                        errorResponse.put("success", false);
+                        errorResponse.put("message", "회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+                        errorResponse.put("debug", "Database error: " + dbEx.getMessage());
+                        
+                        PrintWriter out = response.getWriter();
+                        Gson gson = new Gson();
+                        out.print(gson.toJson(errorResponse));
+                        out.flush();
+                        return;
+                    }
                     
                     if (result > 0) {
-                        // Signup success
+                        // Signup success - 회원가입 성공 후 이메일 인증 메일 발송
                         HttpSession session = request.getSession();
                         session.setAttribute("email", email);
                         
-                        // 환경별 리다이렉션 URL 설정
-                        String baseURL = request.getRequestURL().toString();
-                        String redirectUrl;
+                        // 베이스 URL 생성
+                        String scheme = request.getScheme();
+                        String serverName = request.getServerName();
+                        int serverPort = request.getServerPort();
+                        String contextPath = request.getContextPath();
                         
-                        // 모든 환경에서 localhost:8081/DateGenie로 리다이렉트
-                        redirectUrl = "http://localhost:8081/DateGenie/login.html";
+                        StringBuilder baseUrl = new StringBuilder();
+                        baseUrl.append(scheme).append("://").append(serverName);
+                        if ((scheme.equals("http") && serverPort != 80) || 
+                            (scheme.equals("https") && serverPort != 443)) {
+                            baseUrl.append(":").append(serverPort);
+                        }
+                        baseUrl.append(contextPath);
+                        
+                        // 이메일 인증 서비스 호출
+                        System.out.println("=== DEBUG: Starting email verification ===");
+                        System.out.println("Email: " + email);
+                        System.out.println("Base URL: " + baseUrl.toString());
+                        
+                        EmailVerificationService emailVerificationService = new EmailVerificationService();
+                        VerificationResult emailResult = null;
+                        
+                        try {
+                            emailResult = emailVerificationService.createAndSendVerification(email, baseUrl.toString());
+                            System.out.println("Email verification result: " + (emailResult != null ? emailResult.isSuccess() : "null"));
+                            if (emailResult != null) {
+                                System.out.println("Email result message: " + emailResult.getMessage());
+                            }
+                        } catch (Exception emailEx) {
+                            System.err.println("=== Email Verification Error ===");
+                            System.err.println("Error: " + emailEx.getMessage());
+                            emailEx.printStackTrace();
+                            System.err.println("================================");
+                            emailResult = new VerificationResult(false, "Email service error: " + emailEx.getMessage(), null);
+                        }
                         
                         Map<String, Object> successResponse = new HashMap<>();
                         successResponse.put("success", true);
-                        successResponse.put("message", "회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.");
-                        successResponse.put("redirectUrl", redirectUrl);
+                        
+                        if (emailResult.isSuccess()) {
+                            // 이메일 인증 메일 발송 성공
+                            successResponse.put("message", "회원가입이 완료되었습니다! 이메일 인증을 위해 " + email + "로 발송된 메일을 확인해주세요.");
+                            successResponse.put("emailSent", true);
+                        } else {
+                            // 이메일 발송 실패 시에도 회원가입은 완료된 상태이므로 성공 처리
+                            successResponse.put("message", "회원가입이 완료되었습니다! 이메일 인증 메일 발송에 실패했지만, 이메일 인증 섹션에서 재발송할 수 있습니다.");
+                            successResponse.put("emailSent", false);
+                            successResponse.put("emailError", emailResult.getMessage());
+                        }
                         
                         PrintWriter out = response.getWriter();
                         Gson gson = new Gson();
@@ -171,11 +241,18 @@ public class JoinService extends HttpServlet {
                 }
             
         } catch (Exception e) {
+            // Log the actual error for debugging
+            System.err.println("=== JoinService Error ===");
+            System.err.println("Error message: " + e.getMessage());
+            e.printStackTrace();
+            System.err.println("========================");
+            
             try {
                 response.setContentType("application/json; charset=UTF-8");
                 Map<String, Object> errorResponse = new HashMap<>();
                 errorResponse.put("success", false);
                 errorResponse.put("message", "서버 오류가 발생했습니다. 다시 시도해주세요.");
+                errorResponse.put("debug", e.getMessage()); // Add debug info
                 
                 PrintWriter out = response.getWriter();
                 Gson gson = new Gson();

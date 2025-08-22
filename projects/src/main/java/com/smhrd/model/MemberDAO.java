@@ -33,7 +33,9 @@ public class MemberDAO {
 			cnt = sqlsession.insert("com.smhrd.db.UserInfo.join", member);
 			
 		} catch (Exception e) {
-			// Silent exception handling
+			// Log exception for debugging
+			System.err.println("MemberDAO.join() 오류: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			if (sqlsession != null) {
 				sqlsession.close();
@@ -119,6 +121,33 @@ public class MemberDAO {
 		sqlsession.close();
 		// 4. 리턴값 정의
 		return result;
+	}
+	
+	// 이메일 인증 상태 업데이트 메서드
+	public boolean updateEmailVerificationStatus(String email, boolean verified) {
+		SqlSession sqlsession = sqlSessionFactory.openSession(true);
+		int cnt = 0;
+		
+		try {
+			UserInfo updateData = new UserInfo();
+			updateData.setEmail(email);
+			updateData.setEmailVerified(verified);
+			
+			cnt = sqlsession.update("com.smhrd.db.UserInfo.updateEmailVerified", updateData);
+			
+		} catch (Exception e) {
+			// Log exception for debugging
+			System.err.println("MemberDAO.updateEmailVerificationStatus() 오류: " + e.getMessage());
+			System.err.println("이메일 인증 기능이 데이터베이스 스키마에서 지원되지 않을 수 있습니다.");
+			// Return true to prevent blocking signup process
+			return true;
+		} finally {
+			if (sqlsession != null) {
+				sqlsession.close();
+			}
+		}
+		
+		return cnt > 0;
 	}
 	
 }

@@ -9,6 +9,7 @@ public class UserInfo {
     private String pw;
     private String nickname;
     private String joinDate;
+    private boolean emailVerified = false;
 
     // Signup constructor (joinDate handled by DB)
     public UserInfo(String email, String pw, String nickname) {
@@ -51,6 +52,10 @@ public class UserInfo {
         return joinDate;
     }
     
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+    
     // Setter methods
     public void setEmail(String email) {
         this.email = email;
@@ -69,9 +74,13 @@ public class UserInfo {
         this.joinDate = joinDate;
     }
     
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+    
     // toString method
     @Override
     public String toString() {
-        return "UserInfo [email=" + email + ", nickname=" + nickname + ", joinDate=" + joinDate + "]";
+        return "UserInfo [email=" + email + ", nickname=" + nickname + ", joinDate=" + joinDate + ", emailVerified=" + emailVerified + "]";
     }
 }

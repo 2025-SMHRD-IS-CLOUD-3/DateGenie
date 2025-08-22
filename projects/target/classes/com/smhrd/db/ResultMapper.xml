@@ -1,5 +1,191 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.smhrd.db.ResultMapper">
-	
+
+    <!-- 분석 세션 저장 -->
+    <insert id="insertAnalysisSession" parameterType="map">
+        INSERT INTO analysis_sessions (
+            session_id, user_id, session_name, partner_name,
+            success_rate, confidence_level, relationship_stage, hero_insight,
+            analysis_date, conversation_period_start, conversation_period_end,
+            total_messages, analysis_status, created_at, updated_at
+        ) VALUES (
+            #{sessionId}, #{userId}, #{sessionName}, #{partnerName},
+            #{successRate}, #{confidenceLevel}, #{relationshipStage}, #{heroInsight},
+            SYSDATE, TO_DATE(#{conversationStart}, 'YYYY-MM-DD'), TO_DATE(#{conversationEnd}, 'YYYY-MM-DD'),
+            #{totalMessages}, 'completed', SYSDATE, SYSDATE
+        )
+    </insert>
+
+    <!-- 관심도 추이 데이터 저장 -->
+    <insert id="insertInterestTrend" parameterType="map">
+        INSERT INTO interest_trends (
+            trend_id, session_id, trend_date, interest_value,
+            message_count, response_time_avg, emoji_usage_count, created_at
+        ) VALUES (
+            interest_trends_seq.NEXTVAL, #{sessionId}, TO_DATE(#{trendDate}, 'YYYY-MM-DD'), #{interestValue},
+            #{messageCount}, #{avgResponseTime}, #{emojiCount}, SYSDATE
+        )
+    </insert>
+
+    <!-- 감정 분석 결과 저장 -->
+    <insert id="insertEmotionAnalysis" parameterType="map">
+        INSERT INTO emotion_analysis (
+            emotion_id, session_id, positive_percentage, neutral_percentage, negative_percentage,
+            dominant_emotion, emotional_stability_score, positive_keywords, negative_keywords, created_at
+        ) VALUES (
+            emotion_analysis_seq.NEXTVAL, #{sessionId}, #{positive}, #{neutral}, #{negative},
+            #{dominantEmotion}, #{stabilityScore}, #{positiveKeywords}, #{negativeKeywords}, SYSDATE
+        )
+    </insert>
+
+    <!-- 긍정적 신호 저장 -->
+    <insert id="insertPositiveSignal" parameterType="map">
+        INSERT INTO positive_signals (
+            signal_id, session_id, signal_text, signal_description, confidence_score,
+            signal_type, metric_value, metric_unit, detection_method, signal_priority, created_at
+        ) VALUES (
+            positive_signals_seq.NEXTVAL, #{sessionId}, #{text}, #{description}, #{confidence},
+            #{type}, #{metricValue}, #{metricUnit}, 'ai_analysis', #{priority, jdbcType=INTEGER}, SYSDATE
+        )
+    </insert>
+
+    <!-- 대표 호감 메시지 저장 -->
+    <insert id="insertFavoriteMessage" parameterType="map">
+        INSERT INTO favorite_messages (
+            message_id, session_id, message_text, confidence_percentage, analysis_reason,
+            message_date, sender_type, message_length, contains_emoji,
+            sentiment_score, intimacy_level, action_type, created_at
+        ) VALUES (
+            favorite_messages_seq.NEXTVAL, #{sessionId}, #{text}, #{confidence}, #{reason},
+            TO_TIMESTAMP(#{messageDate}, 'YYYY-MM-DD HH24:MI:SS'), #{sender}, LENGTH(#{text}), 
+            CASE WHEN REGEXP_LIKE(#{text}, '[😀-🙏]') THEN 1 ELSE 0 END,
+            #{sentimentScore, jdbcType=DECIMAL}, #{intimacyLevel, jdbcType=INTEGER}, #{actionType}, SYSDATE
+        )
+    </insert>
+
+    <!-- 맞춤 조언 저장 -->
+    <insert id="insertCustomAdvice" parameterType="map">
+        INSERT INTO custom_advice (
+            advice_id, session_id, advice_title, advice_content,
+            advice_type, priority_order, urgency_level,
+            based_on_success_rate, based_on_signals, created_at
+        ) VALUES (
+            custom_advice_seq.NEXTVAL, #{sessionId}, #{title}, #{content},
+            #{type}, #{priority}, #{urgency},
+            #{basedOnSuccessRate, jdbcType=DECIMAL}, #{basedOnSignals}, SYSDATE
+        )
+    </insert>
+
+    <!-- 분석 결과 조회 -->
+    <select id="getAnalysisResult" parameterType="string" resultType="map">
+        SELECT 
+            session_id as sessionId,
+            user_id as userId,
+            session_name as sessionName,
+            partner_name as partnerName,
+            success_rate as successRate,
+            confidence_level as confidenceLevel,
+            relationship_stage as relationshipStage,
+            hero_insight as heroInsight,
+            analysis_date as analysisDate,
+            conversation_period_start as conversationStart,
+            conversation_period_end as conversationEnd,
+            total_messages as totalMessages,
+            analysis_status as analysisStatus
+        FROM analysis_sessions 
+        WHERE session_id = #{sessionId}
+    </select>
+
+    <!-- 관심도 추이 조회 -->
+    <select id="getInterestTrends" parameterType="string" resultType="map">
+        SELECT 
+            TO_CHAR(trend_date, 'MM월 DD일') as date,
+            interest_value as value,
+            message_count as messageCount,
+            response_time_avg as avgResponseTime,
+            emoji_usage_count as emojiCount
+        FROM interest_trends 
+        WHERE session_id = #{sessionId}
+        ORDER BY trend_date
+    </select>
+
+    <!-- 감정 분석 조회 -->
+    <select id="getEmotionAnalysis" parameterType="string" resultType="map">
+        SELECT 
+            positive_percentage as positive,
+            neutral_percentage as neutral,
+            negative_percentage as negative,
+            dominant_emotion as dominantEmotion,
+            emotional_stability_score as stabilityScore,
+            positive_keywords as positiveKeywords,
+            negative_keywords as negativeKeywords
+        FROM emotion_analysis 
+        WHERE session_id = #{sessionId}
+    </select>
+
+    <!-- 긍정적 신호 조회 -->
+    <select id="getPositiveSignals" parameterType="string" resultType="map">
+        SELECT 
+            signal_text as text,
+            signal_description as description,
+            confidence_score as confidence,
+            signal_type as type,
+            metric_value as metricValue,
+            metric_unit as metricUnit
+        FROM positive_signals 
+        WHERE session_id = #{sessionId}
+        ORDER BY confidence_score DESC, signal_priority
+    </select>
+
+    <!-- 대표 호감 메시지 조회 -->
+    <select id="getFavoriteMessage" parameterType="string" resultType="map">
+        SELECT 
+            message_text as text,
+            confidence_percentage as confidence,
+            TO_CHAR(message_date, 'MM월 DD일 오후 HH:MI') as date,
+            analysis_reason as reason,
+            sender_type as sender
+        FROM favorite_messages 
+        WHERE session_id = #{sessionId}
+        ORDER BY confidence_percentage DESC
+        FETCH FIRST 1 ROW ONLY
+    </select>
+
+    <!-- 맞춤 조언 조회 -->
+    <select id="getCustomAdvice" parameterType="string" resultType="map">
+        SELECT 
+            advice_title as title,
+            advice_content as content,
+            advice_type as type,
+            priority_order as priority,
+            urgency_level as urgency
+        FROM custom_advice 
+        WHERE session_id = #{sessionId}
+        ORDER BY priority_order
+    </select>
+
+    <!-- 사용자별 분석 히스토리 조회 -->
+    <select id="getUserAnalysisHistory" parameterType="string" resultType="map">
+        SELECT 
+            session_id as sessionId,
+            session_name as sessionName,
+            partner_name as partnerName,
+            success_rate as successRate,
+            confidence_level as confidenceLevel,
+            relationship_stage as relationshipStage,
+            TO_CHAR(analysis_date, 'YYYY-MM-DD HH24:MI') as analysisDate,
+            total_messages as totalMessages
+        FROM analysis_sessions 
+        WHERE user_id = #{userId}
+        ORDER BY analysis_date DESC
+    </select>
+
+    <!-- 세션 존재 확인 -->
+    <select id="checkSessionExists" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM analysis_sessions 
+        WHERE session_id = #{sessionId}
+    </select>
+
 </mapper>

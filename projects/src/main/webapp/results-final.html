@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>썸 관계 분석 결과 - Date Genie</title>
+    <link rel="icon" type="image/svg+xml" href="images/icon.svg">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* === Core Reset & Variables === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navbar-height: 70px;
+            --primary-gradient: linear-gradient(135deg, #ec4899, #8b5cf6);
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --text-primary: #1f1d3a;
+            --text-secondary: #6b7280;
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --shadow-primary: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 40%, #eef2ff 100%);
+            min-height: 100vh;
+        }
+
+        /* === Navigation === */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--navbar-height);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .heart-icon {
+            color: #ec4899;
+            font-size: 1.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 12px;
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--text-primary);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* === Main Container === */
+        .results-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: calc(var(--navbar-height) + 2rem) 1rem 3rem;
+        }
+
+        /* === Card System === */
+        .result-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* === Two Column Layout System === */
+        .two-column-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .column-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .column-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* === Hero Success Dashboard === */
+        .hero-dashboard {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%);
+            position: relative;
+        }
+
+        .success-meter {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 2rem;
+        }
+
+        .success-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #ec4899 0%, #8b5cf6 76%, #f3f4f6 76%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: scaleIn 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .success-circle::before {
+            content: '';
+            position: absolute;
+            inset: 20px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .success-percentage {
+            position: absolute;
+            font-size: 3rem;
+            font-weight: 800;
+            color: #7c3aed;
+            z-index: 2;
+        }
+
+        .relationship-status {
+            margin-bottom: 1rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.3);
+        }
+
+        .hero-insight {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 1.5rem 0;
+            line-height: 1.4;
+        }
+
+        .confidence-level {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--success-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* === Chart Containers === */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        /* === Section Headers === */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .section-title h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* === Signal Components === */
+        .signal-list {
+            list-style: none;
+        }
+
+        .signal-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .signal-item:last-child {
+            border-bottom: none;
+        }
+
+        .signal-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+        }
+
+        .positive-signal .signal-icon {
+            background: var(--success-color);
+        }
+
+        .warning-signal .signal-icon {
+            background: var(--warning-color);
+        }
+
+        .signal-content {
+            flex: 1;
+        }
+
+        .signal-text {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .signal-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .confidence-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .confidence-stars {
+            color: #fbbf24;
+        }
+
+        /* === Favorite Message Component === */
+        .favorite-message {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.05), rgba(139, 92, 246, 0.05));
+            border: 2px solid rgba(236, 72, 153, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .message-badge {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .message-text {
+            background: white;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            font-style: italic;
+            color: var(--text-primary);
+            border-left: 4px solid #ec4899;
+            margin: 1rem 0;
+            position: relative;
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .message-meta {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* === Conversation Guide === */
+        .conversation-examples {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .conversation-item {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 1rem;
+            border-left: 4px solid var(--info-color);
+        }
+
+        .conversation-type {
+            font-weight: 600;
+            color: var(--info-color);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .conversation-text {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .conversation-timing {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* === Advice Component === */
+        .advice-item {
+            background: rgba(245, 158, 11, 0.05);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 0.75rem 0;
+        }
+
+        .advice-title {
+            font-weight: 600;
+            color: var(--warning-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .advice-content {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        /* === Sticky Note Style === */
+        .sticky-note {
+            background: #ffeb3b;
+            color: #333;
+            font-family: 'Malgun Gothic', sans-serif;
+            padding: 1.2rem 1.5rem;
+            margin: 2rem 0;
+            transform: rotate(-1deg);
+            border-radius: 0;
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.2);
+            position: relative;
+            border: 1px solid #f9c74f;
+        }
+
+        .sticky-note::before {
+            content: '📌';
+            position: absolute;
+            top: -8px;
+            right: 15px;
+            font-size: 1.3rem;
+        }
+
+        /* === Action Buttons === */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #7c3aed;
+            border: 2px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(124, 58, 237, 0.1);
+            border-color: rgba(124, 58, 237, 0.5);
+            transform: translateY(-1px);
+        }
+
+        /* === Animations === */
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* === Responsive Design === */
+        @media (max-width: 768px) {
+            .results-container {
+                padding: calc(var(--navbar-height) + 1rem) 0.5rem 2rem;
+            }
+
+            .two-column-grid,
+            .action-buttons {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .result-card,
+            .column-card {
+                padding: 1.5rem;
+                border-radius: 20px;
+            }
+
+            .hero-dashboard {
+                padding: 2rem 1rem;
+            }
+
+            .success-meter {
+                width: 160px;
+                height: 160px;
+            }
+
+            .success-percentage {
+                font-size: 2.5rem;
+            }
+
+            .hero-insight {
+                font-size: 1.1rem;
+            }
+
+            .chart-container {
+                height: 250px;
+                padding: 0.75rem;
+            }
+        }
+
+        /* === Accessibility === */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .btn-primary:focus,
+        .btn-secondary:focus {
+            outline: 3px solid rgba(124, 58, 237, 0.5);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/DateGenie/index.html" class="brand-logo">
+                <i class="fas fa-heart heart-icon"></i>
+                <span>Date Genie</span>
+            </a>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span id="userName">사용자님</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="results-container">
+        <!-- 1. 호감도 (최상단) -->
+        <div class="result-card hero-dashboard">
+            <div class="relationship-status">
+                <div class="status-badge" id="relationshipStage">썸 가능성 높음</div>
+            </div>
+            
+            <div class="success-meter">
+                <div class="success-circle" id="successCircle">
+                    <div class="success-percentage" id="successPercentage">76%</div>
+                </div>
+            </div>
+
+            <h1 class="hero-insight" id="heroInsight">
+                상대방이 당신에게 호감을 가지고 있을 확률이 높습니다
+            </h1>
+
+            <div class="confidence-level">
+                <i class="fas fa-shield-check"></i>
+                <span>분석 신뢰도: <strong id="confidenceLevel">83%</strong></span>
+            </div>
+        </div>
+
+        <!-- 2. 호감도 변화 추이 + 감정분석 (2열) -->
+        <div class="two-column-grid">
+            <div class="column-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="section-title">
+                        <h3>호감도 변화 추이</h3>
+                        <p class="section-subtitle">최근 10일간 관심도 변화</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="interestChart"></canvas>
+                </div>
+            </div>
+
+            <div class="column-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="section-title">
+                        <h3>감정 분석</h3>
+                        <p class="section-subtitle">대화 톤 감정 분포</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="emotionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 발견된 호감 신호 + 대표 호감문장 (2열) -->
+        <div class="two-column-grid">
+            <div class="column-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="section-title">
+                        <h3>발견된 호감 신호</h3>
+                        <p class="section-subtitle">긍정적 신호 분석</p>
+                    </div>
+                </div>
+                <ul class="signal-list" id="positiveSignals">
+                    <!-- 동적 생성 -->
+                </ul>
+            </div>
+
+            <div class="column-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-quote-right"></i>
+                    </div>
+                    <div class="section-title">
+                        <h3>대표 호감문장</h3>
+                        <p class="section-subtitle">가장 호감도가 높은 메시지</p>
+                    </div>
+                </div>
+                <div class="favorite-message" id="favoriteMessage">
+                    <!-- 동적 생성 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 실전 대화 가이드 + 맞춤 조언 (2열) -->
+        <div class="two-column-grid">
+            <div class="column-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="section-title">
+                        <h3>실전 대화 가이드</h3>
+                        <p class="section-subtitle">바로 사용할 메시지</p>
+                    </div>
+                </div>
+                <div class="conversation-examples" id="conversationGuide">
+                    <!-- 동적 생성 -->
+                </div>
+            </div>
+
+            <div class="column-card">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div class="section-title">
+                        <h3>맞춤 조언</h3>
+                        <p class="section-subtitle">상황별 추천 행동</p>
+                    </div>
+                </div>
+                <div class="advice-list" id="customAdvice">
+                    <!-- 동적 생성 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 스티키 노트 -->
+        <div class="sticky-note">
+            📝 참고: 이 모든 건 제 개인적인 의견이에요! 100% 맞다는 보장은 없어요 ㅋㅋ 그래도 참고는 되실 거예요?
+        </div>
+
+        <!-- 6. 새로운 분석 + 분석 히스토리 (2열) -->
+        <div class="action-buttons">
+            <a href="/DateGenie/upload.html" class="btn-primary">
+                <i class="fas fa-upload"></i>
+                새로운 분석하기
+            </a>
+            <a href="/DateGenie/dashboard.html" class="btn-secondary">
+                <i class="fas fa-chart-line"></i>
+                분석 히스토리 보기
+            </a>
+        </div>
+    </div>
+
+    <!-- Screen Reader Announcements -->
+    <div class="sr-only" aria-live="polite" id="announcements"></div>
+
+    <script>
+        // === 동적 데이터 로딩 ===
+        let analysisData = null;
+        
+        // 페이지 로드 시 분석 데이터 초기화
+        async function initializeAnalysisData() {
+            try {
+                // URL에서 sessionId 파라미터 확인
+                const urlParams = new URLSearchParams(window.location.search);
+                const sessionId = urlParams.get('sessionId');
+                
+                // localStorage에서 분석 결과 확인
+                const storedResult = localStorage.getItem('analysisResult');
+                
+                if (storedResult) {
+                    // localStorage에 있는 데이터 사용
+                    console.log('localStorage에서 분석 데이터 로드');
+                    analysisData = JSON.parse(storedResult);
+                } else if (sessionId) {
+                    // API에서 분석 결과 가져오기
+                    console.log('API에서 분석 데이터 로드:', sessionId);
+                    analysisData = await fetchAnalysisResult(sessionId);
+                } else {
+                    // 데모 데이터 사용
+                    console.log('데모 데이터 사용');
+                    analysisData = getDefaultAnalysisData();
+                }
+                
+                // 데이터 검증 및 기본값 설정
+                analysisData = validateAndNormalizeData(analysisData);
+                
+                console.log('최종 분석 데이터:', analysisData);
+                
+            } catch (error) {
+                console.error('분석 데이터 로드 실패:', error);
+                
+                // 에러 발생 시 데모 데이터 사용
+                analysisData = getDefaultAnalysisData();
+                
+                // 사용자에게 알림
+                if (window.showNotification) {
+                    window.showNotification('분석 결과를 불러오는데 실패했습니다. 데모 데이터를 표시합니다.', 'warning');
+                }
+            }
+        }
+        
+        // API에서 분석 결과 가져오기
+        async function fetchAnalysisResult(sessionId) {
+            const response = await fetch(`/DateGenie/AnalysisService?action=getResult&sessionId=${sessionId}`);
+            
+            if (!response.ok) {
+                throw new Error('분석 결과를 가져올 수 없습니다.');
+            }
+            
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.message || '분석 결과를 가져올 수 없습니다.');
+            }
+            
+            return result.analysisData;
+        }
+        
+        // 데이터 검증 및 정규화
+        function validateAndNormalizeData(data) {
+            // 기본 구조 확인 및 기본값 설정
+            const normalized = {
+                successRate: data.successRate || 0,
+                confidenceLevel: data.confidenceLevel || 0,
+                relationshipStage: data.relationshipStage || "분석 중",
+                heroInsight: data.heroInsight || "분석을 진행하고 있습니다.",
+                
+                interestTrendData: data.interestTrendData || [],
+                emotionData: data.emotionData || { positive: 0, neutral: 0, negative: 0 },
+                positiveSignals: data.positiveSignals || [],
+                favoriteMessage: data.favoriteMessage || {
+                    text: "분석된 메시지가 없습니다.",
+                    confidence: 0,
+                    date: "날짜 없음",
+                    reason: "메시지 분석 중"
+                },
+                conversationGuide: data.conversationGuide || [],
+                customAdvice: data.customAdvice || []
+            };
+            
+            // 빈 데이터에 대한 기본값 설정
+            if (normalized.interestTrendData.length === 0) {
+                normalized.interestTrendData = getDefaultTrendData();
+            }
+            
+            if (normalized.conversationGuide.length === 0) {
+                normalized.conversationGuide = getDefaultConversationGuide();
+            }
+            
+            return normalized;
+        }
+        
+        // 기본 추이 데이터
+        function getDefaultTrendData() {
+            return [
+                { date: '8월 13일', value: 45 },
+                { date: '8월 14일', value: 52 },
+                { date: '8월 15일', value: 48 },
+                { date: '8월 16일', value: 58 },
+                { date: '8월 17일', value: 62 },
+                { date: '8월 18일', value: 59 },
+                { date: '8월 19일', value: 67 },
+                { date: '8월 20일', value: 71 },
+                { date: '8월 21일', value: 69 },
+                { date: '8월 22일', value: 76 }
+            ];
+        }
+        
+        // 기본 대화 가이드
+        function getDefaultConversationGuide() {
+            return [
+                {
+                    type: "일상 공유",
+                    text: "오늘 날씨 진짜 좋다! 밖에 나가고 싶어지는 날씨야 😄",
+                    timing: "오후 2-6시 추천"
+                },
+                {
+                    type: "관심사 질문",
+                    text: "요즘 뭐 재밌는 거 있어? 나도 새로운 취미 찾고 있어서 ㅎㅎ",
+                    timing: "저녁 시간대 추천"
+                },
+                {
+                    type: "만남 제안",
+                    text: "혹시 시간 되면 커피 한 잔 어때? 오랜만에 수다 떨고 싶어 ☕",
+                    timing: "주말 오전 추천"
+                }
+            ];
+        }
+        
+        // 데모/기본 데이터
+        function getDefaultAnalysisData() {
+            return {
+                successRate: 76,
+                confidenceLevel: 83,
+                relationshipStage: "썸 가능성 높음",
+                heroInsight: "상대방이 당신에게 호감을 가지고 있을 확률이 높습니다",
+                
+                interestTrendData: getDefaultTrendData(),
+                
+                emotionData: {
+                    positive: 64,
+                    neutral: 23,
+                    negative: 13
+                },
+                
+                positiveSignals: [
+                    {
+                        text: "응답 속도 향상",
+                        description: "평균 응답 시간이 3분 이내로 단축됨",
+                        confidence: 5
+                    },
+                    {
+                        text: "이모티콘 사용 증가",
+                        description: "대화에서 이모티콘 사용 빈도가 40% 증가",
+                        confidence: 4
+                    },
+                    {
+                        text: "개인적 질문 증가",
+                        description: "일상이나 근황에 대한 질문이 늘어남",
+                        confidence: 4
+                    },
+                    {
+                        text: "미래 계획 언급",
+                        description: "함께할 활동에 대한 언급이 자주 나타남",
+                        confidence: 5
+                    }
+                ],
+                
+                favoriteMessage: {
+                    text: "아 오늘 지나가다가 그 카페 봤는데 너 생각났어 ㅋㅋ 언제 같이 가볼까? 😊",
+                    confidence: 92,
+                    date: "8월 20일 오후 3:24",
+                    reason: "자연스러운 만남 제안과 개인적 관심 표현"
+                },
+                
+                conversationGuide: getDefaultConversationGuide(),
+                
+                customAdvice: [
+                    {
+                        title: "지금 단계에서는",
+                        content: "상대방이 보내는 긍정적 신호를 놓치지 말고, 자연스럽게 대화를 이어가세요. 너무 급하지 않게!"
+                    },
+                    {
+                        title: "다음 스텝",
+                        content: "공통 관심사를 중심으로 가벼운 만남을 제안해보세요. 부담스럽지 않은 선에서 시작하는 것이 좋습니다."
+                    },
+                    {
+                        title: "주의사항",
+                        content: "밤늦은 시간 연락은 조금 줄이고, 상대방의 생활 패턴을 존중하는 모습을 보여주세요."
+                    }
+                ]
+            };
+        }
+
+        // === UI Controllers ===
+        class ResultsFinalController {
+            constructor(data) {
+                this.data = data;
+                this.init();
+            }
+
+            init() {
+                this.updateHeroDashboard();
+                this.renderSignals();
+                this.renderFavoriteMessage();
+                this.renderConversationGuide();
+                this.renderCustomAdvice();
+                this.startAnimations();
+                this.setupInteractions();
+                
+                // 차트 초기화
+                setTimeout(() => {
+                    this.initCharts();
+                }, 1000);
+            }
+
+            updateHeroDashboard() {
+                // Update success rate
+                setTimeout(() => {
+                    document.getElementById('successPercentage').textContent = this.data.successRate + '%';
+                    document.getElementById('successCircle').style.background = 
+                        `conic-gradient(from 0deg, #ec4899 0%, #8b5cf6 ${this.data.successRate}%, #f3f4f6 ${this.data.successRate}%)`;
+                }, 500);
+                
+                // Update other hero elements
+                document.getElementById('relationshipStage').textContent = this.data.relationshipStage;
+                document.getElementById('heroInsight').textContent = this.data.heroInsight;
+                document.getElementById('confidenceLevel').textContent = this.data.confidenceLevel + '%';
+            }
+
+            renderSignals() {
+                const container = document.getElementById('positiveSignals');
+                container.innerHTML = this.data.positiveSignals.map(signal => `
+                    <li class="signal-item positive-signal">
+                        <div class="signal-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="signal-content">
+                            <div class="signal-text">${signal.text}</div>
+                            <div class="signal-description">${signal.description}</div>
+                            <div class="confidence-indicator">
+                                <span class="confidence-stars">
+                                    ${'★'.repeat(signal.confidence)}${'☆'.repeat(5 - signal.confidence)}
+                                </span>
+                                <span style="font-size: 0.8rem; margin-left: 0.5rem;">신뢰도</span>
+                            </div>
+                        </div>
+                    </li>
+                `).join('');
+            }
+
+            renderFavoriteMessage() {
+                const container = document.getElementById('favoriteMessage');
+                const message = this.data.favoriteMessage;
+                
+                container.innerHTML = `
+                    <div class="message-badge">호감도 ${message.confidence}%</div>
+                    <div class="message-text">${message.text}</div>
+                    <div class="message-meta">
+                        <i class="fas fa-clock"></i>
+                        <span>${message.date}</span>
+                        <span>•</span>
+                        <span>${message.reason}</span>
+                    </div>
+                `;
+            }
+
+            renderConversationGuide() {
+                const container = document.getElementById('conversationGuide');
+                container.innerHTML = this.data.conversationGuide.map(item => `
+                    <div class="conversation-item">
+                        <div class="conversation-type">${item.type}</div>
+                        <div class="conversation-text">${item.text}</div>
+                        <div class="conversation-timing">💡 ${item.timing}</div>
+                    </div>
+                `).join('');
+            }
+
+            renderCustomAdvice() {
+                const container = document.getElementById('customAdvice');
+                container.innerHTML = this.data.customAdvice.map(advice => `
+                    <div class="advice-item">
+                        <div class="advice-title">
+                            <i class="fas fa-lightbulb"></i>
+                            ${advice.title}
+                        </div>
+                        <div class="advice-content">${advice.content}</div>
+                    </div>
+                `).join('');
+            }
+
+            initCharts() {
+                // 관심도 변화 추이 차트
+                const interestCtx = document.getElementById('interestChart').getContext('2d');
+                new Chart(interestCtx, {
+                    type: 'line',
+                    data: {
+                        labels: this.data.interestTrendData.map(item => item.date),
+                        datasets: [{
+                            label: '관심도 지수',
+                            data: this.data.interestTrendData.map(item => item.value),
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#8b5cf6',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                min: 0,
+                                max: 100,
+                                grid: { color: 'rgba(139, 92, 246, 0.1)' },
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: { color: 'rgba(139, 92, 246, 0.1)' }
+                            }
+                        }
+                    }
+                });
+
+                // 감정 분석 차트
+                const emotionCtx = document.getElementById('emotionChart').getContext('2d');
+                new Chart(emotionCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['긍정적 😊', '중립적 😐', '부정적 😔'],
+                        datasets: [{
+                            data: [
+                                this.data.emotionData.positive,
+                                this.data.emotionData.neutral,
+                                this.data.emotionData.negative
+                            ],
+                            backgroundColor: ['#10b981', '#6b7280', '#ef4444'],
+                            borderWidth: 0,
+                            cutout: '60%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    usePointStyle: true,
+                                    font: { size: 12 }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            startAnimations() {
+                // Animate cards
+                const cards = document.querySelectorAll('.result-card, .column-card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }
+
+            setupInteractions() {
+                // Setup accessibility announcements
+                setTimeout(() => {
+                    const announcement = `분석 완료. 썸 성공 확률 ${this.data.successRate}퍼센트입니다.`;
+                    document.getElementById('announcements').textContent = announcement;
+                }, 2000);
+            }
+        }
+
+        // === Initialize App ===
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 로딩 표시
+            showLoadingState();
+            
+            try {
+                // 분석 데이터 초기화
+                await initializeAnalysisData();
+                
+                // 데이터가 준비되면 컨트롤러 초기화
+                new ResultsFinalController(analysisData);
+                
+                // 로딩 상태 제거
+                hideLoadingState();
+                
+            } catch (error) {
+                console.error('앱 초기화 실패:', error);
+                
+                // 에러 발생 시 기본 데이터로 초기화
+                analysisData = getDefaultAnalysisData();
+                new ResultsFinalController(analysisData);
+                
+                hideLoadingState();
+                
+                if (window.showNotification) {
+                    window.showNotification('데이터 로딩에 실패했습니다. 데모 데이터를 표시합니다.', 'warning');
+                }
+            }
+        });
+        
+        // 로딩 상태 표시
+        function showLoadingState() {
+            const heroSection = document.querySelector('.hero-dashboard');
+            if (heroSection) {
+                heroSection.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #8b5cf6; margin-bottom: 1rem;"></i>
+                        <h2>분석 결과를 불러오는 중...</h2>
+                        <p>잠시만 기다려주세요.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // 로딩 상태 제거
+        function hideLoadingState() {
+            // 로딩 메시지는 ResultsFinalController에서 실제 데이터로 교체됨
+        }
+    </script>
+</body>
+</html>

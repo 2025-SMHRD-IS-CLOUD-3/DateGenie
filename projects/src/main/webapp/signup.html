@@ -187,6 +187,231 @@
         body.dark-mode .dropdown-divider {
             background: rgba(255, 255, 255, 0.1);
         }
+
+        /* Email Verification Section Styles */
+        .email-verification-section {
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .verification-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .verification-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, #ec4899, #be185d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+        }
+
+        .verification-header h3 {
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .verification-description {
+            color: #6b7280;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .verification-description span {
+            color: #ec4899;
+            font-weight: 600;
+        }
+
+        .verification-form {
+            margin-bottom: 1.5rem;
+        }
+
+        .verify-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .verify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .verify-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .verification-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .resend-btn, .back-to-signup-btn {
+            width: 100%;
+            background: transparent;
+            color: #6b7280;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .resend-btn:hover {
+            border-color: #ec4899;
+            color: #ec4899;
+            background: rgba(236, 72, 153, 0.05);
+        }
+
+        .back-to-signup-btn:hover {
+            border-color: #6b7280;
+            color: #374151;
+            background: rgba(107, 114, 128, 0.05);
+        }
+
+        .resend-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #e5e7eb;
+            color: #9ca3af;
+        }
+
+        .resend-btn:disabled:hover {
+            border-color: #e5e7eb;
+            color: #9ca3af;
+            background: transparent;
+        }
+
+        .verification-info {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .verification-info p {
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .verification-info ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .verification-info li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Dark mode for verification section */
+        body.dark-mode .verification-header h3 {
+            color: white;
+        }
+
+        body.dark-mode .verification-description {
+            color: #9ca3af;
+        }
+
+        body.dark-mode .resend-btn, 
+        body.dark-mode .back-to-signup-btn {
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #d1d5db;
+        }
+
+        body.dark-mode .resend-btn:hover {
+            border-color: #ec4899;
+            color: #ec4899;
+            background: rgba(236, 72, 153, 0.1);
+        }
+
+        body.dark-mode .back-to-signup-btn:hover {
+            border-color: #d1d5db;
+            color: white;
+            background: rgba(209, 213, 219, 0.1);
+        }
+
+        body.dark-mode .verification-info {
+            background: rgba(255, 255, 255, 0.05);
+            color: #9ca3af;
+        }
+
+        /* Animation for section transitions */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOutDown {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        .fadeOut {
+            animation: fadeOutDown 0.3s ease forwards;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .verification-actions {
+                gap: 0.5rem;
+            }
+            
+            .verification-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .verification-header h3 {
+                font-size: 1.25rem;
+            }
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     </head>
@@ -305,7 +530,55 @@
                     </button>
                 </form>
 
-                
+                <!-- Email Verification Section -->
+                <div class="email-verification-section" id="emailVerificationSection" style="display: none;">
+                    <div class="verification-header">
+                        <div class="verification-icon">
+                            <i class="fas fa-envelope-open"></i>
+                        </div>
+                        <h3>이메일 인증</h3>
+                        <p class="verification-description">
+                            <span id="verificationEmail">your@email.com</span>으로<br>
+                            인증 코드를 발송했습니다.
+                        </p>
+                    </div>
+
+                    <form class="verification-form" id="verificationForm" novalidate>
+                        <div class="form-group">
+                            <label for="verificationCode">인증 코드</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-key"></i>
+                                <input type="text" id="verificationCode" name="verificationCode" maxlength="6" placeholder="6자리 인증 코드를 입력하세요" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="verify-btn">
+                            <span>인증 확인</span>
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </form>
+
+                    <div class="verification-actions">
+                        <button type="button" class="resend-btn" id="resendBtn">
+                            <i class="fas fa-redo"></i>
+                            <span id="resendText">인증 코드 재발송</span>
+                        </button>
+                        
+                        <button type="button" class="back-to-signup-btn" id="backToSignupBtn">
+                            <i class="fas fa-arrow-left"></i>
+                            회원가입으로 돌아가기
+                        </button>
+                    </div>
+
+                    <div class="verification-info">
+                        <p><i class="fas fa-info-circle"></i> 인증 코드를 받지 못하셨나요?</p>
+                        <ul>
+                            <li>스팸함을 확인해주세요</li>
+                            <li>이메일 주소를 다시 확인해주세요</li>
+                            <li>몇 분 후 다시 시도해주세요</li>
+                        </ul>
+                    </div>
+                </div>
 
                 <div class="login-link">
                     <p>이미 계정이 있으신가요? <a href="/DateGenie/login.html">로그인</a></p>
@@ -389,8 +662,9 @@
         <i class="fas fa-moon moon-icon"></i>
     </button>
 
-    <script src="js/main.js"></script>
-    <script src="js/signup.js"></script>
+    <script src="js/config.js?v=20240822"></script>
+    <script src="js/main.js?v=20240822"></script>
+    <script src="js/signup.js?v=20240822"></script>
     <script>
         // 사용자 드롭다운 메뉴 기능
         function initUserDropdown() {

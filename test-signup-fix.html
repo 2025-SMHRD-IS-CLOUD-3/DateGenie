@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test Signup Fix</title>
+</head>
+<body>
+    <h2>Test Email Verification Fix</h2>
+    <form id="signupForm">
+        <input type="email" id="email" placeholder="Email" value="test@example.com" required>
+        <input type="password" id="password" placeholder="Password" value="Test1234!" required>
+        <input type="text" id="nickname" placeholder="Nickname" value="testuser" required>
+        <button type="submit">Test Signup</button>
+    </form>
+    
+    <div id="result" style="margin-top:20px; padding:10px; border:1px solid #ccc;"></div>
+
+    <script>
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData();
+        formData.append('email', document.getElementById('email').value);
+        formData.append('pw', document.getElementById('password').value);
+        formData.append('nickname', document.getElementById('nickname').value);
+        
+        const result = document.getElementById('result');
+        result.innerHTML = 'Testing...';
+        
+        try {
+            const response = await fetch('http://localhost:8081/DateGenie/JoinService', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            result.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            
+            if (data.success && data.emailSent) {
+                result.style.backgroundColor = '#d4edda';
+                result.innerHTML += '<h3>✅ SUCCESS: Email verification fixed!</h3>';
+            } else if (data.success && !data.emailSent) {
+                result.style.backgroundColor = '#fff3cd';
+                result.innerHTML += '<h3>⚠️ Signup OK but email issue: ' + (data.emailError || 'Unknown') + '</h3>';
+            } else {
+                result.style.backgroundColor = '#f8d7da';
+                result.innerHTML += '<h3>❌ ERROR: ' + (data.message || 'Unknown error') + '</h3>';
+            }
+        } catch (error) {
+            result.innerHTML = '<h3>❌ FETCH ERROR: ' + error.message + '</h3>';
+            result.style.backgroundColor = '#f8d7da';
+        }
+    });
+    </script>
+</body>
+</html>

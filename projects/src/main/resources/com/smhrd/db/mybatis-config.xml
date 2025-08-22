@@ -16,5 +16,7 @@
   </environments>
   <mappers>
     <mapper resource="com/smhrd/db/UserInfo.xml"/>
+    <mapper resource="com/smhrd/db/ResultMapper.xml"/>
+    <mapper resource="com/smhrd/db/EmailVerification.xml"/>
   </mappers>
 </configuration>

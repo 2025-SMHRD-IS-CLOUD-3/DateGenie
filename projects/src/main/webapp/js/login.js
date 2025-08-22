@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             // API 엔드포인트 결정 (fallback 포함)
-            const apiEndpoint = window.APP_CONFIG?.apiEndpoint || 'http://localhost:8081';
+            const apiEndpoint = window.APP_CONFIG?.apiEndpoint || 'http://localhost:8081/DateGenie';
             const loginUrl = `${apiEndpoint}/LoginService`;
             
             fetch(loginUrl, {
