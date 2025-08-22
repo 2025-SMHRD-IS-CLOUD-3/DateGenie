@@ -81,18 +81,40 @@ public class MemberDAO {
 		return result;
 	}
 	
+	// 이메일 중복 체크 메서드 (새로 추가)
+	public boolean isEmailExists(String email) {
+		System.out.println("=== MemberDAO.isEmailExists 메서드 시작 ===");
+		System.out.println("체크할 이메일: " + email);
+		
+		SqlSession sqlsession = sqlSessionFactory.openSession();
+		
+		try {
+			System.out.println("SQL 쿼리 실행 시도...");
+			Integer count = sqlsession.selectOne("checkEmailExists", email);
+			System.out.println("SQL 쿼리 실행 완료");
+			System.out.println("DB에서 반환된 카운트: " + count);
+			
+			boolean exists = count != null && count > 0;
+			System.out.println("최종 중복 체크 결과: " + exists);
+			
+			return exists;
+			
+		} catch (Exception e) {
+			System.out.println("=== MemberDAO.isEmailExists 예외 발생 ===");
+			System.out.println("예외 메시지: " + e.getMessage());
+			e.printStackTrace();
+			return false;
+			
+		} finally {
+			sqlsession.close();
+			System.out.println("=== MemberDAO.isEmailExists 메서드 종료 ===");
+		}
+	}
+	
+	
+	
 }
 
-// 메서드 선언
-// public void join(int age, String name){
-// }
-// 메서드 호출
-// join(30, "임명진")
-
-// parameter: 매개변수
-//		--> 메서드 선언(생성)할 때, 소괄호 안에 들어가는 변수
-// argument: 전달인자
-//		--> 메서드 호출(사용)할때, 소괄호 안에 들어가는 데이터
 
 
 

@@ -525,7 +525,7 @@
 					<a href="profile-edit.html" class="btn-primary" style="padding:.55rem .9rem;"><i class="fas fa-pen"></i> 회원정보 수정</a>
                         </div>
 				<div class="list">
-					<div class="list-item"><div class="left"><i class="fas fa-id-card"></i> 이름</div><div id="profileName">-</div></div>
+					<div class="list-item"><div class="left"><i class="fas fa-id-card"></i> 닉네임</div><div id="profileName">-</div></div>
 					<div class="list-item"><div class="left"><i class="fas fa-envelope"></i> 이메일</div><div id="profileEmail">-</div></div>
 					<div class="list-item"><div class="left"><i class="fas fa-calendar"></i> 가입일</div><div id="profileJoinDate">-</div></div>
 					<div class="list-item"><div class="left"><i class="fas fa-chart-line"></i> 분석 횟수</div><div id="profileAnalysisCount">-</div></div>
@@ -700,6 +700,21 @@
 			const userNameText = document.getElementById('userNameText');
 			if (userAvatar) userAvatar.src = profilePicture;
 			if (userNameText) { userNameText.textContent = user.nickname ? user.nickname : '사용자'; }
+			
+			loadAnalysisCount();
+		}
+		// 분석횟수
+		function loadAnalysisCount() {
+		    const user = JSON.parse(localStorage.getItem('user'));
+		    fetch('/BackEnd/AnalysisCount?email=' + user.email)
+		        .then(response => response.json())
+		        .then(data => {
+		            document.getElementById('profileAnalysisCount').textContent = data.count + '회';
+		        })
+		        .catch(error => {
+		            console.error('분석 횟수 로딩 실패:', error);
+		            document.getElementById('profileAnalysisCount').textContent = '0회';
+		        });
 		}
 
 		function initSidebarLinks() {

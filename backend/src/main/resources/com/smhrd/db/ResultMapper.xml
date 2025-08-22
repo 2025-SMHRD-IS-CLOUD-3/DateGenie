@@ -2,4 +2,84 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.smhrd.db.ResultMapper">
 	
+    <!-- 분석 결과 저장 쿼리 -->
+    <insert id="insertResult" parameterType="com.smhrd.model.ResultDTO">
+        INSERT INTO RESULT (
+            RESULT_NUM,
+            EMAIL,
+            EMOTION_SCORE,
+            EMOTION_SENTENCE,
+            PERSONALITY,
+            ADVICE,
+            TARGET_NAME,
+            DISPLAY_ORDER,
+            FIRST_TALK,
+            EMOTION_COUNT,
+            TALK_BALANCE,
+            TALK_SPEED,
+            TALK_COUNT
+        ) VALUES (
+            RESULT_NUM_SEQ.NEXTVAL,  -- 시퀀스 사용
+            #{email},
+            #{emotionScore},
+            #{emotionSentence},
+            #{personality},
+            #{advice},
+            #{targetName},
+            #{displayOrder},
+            #{firstTalk},
+            #{emotionCount},
+            #{talkBalance},
+            #{talkSpeed},
+            #{talkCount}
+        )
+    </insert>
+    
+    <!-- 이메일로 분석 결과 조회 (최신 결과 1개) -->
+    <select id="selectResultByEmail" parameterType="String" resultType="com.smhrd.model.ResultDTO">
+        SELECT 
+            RESULT_NUM as resultNum,
+            EMAIL as email,
+            EMOTION_SCORE as emotionScore,
+            EMOTION_SENTENCE as emotionSentence,
+            PERSONALITY as personality,
+            ADVICE as advice,
+            TARGET_NAME as targetName,
+            DISPLAY_ORDER as displayOrder,
+            FIRST_TALK as firstTalk,
+            EMOTION_COUNT as emotionCount,
+            TALK_BALANCE as talkBalance,
+            TALK_SPEED as talkSpeed,
+            TALK_COUNT as talkCount
+        FROM RESULT 
+        WHERE EMAIL = #{email}
+        ORDER BY RESULT_NUM DESC
+        FETCH FIRST 1 ROWS ONLY
+    </select>
+    
+    <!-- 전체 분석 결과 조회 -->
+    <select id="selectAllResults" resultType="com.smhrd.model.ResultDTO">
+        SELECT 
+            RESULT_NUM as resultNum,
+            EMAIL as email,
+            EMOTION_SCORE as emotionScore,
+            EMOTION_SENTENCE as emotionSentence,
+            PERSONALITY as personality,
+            ADVICE as advice,
+            TARGET_NAME as targetName,
+            DISPLAY_ORDER as displayOrder,
+            FIRST_TALK as firstTalk,
+            EMOTION_COUNT as emotionCount,
+            TALK_BALANCE as talkBalance,
+            TALK_SPEED as talkSpeed,
+            TALK_COUNT as talkCount
+        FROM RESULT 
+        ORDER BY RESULT_NUM DESC
+    </select>
+
+	<!-- dashboard 분석횟수  -->
+	<select id="getAnalysisCountByEmail" parameterType="String" resultType="int">
+	    SELECT COUNT(*) FROM RESULT WHERE EMAIL = #{email}
+	</select>
+	
 </mapper>

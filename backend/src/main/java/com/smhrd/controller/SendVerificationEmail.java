@@ -18,6 +18,7 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.smhrd.model.EmailDAO;
+import com.smhrd.model.MemberDAO;
 
 
 @WebServlet("/SendVerificationEmail")
@@ -49,6 +50,43 @@ System.out.println("=== SendVerificationEmail 서블릿 호출됨 ===");
                 return;
             }
             
+            // 2. 이메일 중복 체크 (추가된 부분)
+            System.out.println("=== 이메일 중복 체크 시작 ===");
+            
+            // 실제 회원 테이블 체크
+            MemberDAO memberDAO = new MemberDAO();
+            System.out.println("MemberDAO 객체 생성 완료");
+            System.out.println("회원 테이블 중복 체크 시도...");
+            boolean isAlreadyMember = memberDAO.isEmailExists(email);
+            System.out.println("회원 테이블 중복 체크 완료");
+            System.out.println("회원 테이블 중복 체크 결과: " + isAlreadyMember);
+
+            if (isAlreadyMember) {
+                System.out.println("=== 이미 가입된 회원 감지 ===");
+                System.out.println("이미 가입된 이메일: " + email);
+                sendErrorResponse(response, "이미 가입된 이메일입니다.");
+                return;
+            }
+            
+            
+            // 인증 진행 중인지 체크
+            EmailDAO emailDAO = new EmailDAO();
+            System.out.println("EmailDAO 객체 생성 완료");
+            
+            System.out.println("isEmailVerified 메서드 호출 시도...");
+            boolean isAlreadyRegistered = emailDAO.isEmailVerified(email);
+            System.out.println("isEmailVerified 메서드 호출 완료");
+            System.out.println("중복 체크 결과: " + isAlreadyRegistered);
+            
+            if (isAlreadyRegistered) {
+                System.out.println("=== 중복된 이메일 감지 ===");
+                System.out.println("이미 가입된 이메일: " + email);
+                sendErrorResponse(response, "이미 가입된 이메일입니다.");
+                return;
+            }
+            
+            System.out.println("=== 중복 체크 통과 - 인증 메일 발송 진행 ===");
+            
             // 2. 고유 토큰 생성
             String verificationToken = UUID.randomUUID().toString();
             System.out.println("생성된 토큰: " + verificationToken);
@@ -59,7 +97,6 @@ System.out.println("=== SendVerificationEmail 서블릿 호출됨 ===");
             System.out.println("토큰 만료시간: " + expiresAt);
             
             // 4. DB에 토큰 저장
-            EmailDAO emailDAO = new EmailDAO();
             int saveResult = emailDAO.saveVerificationToken(email, verificationToken, expiresAt);
             System.out.println("DB 저장 결과: " + saveResult);
             

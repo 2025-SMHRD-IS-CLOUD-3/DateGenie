@@ -20,4 +20,12 @@
 		select * from USER_INFO
 	</select>
 	
+	<!-- 이메일 중복 체크 -->
+	<select id="checkEmailExists" parameterType="String" resultType="int">
+		SELECT COUNT(*) 
+		FROM USER_INFO 
+		WHERE EMAIL = #{email}
+	</select>
+	
+	
 </mapper>

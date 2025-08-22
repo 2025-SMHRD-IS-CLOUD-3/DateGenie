@@ -226,40 +226,94 @@ public class AnalysisJobManager {
                 job.message = "결과 처리 중...";
                 Map<String, Object> analysisResult = parseGeminiResponse(geminiResponse);
                 job.result = analysisResult;
+                
+             // === 디버깅 코드 추가 ===
+                System.out.println("\n=== 파싱된 analysisResult 전체 내용 ===");
+                for (Map.Entry<String, Object> entry : analysisResult.entrySet()) {
+                    Object value = entry.getValue();
+                    String type = (value != null) ? value.getClass().getSimpleName() : "null";
+                    System.out.println(entry.getKey() + " = " + value + " (타입: " + type + ")");
+                }
+                System.out.println("=========================================\n");
+
 
                 // 4. DB 저장
                 job.percent = 90;
                 job.message = "결과 정리 중...";
                 
-                // 임시 저장 성공 처리
-                System.out.println("분석 완료! (DB 저장 건너뜀) Email: " + email);
-                System.out.println("Gemini 분석 결과: " + analysisResult);
+//                // 임시 저장 성공 처리
+//                System.out.println("분석 완료! (DB 저장 건너뜀) Email: " + email);
+//                System.out.println("Gemini 분석 결과: " + analysisResult);
                 
                 // 실제 저장 하는 부분
-				/*
-				 * ResultDTO resultDTO = new ResultDTO(); resultDTO.setEmail(email);
-				 * resultDTO.setEmotionScore((Integer) analysisResult.get("emotionScore"));
-				 * resultDTO.setEmotionSentence((String) analysisResult.get("emotionSentence"));
-				 * resultDTO.setPersonality((String) analysisResult.get("personality"));
-				 * resultDTO.setAdvice((String) analysisResult.get("advice"));
-				 * resultDTO.setTargetName((String) analysisResult.get("targetName"));
-				 * resultDTO.setDisplayOrder((Integer) analysisResult.get("displayOrder"));
-				 * resultDTO.setFirstTalk((String) analysisResult.get("firstTalk"));
-				 * resultDTO.setEmotionCount((Integer) analysisResult.get("emotionCount"));
-				 * resultDTO.setTalkBalance((String) analysisResult.get("talkBalance"));
-				 * resultDTO.setTalkSpeed((String) analysisResult.get("talkSpeed"));
-				 * resultDTO.setTalkCount((Integer) analysisResult.get("talkCount"));
-				 * 
-				 * 
-				 * ResultDAO dao = new ResultDAO(); int cnt = dao.insertResult(resultDTO);
-				 */
+				
+				  ResultDTO resultDTO = new ResultDTO(); 
+				  resultDTO.setEmail(email);
+
+				// === 숫자 필드 디버깅 ===
+				System.out.println("\n=== 숫자 필드 타입 확인 ===");
+
+				// emotionScore 확인
+				Object emotionScoreObj = analysisResult.get("emotionScore");
+				System.out.println("emotionScore 원본: " + emotionScoreObj + " (타입: " + (emotionScoreObj != null ? emotionScoreObj.getClass().getSimpleName() : "null"));
+				try {
+				    resultDTO.setEmotionScore((Integer) analysisResult.get("emotionScore"));
+				    System.out.println("emotionScore 설정 성공");
+				} catch (Exception e) {
+				    System.out.println("emotionScore 설정 실패: " + e.getMessage());
+				}
+
+				// displayOrder 확인
+				Object displayOrderObj = analysisResult.get("displayOrder");
+				System.out.println("displayOrder 원본: " + displayOrderObj + " (타입: " + (displayOrderObj != null ? displayOrderObj.getClass().getSimpleName() : "null"));
+				try {
+				    resultDTO.setDisplayOrder((Integer) analysisResult.get("displayOrder"));
+				    System.out.println("displayOrder 설정 성공");
+				} catch (Exception e) {
+				    System.out.println("displayOrder 설정 실패: " + e.getMessage());
+				}
+
+				// emotionCount 확인
+				Object emotionCountObj = analysisResult.get("emotionCount");
+				System.out.println("emotionCount 원본: " + emotionCountObj + " (타입: " + (emotionCountObj != null ? emotionCountObj.getClass().getSimpleName() : "null"));
+				try {
+				    resultDTO.setEmotionCount((Integer) analysisResult.get("emotionCount"));
+				    System.out.println("emotionCount 설정 성공");
+				} catch (Exception e) {
+				    System.out.println("emotionCount 설정 실패: " + e.getMessage());
+				}
+
+				// talkCount 확인
+				Object talkCountObj = analysisResult.get("talkCount");
+				System.out.println("talkCount 원본: " + talkCountObj + " (타입: " + (talkCountObj != null ? talkCountObj.getClass().getSimpleName() : "null"));
+				try {
+				    resultDTO.setTalkCount((Integer) analysisResult.get("talkCount"));
+				    System.out.println("talkCount 설정 성공");
+				} catch (Exception e) {
+				    System.out.println("talkCount 설정 실패: " + e.getMessage());
+				}
+
+				System.out.println("========================\n");
+
+				// 나머지 문자열 필드들 설정
+				resultDTO.setEmotionSentence((String) analysisResult.get("emotionSentence"));
+				resultDTO.setPersonality((String) analysisResult.get("personality"));
+				resultDTO.setAdvice((String) analysisResult.get("advice"));
+				resultDTO.setTargetName((String) analysisResult.get("targetName"));
+				resultDTO.setFirstTalk((String) analysisResult.get("firstTalk"));
+				resultDTO.setTalkBalance((String) analysisResult.get("talkBalance"));
+				resultDTO.setTalkSpeed((String) analysisResult.get("talkSpeed"));
+				  
+				  
+				  ResultDAO dao = new ResultDAO(); int cnt = dao.insertResult(resultDTO);
+				 
 				 
                 
                 
-				/*
-				 * if (cnt > 0) { System.out.println("분석 결과 DB 저장 성공! Email: " + email); } else
-				 * { throw new Exception("DB 저장 실패"); }
-				 */
+				
+				  if (cnt > 0) { System.out.println("분석 결과 DB 저장 성공! Email: " + email); } else
+				  { throw new Exception("DB 저장 실패"); }
+				 
 
                 // 5. 완료
                 job.percent = 100;
