@@ -54,28 +54,39 @@ try {
             Map<String, Object> responseData = new HashMap<>();
             
             if (result != null) {
-                // 세션 설정
-                HttpSession session = request.getSession();
-                session.setAttribute("loginMember", result);
-                
-                responseData.put("success", true);
-                responseData.put("message", "로그인에 성공했습니다!");
-                responseData.put("userInfo", result);
-                // 환경별 리다이렉션 URL 설정
-                String baseURL = request.getRequestURL().toString();
-                String referer = request.getHeader("Referer");
-                String redirectUrl;
-                
-                // 환경별 리다이렉트 URL 설정
-                
-                // 서비스가 실행 중인 환경에 따라 결정 (referer가 아닌 실제 서버 위치 기준)
-                // 모든 환경에서 localhost:8081/DateGenie로 리다이렉트
-                redirectUrl = "http://localhost:8081/DateGenie/upload.html";
-                System.out.println("=== 로그인 성공 디버깅 ===");
-                System.out.println("로그인 결과: " + result);
-                System.out.println("세션 설정 사용자 ID: " + (result != null ? result.getEmail() : "null"));
-                System.out.println("최종 결정된 redirectUrl: " + redirectUrl);
-                responseData.put("redirectUrl", redirectUrl);
+                // 이메일 인증 상태 확인 - 필수 검증
+                if (!result.isEmailVerified()) {
+                    // 이메일 미인증 사용자 - 로그인 차단
+                    responseData.put("success", false);
+                    responseData.put("message", "이메일 인증을 완료한 후 로그인해주세요. 이메일을 확인하거나 인증 메일을 재발송해주세요.");
+                    responseData.put("requiresVerification", true);
+                    responseData.put("email", result.getEmail());
+                    responseData.put("canResend", true);
+                } else {
+                    // 이메일 인증 완료 사용자 - 로그인 허용
+                    HttpSession session = request.getSession();
+                    session.setAttribute("loginMember", result);
+                    
+                    responseData.put("success", true);
+                    responseData.put("message", "로그인에 성공했습니다!");
+                    responseData.put("userInfo", result);
+                    
+                    // 환경별 리다이렉션 URL 설정
+                    String baseURL = request.getRequestURL().toString();
+                    String referer = request.getHeader("Referer");
+                    String redirectUrl;
+                    
+                    // 환경별 리다이렉트 URL 설정
+                    
+                    // 서비스가 실행 중인 환경에 따라 결정 (referer가 아닌 실제 서버 위치 기준)
+                    // 모든 환경에서 localhost:8081/DateGenie로 리다이렉트
+                    redirectUrl = "http://localhost:8081/DateGenie/upload.html";
+                    System.out.println("=== 로그인 성공 디버깅 ===");
+                    System.out.println("로그인 결과: " + result);
+                    System.out.println("세션 설정 사용자 ID: " + (result != null ? result.getEmail() : "null"));
+                    System.out.println("최종 결정된 redirectUrl: " + redirectUrl);
+                    responseData.put("redirectUrl", redirectUrl);
+                }
                 
             } else {
                 responseData.put("success", false);

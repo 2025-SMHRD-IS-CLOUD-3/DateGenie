@@ -143,6 +143,8 @@ public class JoinService extends HttpServlet {
                     // Email is available, proceed with registration
                     System.out.println("=== DEBUG: Creating new member ===");
                     UserInfo newMember = new UserInfo(email, password, nickname);
+                    // Set email verification status to false for new users (mandatory verification)
+                    newMember.setEmailVerified(false);
                     System.out.println("Member created, attempting database insert...");
                     
                     int result = 0;
@@ -209,17 +211,21 @@ public class JoinService extends HttpServlet {
                         }
                         
                         Map<String, Object> successResponse = new HashMap<>();
-                        successResponse.put("success", true);
                         
                         if (emailResult.isSuccess()) {
-                            // 이메일 인증 메일 발송 성공
-                            successResponse.put("message", "회원가입이 완료되었습니다! 이메일 인증을 위해 " + email + "로 발송된 메일을 확인해주세요.");
+                            // 이메일 인증 메일 발송 성공 - 회원가입 완료
+                            successResponse.put("success", true);
+                            successResponse.put("message", "회원가입이 완료되었습니다! 이메일 인증을 위해 " + email + "로 발송된 메일을 확인해주세요. 이메일 인증 후 로그인이 가능합니다.");
                             successResponse.put("emailSent", true);
+                            successResponse.put("requiresVerification", true);
                         } else {
-                            // 이메일 발송 실패 시에도 회원가입은 완료된 상태이므로 성공 처리
-                            successResponse.put("message", "회원가입이 완료되었습니다! 이메일 인증 메일 발송에 실패했지만, 이메일 인증 섹션에서 재발송할 수 있습니다.");
+                            // 이메일 발송 실패 - 계정은 생성되었지만 이메일 인증 필요
+                            successResponse.put("success", true);
+                            successResponse.put("message", "계정이 생성되었습니다. 이메일 인증 메일 발송에 실패했지만, 로그인 전에 이메일 인증이 필요합니다. 이메일 인증 섹션에서 재발송해주세요.");
                             successResponse.put("emailSent", false);
                             successResponse.put("emailError", emailResult.getMessage());
+                            successResponse.put("requiresVerification", true);
+                            successResponse.put("canResend", true);
                         }
                         
                         PrintWriter out = response.getWriter();

@@ -3,11 +3,11 @@
 <mapper namespace="com.smhrd.db.UserInfo">
 
 	<insert id="join" parameterType="com.smhrd.model.UserInfo">
-		INSERT INTO CAMPUS_24IS_CLOUD3_P2_4.USER_INFO (EMAIL, PW, NICKNAME, JOIN_DATE) VALUES(#{email}, #{pw}, #{nickname}, TRUNC(SYSDATE))
+		INSERT INTO CAMPUS_24IS_CLOUD3_P2_4.USER_INFO (EMAIL, PW, NICKNAME, JOIN_DATE, EMAIL_VERIFIED) VALUES(#{email}, #{pw}, #{nickname}, TRUNC(SYSDATE), #{emailVerified})
 	</insert>
 	
 	<select id="login" resultType="com.smhrd.model.UserInfo" parameterType="com.smhrd.model.UserInfo">
-		SELECT EMAIL, PW, NICKNAME, TO_CHAR(JOIN_DATE, 'YYYY-MM-DD') as joinDate 
+		SELECT EMAIL, PW, NICKNAME, TO_CHAR(JOIN_DATE, 'YYYY-MM-DD') as joinDate, EMAIL_VERIFIED as emailVerified
 		FROM CAMPUS_24IS_CLOUD3_P2_4.USER_INFO 
 		WHERE EMAIL=#{email}
 	</select>
@@ -17,18 +17,18 @@
 	</update>
 	
 	<select id="select" resultType="com.smhrd.model.UserInfo">
-		select EMAIL, PW, NICKNAME, TO_CHAR(JOIN_DATE, 'YYYY-MM-DD') as joinDate from CAMPUS_24IS_CLOUD3_P2_4.USER_INFO
+		select EMAIL, PW, NICKNAME, TO_CHAR(JOIN_DATE, 'YYYY-MM-DD') as joinDate, EMAIL_VERIFIED as emailVerified from CAMPUS_24IS_CLOUD3_P2_4.USER_INFO
 	</select>
 	
 	<select id="checkEmail" resultType="com.smhrd.model.UserInfo" parameterType="String">
-		SELECT EMAIL, PW, NICKNAME, TO_CHAR(JOIN_DATE, 'YYYY-MM-DD') as joinDate 
+		SELECT EMAIL, PW, NICKNAME, TO_CHAR(JOIN_DATE, 'YYYY-MM-DD') as joinDate, EMAIL_VERIFIED as emailVerified
 		FROM CAMPUS_24IS_CLOUD3_P2_4.USER_INFO 
 		WHERE EMAIL=#{email}
 	</select>
 	
 	<update id="updateEmailVerified" parameterType="com.smhrd.model.UserInfo">
 		UPDATE CAMPUS_24IS_CLOUD3_P2_4.USER_INFO 
-		SET NICKNAME = #{nickname}
+		SET EMAIL_VERIFIED = #{emailVerified}
 		WHERE EMAIL = #{email}
 	</update>
 	
