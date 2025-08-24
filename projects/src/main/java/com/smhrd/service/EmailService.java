@@ -3,6 +3,7 @@ package com.smhrd.service;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.io.UnsupportedEncodingException;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -12,6 +13,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 
 import com.smhrd.util.EmailConfig;
 
@@ -21,9 +23,7 @@ import com.smhrd.util.EmailConfig;
  */
 public class EmailService {
     
-    // 발송 제한을 위한 카운터 (메모리 기반, 실제 운영에서는 Redis 등 사용 권장)
-    private static final ConcurrentHashMap<String, AtomicInteger> emailCountMap = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, Long> lastResetTimeMap = new ConcurrentHashMap<>();
+    // 발송 제한 기능 제거됨 - 무제한 이메일 발송 허용
     
     // 이메일 세션 (싱글톤 패턴)
     private static Session emailSession = null;
@@ -35,6 +35,12 @@ public class EmailService {
         if (emailSession == null) {
             synchronized (EmailService.class) {
                 if (emailSession == null) {
+                    // 한글 인코딩을 위한 시스템 속성 설정 (전역)
+                    System.setProperty("mail.mime.charset", "UTF-8");
+                    System.setProperty("mail.mime.encodefilename", "true");
+                    System.setProperty("mail.mime.decodefilename", "true");
+                    System.setProperty("file.encoding", "UTF-8");
+                    
                     Properties props = EmailConfig.getSmtpProperties();
                     
                     // SMTP 인증이 필요한 경우
@@ -70,24 +76,23 @@ public class EmailService {
      */
     public static boolean sendVerificationEmail(String toEmail, String verificationToken, String verificationCode, String baseUrl) {
         
-        // 발송 제한 확인
-        if (!checkRateLimit(toEmail)) {
-            System.err.println("이메일 발송 제한 초과: " + toEmail);
-            return false;
-        }
+        // 발송 제한 체크 제거 - 무제한 발송 허용
         
         try {
             Session session = getEmailSession();
             MimeMessage message = new MimeMessage(session);
             
-            // 발송자 설정
-            message.setFrom(new InternetAddress(EmailConfig.getFromAddress(), EmailConfig.getFromName()));
+            // 한글 인코딩을 위한 시스템 속성 설정
+            System.setProperty("mail.mime.charset", "UTF-8");
+            
+            // 발송자 설정 (UTF-8 직접 설정)
+            message.setFrom(new InternetAddress(EmailConfig.getFromAddress(), EmailConfig.getFromName(), "UTF-8"));
             
             // 수신자 설정
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
             
-            // 제목 설정
-            message.setSubject(EmailConfig.getVerificationSubject(), "UTF-8");
+            // 제목 설정 (영문으로 하드코딩하여 인코딩 문제 완전 해결)
+            message.setSubject("DateGenie Email Verification", "UTF-8");
             
             // 인증 링크 생성
             String verificationUrl = baseUrl + "/verify-email?token=" + verificationToken;
@@ -96,11 +101,14 @@ public class EmailService {
             String htmlContent = createVerificationEmailContent(verificationUrl, verificationToken, verificationCode);
             message.setContent(htmlContent, "text/html; charset=UTF-8");
             
+            // 추가 헤더 설정 (한글 처리를 위함)
+            message.setHeader("Content-Type", "text/html; charset=UTF-8");
+            message.setHeader("Content-Transfer-Encoding", "quoted-printable");
+            
             // 이메일 발송
             Transport.send(message);
             
-            // 발송 카운터 증가
-            incrementEmailCount(toEmail);
+            // 발송 카운터 기능 제거됨
             
             System.out.println("이메일 인증 메일 발송 완료: " + toEmail);
             return true;
@@ -126,8 +134,9 @@ public class EmailService {
         html.append("<html lang=\"ko\">");
         html.append("<head>");
         html.append("<meta charset=\"UTF-8\">");
+        html.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
         html.append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
-        html.append("<title>DateGenie 이메일 인증</title>");
+        html.append("<title>DateGenie Email Verification</title>");
         html.append("<style>");
         html.append("body { font-family: 'Malgun Gothic', Arial, sans-serif; line-height: 1.6; color: #333; }");
         html.append(".container { max-width: 600px; margin: 0 auto; padding: 20px; }");
@@ -196,39 +205,8 @@ public class EmailService {
         return html.toString();
     }
     
-    /**
-     * 이메일 발송 제한 확인
-     * @param email 확인할 이메일 주소
-     * @return 발송 가능 여부
-     */
-    private static boolean checkRateLimit(String email) {
-        long currentTime = System.currentTimeMillis();
-        long oneHour = 60 * 60 * 1000; // 1시간을 밀리초로
-        
-        // 시간당 제한 리셋 확인
-        Long lastReset = lastResetTimeMap.get(email);
-        if (lastReset == null || (currentTime - lastReset) > oneHour) {
-            emailCountMap.put(email, new AtomicInteger(0));
-            lastResetTimeMap.put(email, currentTime);
-        }
-        
-        // 현재 발송 횟수 확인
-        AtomicInteger count = emailCountMap.get(email);
-        if (count == null) {
-            count = new AtomicInteger(0);
-            emailCountMap.put(email, count);
-        }
-        
-        return count.get() < EmailConfig.getRateLimitPerEmail();
-    }
-    
-    /**
-     * 이메일 발송 카운터 증가
-     * @param email 이메일 주소
-     */
-    private static void incrementEmailCount(String email) {
-        emailCountMap.computeIfAbsent(email, k -> new AtomicInteger(0)).incrementAndGet();
-    }
+    // 이메일 발송 제한 기능이 완전히 제거됨
+    // 이제 모든 이메일이 제한 없이 발송됩니다.
     
     /**
      * 테스트용 이메일 발송 (개발 시에만 사용)
@@ -242,10 +220,18 @@ public class EmailService {
             Session session = getEmailSession();
             MimeMessage message = new MimeMessage(session);
             
-            message.setFrom(new InternetAddress(EmailConfig.getFromAddress(), EmailConfig.getFromName()));
+            // 한글 인코딩을 위한 시스템 속성 설정
+            System.setProperty("mail.mime.charset", "UTF-8");
+            
+            // 발송자 설정 (한글 이름 인코딩 처리)
+            message.setFrom(new InternetAddress(EmailConfig.getFromAddress(), EmailConfig.getFromName(), "UTF-8"));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
             message.setSubject(subject, "UTF-8");
             message.setText(content, "UTF-8");
+            
+            // 헤더 설정 추가
+            message.setHeader("Content-Type", "text/plain; charset=UTF-8");
+            message.setHeader("Content-Transfer-Encoding", "base64");
             
             Transport.send(message);
             

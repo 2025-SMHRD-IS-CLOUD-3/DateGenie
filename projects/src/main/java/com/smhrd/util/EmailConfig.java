@@ -50,10 +50,9 @@ public class EmailConfig {
         properties.setProperty("email.from.name", "DateGenie");
         properties.setProperty("email.username", "dategenie.noreply@gmail.com");
         properties.setProperty("email.password", "");
-        properties.setProperty("email.verification.subject", "DateGenie 이메일 인증");
+        properties.setProperty("email.verification.subject", "DateGenie Email Verification");
         properties.setProperty("email.verification.expiry.hours", "24");
-        properties.setProperty("email.rate.limit.per.hour", "10");
-        properties.setProperty("email.rate.limit.per.email", "3");
+        // 발솨 제한 설정 제거됨 - 무제한 발송 허용
         properties.setProperty("email.debug", "false");
     }
     
@@ -166,19 +165,8 @@ public class EmailConfig {
         return Integer.parseInt(properties.getProperty("email.verification.expiry.hours", "24"));
     }
     
-    /**
-     * 시간당 발송 제한 수
-     */
-    public static int getRateLimitPerHour() {
-        return Integer.parseInt(properties.getProperty("email.rate.limit.per.hour", "10"));
-    }
-    
-    /**
-     * 이메일당 발송 제한 수
-     */
-    public static int getRateLimitPerEmail() {
-        return Integer.parseInt(properties.getProperty("email.rate.limit.per.email", "3"));
-    }
+    // 발송 제한 설정 메소드들이 제거됨
+    // 이제 무제한 이메일 발송이 가능합니다.
     
     /**
      * 디버그 모드 여부
@@ -196,6 +184,12 @@ public class EmailConfig {
         smtpProps.put("mail.smtp.port", String.valueOf(getSmtpPort()));
         smtpProps.put("mail.smtp.auth", String.valueOf(isSmtpAuthEnabled()));
         smtpProps.put("mail.smtp.starttls.enable", String.valueOf(isStartTlsEnabled()));
+        
+        // 한글 인코딩을 위한 추가 속성 설정
+        smtpProps.put("mail.mime.charset", "UTF-8");
+        smtpProps.put("mail.smtp.sendpartial", "true");
+        smtpProps.put("mail.mime.encodefilename", "true");
+        smtpProps.put("mail.mime.decodefilename", "true");
         
         if (isDebugMode()) {
             smtpProps.put("mail.debug", "true");
@@ -219,8 +213,7 @@ public class EmailConfig {
         System.out.println("Password: " + (getPassword() != null && !getPassword().isEmpty() ? "설정됨" : "설정되지 않음"));
         System.out.println("Verification Subject: " + getVerificationSubject());
         System.out.println("Verification Expiry: " + getVerificationExpiryHours() + "시간");
-        System.out.println("Rate Limit (per hour): " + getRateLimitPerHour());
-        System.out.println("Rate Limit (per email): " + getRateLimitPerEmail());
+        System.out.println("발송 제한: 비활성화됨 (무제한 발송 가능)");
         System.out.println("Debug Mode: " + isDebugMode());
         System.out.println("==================");
     }

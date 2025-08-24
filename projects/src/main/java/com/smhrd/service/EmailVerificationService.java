@@ -37,13 +37,23 @@ public class EmailVerificationService {
                 return new VerificationResult(false, "유효하지 않은 이메일 주소입니다.", null);
             }
             
-            // 2. 기존 미완료 토큰 확인
-            if (emailVerificationDAO.hasValidToken(email)) {
-                return new VerificationResult(false, "이미 인증 메일이 발송되었습니다. 이메일을 확인해주세요.", null);
+            // 2. 기존 토큰 확인 및 시간 기반 재발송 허용
+            EmailVerification existingVerification = emailVerificationDAO.findByEmail(email);
+            if (existingVerification != null && existingVerification.isValidForVerification()) {
+                // 기존 토큰이 5분 이내에 생성된 경우만 재발송 방지
+                long timeDiffMinutes = (System.currentTimeMillis() - existingVerification.getCreatedAt().getTime()) / (1000 * 60);
+                if (timeDiffMinutes < 5) {
+                    System.out.println("=== DEBUG: 최근 토큰 존재 (생성 후 " + timeDiffMinutes + "분), 재발송 방지 ===");
+                    return new VerificationResult(false, "이미 인증 메일이 발송되었습니다. 이메일을 확인해주세요.", null);
+                } else {
+                    System.out.println("=== DEBUG: 기존 토큰이 " + timeDiffMinutes + "분 전 생성됨, 재발송 허용 ===");
+                }
             }
             
             // 3. 기존 토큰 정리 (같은 이메일의 이전 토큰들 삭제)
-            emailVerificationDAO.deleteByEmail(email);
+            System.out.println("=== DEBUG: 기존 토큰 정리 중... ===");
+            int deletedCount = emailVerificationDAO.deleteByEmail(email);
+            System.out.println("=== DEBUG: 삭제된 기존 토큰 수: " + deletedCount + " ===");
             
             // 4. 새로운 인증 토큰 생성
             String verificationToken = generateSecureToken();
@@ -53,9 +63,9 @@ public class EmailVerificationService {
                 TimeUnit.HOURS.toMillis(EmailConfig.getVerificationExpiryHours());
             Timestamp expiresAt = new Timestamp(expiryMillis);
             
-            // 6. 데이터베이스에 저장
+            // 6. 데이터베이스에 저장 (재시도 로직 포함)
             EmailVerification verification = new EmailVerification(email, verificationToken, expiresAt);
-            int insertResult = emailVerificationDAO.insertVerification(verification);
+            int insertResult = insertVerificationWithRetry(verification, 3);
             
             if (insertResult <= 0) {
                 return new VerificationResult(false, "인증 토큰 저장에 실패했습니다.", null);
@@ -80,6 +90,57 @@ public class EmailVerificationService {
             e.printStackTrace();
             return new VerificationResult(false, "인증 처리 중 오류가 발생했습니다.", null);
         }
+    }
+    
+    /**
+     * 재시도 로직이 포함된 토큰 삽입 메서드
+     * @param verification 삽입할 인증 정보
+     * @param maxRetries 최대 재시도 횟수
+     * @return 성공 시 1, 실패 시 0
+     */
+    private int insertVerificationWithRetry(EmailVerification verification, int maxRetries) {
+        int result = 0;
+        Exception lastException = null;
+        
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                System.out.println("=== 토큰 삽입 시도 " + attempt + "/" + maxRetries + " ===");
+                
+                result = emailVerificationDAO.insertVerification(verification);
+                
+                if (result > 0) {
+                    System.out.println("=== 토큰 삽입 성공! (시도 " + attempt + ") ===");
+                    return result;
+                } else {
+                    System.err.println("=== 토큰 삽입 결과: " + result + " (시도 " + attempt + ") ===");
+                }
+                
+            } catch (Exception e) {
+                lastException = e;
+                System.err.println("=== 토큰 삽입 시도 " + attempt + " 실패 ===");
+                System.err.println("오류: " + e.getMessage());
+                
+                // 마지막 시도가 아니면 잠시 대기 후 재시도
+                if (attempt < maxRetries) {
+                    try {
+                        Thread.sleep(100 * attempt); // 점진적 대기 (100ms, 200ms, 300ms)
+                        System.out.println("=== " + (100 * attempt) + "ms 대기 후 재시도 ===");
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // 모든 재시도 실패
+        System.err.println("=== 모든 재시도 실패. 최종 결과: " + result + " ===");
+        if (lastException != null) {
+            System.err.println("최종 오류: " + lastException.getMessage());
+            lastException.printStackTrace();
+        }
+        
+        return result;
     }
     
     /**
@@ -112,11 +173,19 @@ public class EmailVerificationService {
                 return new VerificationResult(false, "인증 토큰이 만료되었습니다. 새로운 인증 메일을 요청해주세요.", null);
             }
             
-            // 5. 인증 완료 처리
+            // 5. 인증 완료 처리 (USER_EMAIL_AUTH 테이블)
             int updateResult = emailVerificationDAO.updateVerificationStatus(token.trim());
             
             if (updateResult <= 0) {
                 return new VerificationResult(false, "인증 처리에 실패했습니다.", null);
+            }
+            
+            // 6. USER_INFO 테이블의 EMAIL_VERIFIED도 업데이트
+            com.smhrd.model.MemberDAO memberDAO = new com.smhrd.model.MemberDAO();
+            boolean userInfoUpdated = memberDAO.updateEmailVerificationStatus(verification.getEmail(), true);
+            
+            if (!userInfoUpdated) {
+                System.err.println("WARNING: USER_INFO 테이블의 EMAIL_VERIFIED 업데이트에 실패했지만 인증은 완료되었습니다.");
             }
             
             return new VerificationResult(true, "이메일 인증이 완료되었습니다.", verification.getEmail());
@@ -207,11 +276,19 @@ public class EmailVerificationService {
                 return new VerificationResult(false, "잘못된 인증 코드입니다. 다시 확인해주세요.", null);
             }
             
-            // 6. 인증 완료 처리
+            // 6. 인증 완료 처리 (USER_EMAIL_AUTH 테이블)
             int updateResult = emailVerificationDAO.updateVerificationStatus(verification.getVerificationToken());
             
             if (updateResult <= 0) {
                 return new VerificationResult(false, "인증 처리에 실패했습니다.", null);
+            }
+            
+            // 7. USER_INFO 테이블의 EMAIL_VERIFIED도 업데이트
+            com.smhrd.model.MemberDAO memberDAO = new com.smhrd.model.MemberDAO();
+            boolean userInfoUpdated = memberDAO.updateEmailVerificationStatus(email, true);
+            
+            if (!userInfoUpdated) {
+                System.err.println("WARNING: USER_INFO 테이블의 EMAIL_VERIFIED 업데이트에 실패했지만 인증은 완료되었습니다.");
             }
             
             return new VerificationResult(true, "이메일 인증이 완료되었습니다.", email);
@@ -354,7 +431,7 @@ public class EmailVerificationService {
             }
             
             status.append("토큰 만료 시간: ").append(EmailConfig.getVerificationExpiryHours()).append("시간\n");
-            status.append("발송 제한: 이메일당 ").append(EmailConfig.getRateLimitPerEmail()).append("회/시간\n");
+            status.append("발송 제한: 비활성화됨 (무제한 발송 가능)\n");
             status.append("=============================");
             
             return status.toString();
