@@ -21,6 +21,7 @@ public class AnalysisResult {
     private FavoriteMessage favoriteMessage;
     private List<ConversationGuide> conversationGuides;
     private List<CustomAdvice> customAdvice;
+    private CommunicationPatterns communicationPatterns;
     
     // === Inner Classes ===
     
@@ -69,6 +70,7 @@ public class AnalysisResult {
         private double confidenceLevel;
         private String relationshipStage;
         private String heroInsight;
+        private String summary;
         
         public double getSuccessRate() { return successRate; }
         public void setSuccessRate(double successRate) { this.successRate = successRate; }
@@ -81,6 +83,9 @@ public class AnalysisResult {
         
         public String getHeroInsight() { return heroInsight; }
         public void setHeroInsight(String heroInsight) { this.heroInsight = heroInsight; }
+        
+        public String getSummary() { return summary; }
+        public void setSummary(String summary) { this.summary = summary; }
     }
     
     /**
@@ -251,6 +256,36 @@ public class AnalysisResult {
         public void setUrgency(String urgency) { this.urgency = urgency; }
     }
     
+    /**
+     * 커뮤니케이션 패턴 분석
+     */
+    public static class CommunicationPatterns {
+        private double responseSpeed;
+        private double initiationRate;
+        private double engagementLevel;
+        private String communicationStyle;
+        private List<String> frequentTopics;
+        private double conversationMaintenance;
+        
+        public double getResponseSpeed() { return responseSpeed; }
+        public void setResponseSpeed(double responseSpeed) { this.responseSpeed = responseSpeed; }
+        
+        public double getInitiationRate() { return initiationRate; }
+        public void setInitiationRate(double initiationRate) { this.initiationRate = initiationRate; }
+        
+        public double getEngagementLevel() { return engagementLevel; }
+        public void setEngagementLevel(double engagementLevel) { this.engagementLevel = engagementLevel; }
+        
+        public String getCommunicationStyle() { return communicationStyle; }
+        public void setCommunicationStyle(String communicationStyle) { this.communicationStyle = communicationStyle; }
+        
+        public List<String> getFrequentTopics() { return frequentTopics; }
+        public void setFrequentTopics(List<String> frequentTopics) { this.frequentTopics = frequentTopics; }
+        
+        public double getConversationMaintenance() { return conversationMaintenance; }
+        public void setConversationMaintenance(double conversationMaintenance) { this.conversationMaintenance = conversationMaintenance; }
+    }
+    
     // === Main Class Getters and Setters ===
     
     public String getSessionId() { return sessionId; }
@@ -285,6 +320,9 @@ public class AnalysisResult {
     
     public List<CustomAdvice> getCustomAdvice() { return customAdvice; }
     public void setCustomAdvice(List<CustomAdvice> customAdvice) { this.customAdvice = customAdvice; }
+    
+    public CommunicationPatterns getCommunicationPatterns() { return communicationPatterns; }
+    public void setCommunicationPatterns(CommunicationPatterns communicationPatterns) { this.communicationPatterns = communicationPatterns; }
     
     /**
      * Frontend에서 사용할 수 있는 형태로 변환

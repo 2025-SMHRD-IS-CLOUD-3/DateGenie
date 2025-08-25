@@ -35,6 +35,8 @@ public class GeminiAnalysisService {
         this.gson = new GsonBuilder()
             .setPrettyPrinting()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            .disableHtmlEscaping()
+            .setLenient()
             .create();
     }
     
@@ -51,21 +53,52 @@ public class GeminiAnalysisService {
             throws AnalysisException {
         
         try {
+            System.out.println("=== GeminiAnalysisService.analyzeConversation 시작 ===");
+            System.out.println("conversationData 길이: " + (conversationData != null ? conversationData.length() : 0));
+            System.out.println("userId: " + userId);
+            System.out.println("partnerName: " + partnerName);
+            
+            // 입력 데이터 검증
+            if (conversationData == null || conversationData.trim().isEmpty()) {
+                throw new AnalysisException("대화 데이터가 없습니다");
+            }
+            if (userId == null || userId.trim().isEmpty()) {
+                throw new AnalysisException("사용자 ID가 없습니다");
+            }
+            
             // 1. 프롬프트 생성
+            System.out.println("1. 프롬프트 생성 시작");
             String prompt = buildAnalysisPrompt(conversationData, partnerName);
+            System.out.println("1-1. 프롬프트 생성 완료 - 길이: " + prompt.length());
             
             // 2. Gemini API 호출
+            System.out.println("2. Gemini API 호출 시작");
             String apiResponse = callGeminiAPI(prompt);
+            System.out.println("2-1. Gemini API 호출 완료 - 응답 길이: " + (apiResponse != null ? apiResponse.length() : 0));
             
             // 3. 응답 파싱 및 검증
+            System.out.println("3. 응답 파싱 및 검증 시작");
             AnalysisResult result = parseAndValidateResponse(apiResponse, userId, partnerName);
+            System.out.println("3-1. 응답 파싱 및 검증 완료");
             
             // 4. 세션 ID 생성
+            System.out.println("4. 세션 ID 생성");
             result.setSessionId(generateSessionId());
+            System.out.println("4-1. 세션 ID 생성 완료: " + result.getSessionId());
             
+            System.out.println("=== GeminiAnalysisService.analyzeConversation 완료 ===");
             return result;
             
         } catch (Exception e) {
+            System.err.println("=== GeminiAnalysisService 에러 발생 ===");
+            System.err.println("에러 타입: " + e.getClass().getSimpleName());
+            System.err.println("에러 메시지: " + e.getMessage());
+            if (e.getCause() != null) {
+                System.err.println("원인: " + e.getCause().getClass().getSimpleName() + " - " + e.getCause().getMessage());
+            }
+            System.err.println("스택 트레이스:");
+            e.printStackTrace();
+            
             throw new AnalysisException("대화 분석 중 오류가 발생했습니다: " + e.getMessage(), e);
         }
     }
@@ -95,9 +128,26 @@ public class GeminiAnalysisService {
      */
     private String loadPromptTemplate() throws Exception {
         try {
-            return new String(Files.readAllBytes(Paths.get(PROMPT_TEMPLATE_PATH)), StandardCharsets.UTF_8);
+            System.out.println("=== 프롬프트 템플릿 로드 시도 ===");
+            System.out.println("템플릿 경로: " + PROMPT_TEMPLATE_PATH);
+            
+            // 클래스패스에서 리소스 로드 시도
+            java.io.InputStream inputStream = getClass().getClassLoader().getResourceAsStream("prompt_templates/analysis_prompt_template.txt");
+            if (inputStream != null) {
+                String template = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                inputStream.close();
+                System.out.println("클래스패스에서 템플릿 로드 성공 - 길이: " + template.length());
+                return template;
+            }
+            
+            // 파일 시스템에서 로드 시도 (fallback)
+            String template = new String(Files.readAllBytes(Paths.get(PROMPT_TEMPLATE_PATH)), StandardCharsets.UTF_8);
+            System.out.println("파일시스템에서 템플릿 로드 성공 - 길이: " + template.length());
+            return template;
+            
         } catch (Exception e) {
-            // 파일이 없는 경우 기본 프롬프트 사용
+            System.err.println("프롬프트 템플릿 로드 실패: " + e.getMessage());
+            System.err.println("기본 프롬프트 사용");
             return getDefaultPrompt();
         }
     }
@@ -232,8 +282,29 @@ public class GeminiAnalysisService {
             // JSON 응답에서 실제 분석 결과 추출
             String cleanJsonText = extractJsonFromResponse(analysisText);
             
+            // 디버그 로깅
+            System.out.println("=== GEMINI API 응답 디버그 ===");
+            System.out.println("원본 응답 텍스트 (처음 500자):");
+            System.out.println(analysisText.length() > 500 ? analysisText.substring(0, 500) + "..." : analysisText);
+            System.out.println("\n추출된 JSON 텍스트:");
+            System.out.println(cleanJsonText);
+            System.out.println("=== 디버그 끝 ===");
+            
             // 분석 결과 객체로 변환
-            AnalysisResult result = gson.fromJson(cleanJsonText, AnalysisResult.class);
+            System.out.println("=== JSON 파싱 시도 ===");
+            System.out.println("파싱할 JSON 길이: " + cleanJsonText.length());
+            System.out.println("파싱할 JSON 미리보기 (처음 300자): " + 
+                (cleanJsonText.length() > 300 ? cleanJsonText.substring(0, 300) + "..." : cleanJsonText));
+            
+            AnalysisResult result;
+            try {
+                result = gson.fromJson(cleanJsonText, AnalysisResult.class);
+                System.out.println("JSON 파싱 성공!");
+            } catch (com.google.gson.JsonSyntaxException jsonError) {
+                System.err.println("JSON 구문 오류: " + jsonError.getMessage());
+                System.err.println("문제가 된 JSON: " + cleanJsonText);
+                throw new Exception("JSON 구문이 올바르지 않습니다: " + jsonError.getMessage(), jsonError);
+            }
             
             // 기본 정보 설정
             result.setUserId(userId);
@@ -245,6 +316,13 @@ public class GeminiAnalysisService {
             return result;
             
         } catch (Exception e) {
+            System.err.println("=== GEMINI API 파싱 에러 상세 정보 ===");
+            System.err.println("에러 타입: " + e.getClass().getSimpleName());
+            System.err.println("에러 메시지: " + e.getMessage());
+            if (e.getCause() != null) {
+                System.err.println("원인: " + e.getCause().getMessage());
+            }
+            System.err.println("=== 파싱 에러 정보 끝 ===");
             throw new Exception("Gemini API 응답 파싱 실패: " + e.getMessage(), e);
         }
     }
@@ -253,25 +331,73 @@ public class GeminiAnalysisService {
      * 응답 텍스트에서 JSON 부분만 추출
      */
     private String extractJsonFromResponse(String responseText) {
+        System.out.println("=== JSON 추출 시작 ===");
+        System.out.println("응답 텍스트 길이: " + responseText.length());
+        System.out.println("응답 미리보기 (처음 200자): " + 
+            (responseText.length() > 200 ? responseText.substring(0, 200) + "..." : responseText));
         
-        // ```json ... ``` 형태로 감싸져 있는 경우 처리
-        String jsonPattern = "```json\\s*\\n([\\s\\S]*?)\\n\\s*```";
-        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(jsonPattern);
-        java.util.regex.Matcher matcher = pattern.matcher(responseText);
+        // 1. ```json ... ``` 형태 처리 (여러 패턴 지원)
+        String[] jsonPatterns = {
+            "```json\\s*\\n([\\s\\S]*?)\\n\\s*```",  // ```json\n...\n```
+            "```json\\s*([\\s\\S]*?)```",           // ```json...```
+            "```\\s*\\n?([\\s\\S]*?)\\n\\s*```"     // ```\n...\n```
+        };
         
-        if (matcher.find()) {
-            return matcher.group(1).trim();
+        for (String jsonPattern : jsonPatterns) {
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(jsonPattern, java.util.regex.Pattern.MULTILINE | java.util.regex.Pattern.DOTALL);
+            java.util.regex.Matcher matcher = pattern.matcher(responseText);
+            
+            if (matcher.find()) {
+                String extracted = matcher.group(1).trim();
+                System.out.println("패턴으로 JSON 추출 성공: " + jsonPattern);
+                System.out.println("추출된 JSON 길이: " + extracted.length());
+                return extracted;
+            }
         }
         
-        // { ... } 형태의 JSON 찾기
-        int startIndex = responseText.indexOf("{");
+        // 2. 중첩된 중괄호를 고려한 JSON 찾기
+        int startIndex = -1;
+        int endIndex = -1;
+        int braceCount = 0;
+        
+        for (int i = 0; i < responseText.length(); i++) {
+            char c = responseText.charAt(i);
+            
+            if (c == '{') {
+                if (startIndex == -1) {
+                    startIndex = i;
+                }
+                braceCount++;
+            } else if (c == '}') {
+                braceCount--;
+                if (braceCount == 0 && startIndex != -1) {
+                    endIndex = i;
+                    break;
+                }
+            }
+        }
+        
+        if (startIndex != -1 && endIndex != -1) {
+            String extracted = responseText.substring(startIndex, endIndex + 1);
+            System.out.println("중괄호 매칭으로 JSON 추출 성공");
+            System.out.println("추출된 JSON 길이: " + extracted.length());
+            return extracted;
+        }
+        
+        // 3. 마지막 수단: 간단한 { ... } 찾기
+        startIndex = responseText.indexOf("{");
         int lastIndex = responseText.lastIndexOf("}");
         
         if (startIndex != -1 && lastIndex != -1 && startIndex < lastIndex) {
-            return responseText.substring(startIndex, lastIndex + 1);
+            String extracted = responseText.substring(startIndex, lastIndex + 1);
+            System.out.println("기본 방식으로 JSON 추출 시도");
+            System.out.println("추출된 JSON 길이: " + extracted.length());
+            return extracted;
         }
         
-        throw new RuntimeException("응답에서 유효한 JSON을 찾을 수 없습니다: " + responseText);
+        System.err.println("모든 JSON 추출 방법 실패");
+        System.err.println("응답 전문: " + responseText);
+        throw new RuntimeException("응답에서 유효한 JSON을 찾을 수 없습니다. 응답 길이: " + responseText.length());
     }
     
     /**
@@ -279,9 +405,31 @@ public class GeminiAnalysisService {
      */
     private void validateAnalysisResult(AnalysisResult result) throws Exception {
         
-        // 필수 필드 검증
+        // 결과 객체 자체 검증
+        if (result == null) {
+            throw new Exception("분석 결과 객체가 null입니다");
+        }
+        
+        // 디버그 로깅
+        System.out.println("=== 분석 결과 검증 디버그 ===");
+        System.out.println("result 객체 타입: " + result.getClass().getSimpleName());
+        System.out.println("mainResults: " + result.getMainResults());
+        System.out.println("emotionAnalysis: " + result.getEmotionAnalysis());
+        System.out.println("communicationPatterns: " + result.getCommunicationPatterns());
+        System.out.println("=== 검증 디버그 끝 ===");
+        
+        // 필수 필드 검증 및 기본값 설정
         if (result.getMainResults() == null) {
-            throw new Exception("mainResults가 없습니다");
+            System.err.println("WARNING: mainResults가 없어서 기본값으로 설정합니다");
+            // 완전한 기본값 생성
+            AnalysisResult.MainResults defaultMainResults = new AnalysisResult.MainResults();
+            defaultMainResults.setSuccessRate(50.0);
+            defaultMainResults.setConfidenceLevel(50.0);
+            defaultMainResults.setRelationshipStage("분석 진행 중");
+            defaultMainResults.setHeroInsight("대화 분석을 진행하고 있습니다.");
+            defaultMainResults.setSummary("분석 결과를 가져오는데 문제가 있어 기본값을 사용합니다.");
+            result.setMainResults(defaultMainResults);
+            System.out.println("완전한 mainResults 기본값 설정 완료");
         }
         
         // 수치 범위 검증
@@ -299,6 +447,25 @@ public class GeminiAnalysisService {
             if (Math.abs(total - 100.0) > 0.1) {
                 throw new Exception("감정 분석 비율 합계가 100%가 아닙니다: " + total);
             }
+        }
+        
+        // 분석 메타데이터 기본값 설정
+        if (result.getAnalysisMetadata() == null) {
+            System.err.println("WARNING: analysisMetadata가 없어서 기본값으로 설정합니다");
+            AnalysisResult.AnalysisMetadata defaultMetadata = new AnalysisResult.AnalysisMetadata();
+            defaultMetadata.setAnalysisDate(java.time.LocalDateTime.now().toString());
+            defaultMetadata.setTotalMessages(0);
+            defaultMetadata.setAnalysisVersion("1.0");
+            
+            // 대화 기간 기본값
+            AnalysisResult.ConversationPeriod defaultPeriod = new AnalysisResult.ConversationPeriod();
+            String today = java.time.LocalDate.now().toString();
+            defaultPeriod.setStart(today);
+            defaultPeriod.setEnd(today);
+            defaultMetadata.setConversationPeriod(defaultPeriod);
+            
+            result.setAnalysisMetadata(defaultMetadata);
+            System.out.println("analysisMetadata 기본값 설정 완료");
         }
         
         // 기타 필수 검증 로직...

@@ -107,8 +107,27 @@
 		.btn-ghost { background:transparent; color:#7c3aed; border:2px solid rgba(124,58,237,.35); padding:.7rem 1rem; border-radius:12px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:.4rem; }
 
 		/* 업로드 & 진행률 */
-		.dropzone { border:2px dashed rgba(124,58,237,.35); border-radius:14px; background: rgba(124,58,237,.06); padding:2rem; text-align:center; transition: all .2s ease; }
-		.dropzone.dragover { background: rgba(124,58,237,.12); border-color:#7c3aed; }
+		.dropzone { 
+			border: 2px dashed rgba(124,58,237,.35); 
+			border-radius: 14px; 
+			background: rgba(124,58,237,.06); 
+			padding: 2rem; 
+			text-align: center; 
+			transition: all .3s ease;
+			position: relative;
+			overflow: hidden;
+		}
+		.dropzone.dragover { 
+			background: rgba(124,58,237,.15); 
+			border-color: #7c3aed; 
+			border-style: solid;
+			transform: scale(1.02);
+			box-shadow: 0 10px 25px rgba(124,58,237,.2);
+		}
+		.dropzone:hover {
+			border-color: rgba(124,58,237,.6);
+			background: rgba(124,58,237,.08);
+		}
 		.dropzone input[type="file"] { display:none; }
 		.dropzone .label { display:inline-flex; align-items:center; gap:.5rem; background:linear-gradient(135deg,#ec4899,#8b5cf6); color:#fff; padding:.8rem 1.5rem; border-radius:12px; cursor:pointer; font-size:1.1rem; }
 		.dropzone .label:hover { transform: translateY(-2px); box-shadow:0 12px 26px rgba(236,72,153,.32); }
@@ -584,6 +603,9 @@
             }
         }
 
+		// 전역 변수 선언
+		let uploadedFiles = [];
+
 		function initUpload() {
 			const dropzone = document.getElementById('dropzone');
 			const fileInput = document.getElementById('fileInput');
@@ -593,36 +615,117 @@
 			const analysisText = document.getElementById('analysisText');
 			const fileList = document.getElementById('fileList');
 			const analyzeBtn = document.getElementById('analyzeBtn');
-			
-			let uploadedFiles = [];
 
 			if (!dropzone || !fileInput) return;
 
-			// 드래그 앤 드롭 이벤트
+			// 드래그 앤 드롭 이벤트 개선
 			dropzone.addEventListener('dragover', e => { 
-				e.preventDefault(); 
-				dropzone.classList.add('dragover'); 
+				e.preventDefault();
+				e.stopPropagation();
+				dropzone.classList.add('dragover');
+				console.log('Drag over detected');
 			});
-			dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+			
+			dropzone.addEventListener('dragenter', e => {
+				e.preventDefault();
+				e.stopPropagation();
+				dropzone.classList.add('dragover');
+				console.log('Drag enter detected');
+			});
+			
+			dropzone.addEventListener('dragleave', e => {
+				e.preventDefault();
+				e.stopPropagation();
+				// 드롭존을 벗어날 때만 dragover 제거 (자식 요소로 이동할 때는 유지)
+				if (!dropzone.contains(e.relatedTarget)) {
+					dropzone.classList.remove('dragover');
+					console.log('Drag leave detected');
+				}
+			});
+			
 			dropzone.addEventListener('drop', e => { 
-				e.preventDefault(); 
-				dropzone.classList.remove('dragover'); 
-				if (e.dataTransfer.files.length) processFiles(e.dataTransfer.files); 
+				e.preventDefault();
+				e.stopPropagation();
+				dropzone.classList.remove('dragover');
+				console.log('Drop detected, files:', e.dataTransfer.files.length);
+				
+				if (e.dataTransfer.files.length) {
+					// 드롭 성공 피드백
+					const originalBg = dropzone.style.backgroundColor;
+					dropzone.style.backgroundColor = 'rgba(34, 197, 94, 0.1)';
+					dropzone.style.borderColor = '#22c55e';
+					
+					setTimeout(() => {
+						dropzone.style.backgroundColor = originalBg;
+						dropzone.style.borderColor = '';
+					}, 500);
+					
+					processFiles(e.dataTransfer.files);
+				}
 			});
 
-			// 파일 선택 이벤트 (label의 for 속성으로 자동 연결되므로 추가 이벤트 불필요)
-			fileInput.addEventListener('change', () => { 
-				if (fileInput.files.length) processFiles(fileInput.files); 
+			// 파일 선택 이벤트 개선
+			fileInput.addEventListener('change', (e) => { 
+				console.log('File input changed, files:', e.target.files.length);
+				if (e.target.files.length) {
+					// 파일 선택 성공 피드백
+					const label = dropzone.querySelector('.label');
+					const originalText = label.innerHTML;
+					label.innerHTML = '<i class="fas fa-check"></i> 파일 선택됨!';
+					label.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+					
+					setTimeout(() => {
+						label.innerHTML = originalText;
+						label.style.background = '';
+					}, 1000);
+					
+					processFiles(e.target.files);
+				}
 			});
 
 			function processFiles(files) {
+				console.log('Processing files:', files.length);
+				
+				// 파일 개수 제한 확인 (최대 5개)
+				if (files.length > 5) {
+					alert('최대 5개 파일까지만 업로드할 수 있습니다.');
+					return;
+				}
+				
+				// 파일 크기 제한 확인 (50MB)
+				const maxSize = 50 * 1024 * 1024; // 50MB
+				for (let file of files) {
+					if (file.size > maxSize) {
+						alert(`${file.name} 파일이 너무 큽니다. 최대 50MB까지만 업로드할 수 있습니다.`);
+						return;
+					}
+				}
+				
+				// 지원되는 파일 형식 확인
+				const supportedExtensions = ['txt', 'csv', 'json', 'mp3', 'm4a', 'wav'];
+				for (let file of files) {
+					const ext = file.name.split('.').pop().toLowerCase();
+					if (!supportedExtensions.includes(ext)) {
+						alert(`${file.name} 파일 형식이 지원되지 않습니다. 지원 형식: ${supportedExtensions.join(', ')}`);
+						return;
+					}
+				}
+				
+				// 사용자 피드백
+				if (window.showNotification) {
+					window.showNotification(`${files.length}개 파일 업로드를 시작합니다.`, 'info');
+				}
+				
 				Array.from(files).forEach(file => {
+					console.log('Adding file:', file.name, file.size, file.type);
 					const fileItem = {
 						id: Date.now() + Math.random(),
 						name: file.name,
 						size: formatFileSize(file.size),
 						type: getFileType(file.name),
-						status: 'processing'
+						status: 'processing',
+						originalFile: file, // 일관성을 위해 originalFile로 저장
+						file: file // 백업용으로 file도 저장
 					};
 					uploadedFiles.push(fileItem);
 				});
@@ -739,13 +842,30 @@
 			const analysisBar = document.getElementById('analysisProgress');
 			
 			try {
+				// 로그인 상태 확인
+				const userInfo = localStorage.getItem('user');
+				if (!userInfo) {
+					alert('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.');
+					window.location.href = '/DateGenie/login.html';
+					return;
+				}
+				
 				// 버튼 비활성화
 				analyzeBtn.disabled = true;
 				analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 분석 중...';
 				
 				// 진행률 초기화
-				analysisText.textContent = 'Gemini AI가 대화를 분석 중입니다...';
+				analysisText.textContent = 'Gemini AI가 대화를 분석 중입니다... (최대 45초 소요)';
 				analysisBar.style.width = '10%';
+				
+				// 시각적 피드백을 위한 진행률 애니메이션
+				let progressStep = 10;
+				const progressInterval = setInterval(() => {
+					if (progressStep < 40) {
+						progressStep += 2;
+						analysisBar.style.width = progressStep + '%';
+					}
+				}, 1000);
 				
 				// 업로드된 파일에서 대화 데이터 추출
 				const conversationData = await extractConversationData();
@@ -763,30 +883,94 @@
 				analysisBar.style.width = '50%';
 				analysisText.textContent = 'AI 분석 엔진 호출 중...';
 				
-				// 분석 API 호출
-				const response = await fetch('/DateGenie/AnalysisService', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json; charset=UTF-8'
-					},
-					body: JSON.stringify({
-						conversationData: conversationData,
-						partnerName: partnerName
-					})
-				});
+				// 분석 API 호출 (45초 타임아웃 설정)
+				const controller = new AbortController();
+				const timeoutId = setTimeout(() => {
+					controller.abort();
+				}, 45000); // 45초 타임아웃
+				
+				let response;
+				try {
+					response = await fetch('/DateGenie/AnalysisService', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json; charset=UTF-8'
+						},
+						body: JSON.stringify({
+							conversationData: conversationData,
+							partnerName: partnerName
+						}),
+						signal: controller.signal
+					});
+					clearTimeout(timeoutId);
+				} catch (fetchError) {
+					clearTimeout(timeoutId);
+					if (fetchError.name === 'AbortError') {
+						throw new Error('분석 시간이 너무 오래 걸립니다. 잠시 후 다시 시도해주세요.');
+					}
+					throw new Error('네트워크 연결에 실패했습니다. 인터넷 연결을 확인해주세요.');
+				}
 				
 				analysisBar.style.width = '80%';
 				analysisText.textContent = '분석 결과 처리 중...';
 				
 				if (!response.ok) {
-					const errorData = await response.json();
-					throw new Error(errorData.message || '분석 요청이 실패했습니다.');
+					// 401 Unauthorized - 로그인 세션 만료
+					if (response.status === 401) {
+						alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+						localStorage.removeItem('user');
+						localStorage.removeItem('authProvider');
+						window.location.href = '/DateGenie/login.html';
+						return;
+					}
+					
+					// 응답이 JSON인지 확인
+					const contentType = response.headers.get('content-type');
+					let errorMessage = '분석 요청이 실패했습니다.';
+					
+					try {
+						if (contentType && contentType.includes('application/json')) {
+							const errorData = await response.json();
+							errorMessage = errorData.message || errorMessage;
+						} else {
+							// HTML 응답인 경우 텍스트로 읽어서 상태 코드만 표시
+							const errorText = await response.text();
+							console.error('서버에서 HTML 에러 페이지 반환:', errorText.substring(0, 200) + '...');
+							errorMessage = `서버 오류가 발생했습니다 (${response.status}: ${response.statusText})`;
+						}
+					} catch (parseError) {
+						console.error('에러 응답 파싱 실패:', parseError);
+						errorMessage = `서버 오류가 발생했습니다 (${response.status}: ${response.statusText})`;
+					}
+					
+					throw new Error(errorMessage);
 				}
 				
-				const result = await response.json();
+				// 성공 응답도 JSON인지 확인
+				const contentType = response.headers.get('content-type');
+				let result;
+				
+				try {
+					if (contentType && contentType.includes('application/json')) {
+						result = await response.json();
+					} else {
+						// JSON이 아닌 응답인 경우
+						const responseText = await response.text();
+						console.error('서버에서 예상치 못한 응답 형식:', responseText.substring(0, 200) + '...');
+						throw new Error('서버에서 올바르지 않은 응답 형식을 반환했습니다.');
+					}
+				} catch (parseError) {
+					console.error('응답 파싱 실패:', parseError);
+					throw new Error('서버 응답을 처리할 수 없습니다.');
+				}
 				
 				if (!result.success) {
 					throw new Error(result.message || '분석에 실패했습니다.');
+				}
+				
+				// 진행률 애니메이션 정리
+				if (progressInterval) {
+					clearInterval(progressInterval);
 				}
 				
 				// 분석 완료
@@ -810,6 +994,11 @@
 			} catch (error) {
 				console.error('분석 오류:', error);
 				
+				// 진행률 애니메이션 정리
+				if (progressInterval) {
+					clearInterval(progressInterval);
+				}
+				
 				// 에러 처리
 				analysisText.textContent = '분석 실패: ' + error.message;
 				analysisBar.style.width = '0%';
@@ -829,10 +1018,39 @@
 		
 		// 업로드된 파일에서 대화 데이터 추출
 		async function extractConversationData() {
+			// uploadedFiles 배열에서 완료된 파일을 먼저 확인
+			const completedFiles = uploadedFiles.filter(f => f.status === 'completed');
+			
+			if (completedFiles.length > 0) {
+				// uploadedFiles에서 첫 번째 완료된 파일 사용
+				const fileItem = completedFiles[0];
+				const file = fileItem.originalFile || fileItem.file;
+				
+				if (!file) {
+					throw new Error('업로드된 파일 객체를 찾을 수 없습니다.');
+				}
+				
+				try {
+					const text = await readFileAsText(file);
+					
+					// 간단한 전처리
+					if (text.length < 10) {
+						throw new Error('대화 데이터가 너무 짧습니다.');
+					}
+					
+					console.log('파일에서 텍스트 추출 완료:', text.length + '자');
+					return text;
+				} catch (error) {
+					console.error('파일 읽기 오류:', error);
+					throw new Error('파일을 읽을 수 없습니다: ' + error.message);
+				}
+			}
+			
+			// uploadedFiles에 파일이 없으면 fileInput에서 확인 (백업용)
 			const fileInput = document.getElementById('fileInput');
 			
 			if (!fileInput.files || fileInput.files.length === 0) {
-				throw new Error('업로드된 파일이 없습니다.');
+				throw new Error('업로드된 파일이 없습니다. 먼저 파일을 선택해주세요.');
 			}
 			
 			// 첫 번째 파일을 대화 데이터로 사용
@@ -846,6 +1064,7 @@
 					throw new Error('대화 데이터가 너무 짧습니다.');
 				}
 				
+				console.log('fileInput에서 텍스트 추출 완료:', text.length + '자');
 				return text;
 			} catch (error) {
 				console.error('파일 읽기 오류:', error);
@@ -877,8 +1096,7 @@
 				resolve(name || '상대방');
 			});
 		}
-		}
-
+		// 파일 선택 또는 드래그 앤 드롭 후 자동 업로드 시작
 		document.addEventListener('DOMContentLoaded', function(){
             loadUserInfo();
 			initUpload();

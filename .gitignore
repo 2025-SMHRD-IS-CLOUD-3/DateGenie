@@ -32,7 +32,7 @@ buildNumber.properties
 # ============================================
 
 # Eclipse
-.metadata
+.metadata/
 .project
 .classpath
 .settings/

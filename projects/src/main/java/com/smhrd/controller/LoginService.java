@@ -58,10 +58,13 @@ try {
                 if (!result.isEmailVerified()) {
                     // 이메일 미인증 사용자 - 로그인 차단
                     responseData.put("success", false);
-                    responseData.put("message", "이메일 인증을 완료한 후 로그인해주세요. 이메일을 확인하거나 인증 메일을 재발송해주세요.");
+                    responseData.put("message", "이메일 인증을 완료한 후 로그인해주세요.");
+                    responseData.put("detailedMessage", "회원가입 시 입력하신 이메일 주소로 발송된 인증 메일을 확인하거나, 아래 버튼을 클릭하여 인증 메일을 다시 받으세요.");
                     responseData.put("requiresVerification", true);
                     responseData.put("email", result.getEmail());
                     responseData.put("canResend", true);
+                    responseData.put("actionText", "인증 메일 재발송");
+                    responseData.put("redirectUrl", "email-verification.html?email=" + java.net.URLEncoder.encode(result.getEmail(), "UTF-8"));
                 } else {
                     // 이메일 인증 완료 사용자 - 로그인 허용
                     HttpSession session = request.getSession();

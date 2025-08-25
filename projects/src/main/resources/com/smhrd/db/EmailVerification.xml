@@ -4,9 +4,9 @@
 
     <!-- 새로운 이메일 인증 토큰 저장 -->
     <insert id="insert" parameterType="com.smhrd.model.EmailVerification">
-        INSERT INTO CAMPUS_24IS_CLOUD3_P2_4.USER_EMAIL_AUTH 
+        INSERT INTO USER_EMAIL_AUTH 
         (ID, EMAIL, VERIFICATION_TOKEN, CREATED_AT, EXPIRES_AT, VERIFIED) 
-        VALUES (CAMPUS_24IS_CLOUD3_P2_4.USER_EMAIL_AUTH_SEQ.NEXTVAL, #{email}, #{verificationToken}, CURRENT_TIMESTAMP, #{expiresAt}, #{verified})
+        VALUES (USER_EMAIL_AUTH_SEQ.NEXTVAL, #{email}, #{verificationToken}, CURRENT_TIMESTAMP, #{expiresAt}, #{verified})
     </insert>
     
     <!-- 토큰으로 인증 정보 조회 -->
@@ -17,23 +17,24 @@
                CREATED_AT as createdAt, 
                EXPIRES_AT as expiresAt, 
                VERIFIED as verified
-        FROM CAMPUS_24IS_CLOUD3_P2_4.USER_EMAIL_AUTH 
+        FROM USER_EMAIL_AUTH 
         WHERE VERIFICATION_TOKEN = #{token}
     </select>
     
     <!-- 이메일로 최신 인증 정보 조회 (가장 최근 생성된 것) -->
     <select id="findByEmail" resultType="com.smhrd.model.EmailVerification" parameterType="String">
-        SELECT * FROM (
-            SELECT ID as id, 
-                   EMAIL as email, 
-                   VERIFICATION_TOKEN as verificationToken, 
-                   CREATED_AT as createdAt, 
-                   EXPIRES_AT as expiresAt, 
-                   VERIFIED as verified
-            FROM CAMPUS_24IS_CLOUD3_P2_4.USER_EMAIL_AUTH 
-            WHERE EMAIL = #{email} 
-            ORDER BY CREATED_AT DESC
-        ) WHERE ROWNUM = 1
+        SELECT ID as id, 
+               EMAIL as email, 
+               VERIFICATION_TOKEN as verificationToken, 
+               CREATED_AT as createdAt, 
+               EXPIRES_AT as expiresAt, 
+               VERIFIED as verified
+        FROM (
+            SELECT ID, EMAIL, VERIFICATION_TOKEN, CREATED_AT, EXPIRES_AT, VERIFIED,
+                   ROW_NUMBER() OVER (ORDER BY CREATED_AT DESC) as rn
+            FROM USER_EMAIL_AUTH 
+            WHERE EMAIL = #{email}
+        ) WHERE rn = 1
     </select>
     
     <!-- 이메일로 모든 인증 정보 조회 -->
@@ -44,34 +45,34 @@
                CREATED_AT as createdAt, 
                EXPIRES_AT as expiresAt, 
                VERIFIED as verified
-        FROM CAMPUS_24IS_CLOUD3_P2_4.USER_EMAIL_AUTH 
+        FROM USER_EMAIL_AUTH 
         WHERE EMAIL = #{email} 
         ORDER BY CREATED_AT DESC
     </select>
     
     <!-- 인증 상태를 완료로 업데이트 -->
     <update id="updateVerified" parameterType="String">
-        UPDATE CAMPUS_24IS_CLOUD3_P2_4.USER_EMAIL_AUTH 
+        UPDATE USER_EMAIL_AUTH 
         SET VERIFIED = 1 
         WHERE VERIFICATION_TOKEN = #{token}
     </update>
     
     <!-- 특정 이메일의 모든 인증 토큰 삭제 -->
     <delete id="deleteByEmail" parameterType="String">
-        DELETE FROM CAMPUS_24IS_CLOUD3_P2_4.USER_EMAIL_AUTH 
+        DELETE FROM USER_EMAIL_AUTH 
         WHERE EMAIL = #{email}
     </delete>
     
     <!-- 만료된 토큰 삭제 -->
     <delete id="deleteExpired" parameterType="java.sql.Timestamp">
-        DELETE FROM CAMPUS_24IS_CLOUD3_P2_4.USER_EMAIL_AUTH 
+        DELETE FROM USER_EMAIL_AUTH 
         WHERE EXPIRES_AT <![CDATA[<]]> #{now}
     </delete>
     
     <!-- 특정 이메일의 인증 완료된 토큰 수 조회 -->
     <select id="countVerified" resultType="Integer" parameterType="String">
         SELECT COUNT(*) 
-        FROM CAMPUS_24IS_CLOUD3_P2_4.USER_EMAIL_AUTH 
+        FROM USER_EMAIL_AUTH 
         WHERE EMAIL = #{email} 
         AND VERIFIED = 1
     </select>

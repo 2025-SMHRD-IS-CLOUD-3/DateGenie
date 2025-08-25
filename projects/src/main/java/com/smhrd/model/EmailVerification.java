@@ -97,8 +97,8 @@ public class EmailVerification {
         return this.verified != null && this.verified == 1;
     }
     
-    // 인증 완료 여부 확인 메서드 (별칭)
-    public boolean isVerified() {
+    // 인증 완료 여부 확인 메서드 (편의용 - boolean 반환)
+    public boolean isEmailVerified() {
         return checkVerified();
     }
     

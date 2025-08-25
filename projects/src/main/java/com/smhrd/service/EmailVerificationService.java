@@ -30,6 +30,17 @@ public class EmailVerificationService {
      * @return 성공 여부 결과
      */
     public VerificationResult createAndSendVerification(String email, String baseUrl) {
+        return createAndSendVerification(email, baseUrl, false);
+    }
+    
+    /**
+     * 이메일 인증 토큰 생성 및 발송 (재발송 여부 지정 가능)
+     * @param email 인증할 이메일 주소
+     * @param baseUrl 웹사이트 기본 URL
+     * @param isResend 재발송 여부 (true시 시간 제한 무시)
+     * @return 성공 여부 결과
+     */
+    public VerificationResult createAndSendVerification(String email, String baseUrl, boolean isResend) {
         
         try {
             // 1. 이메일 유효성 검사
@@ -37,17 +48,21 @@ public class EmailVerificationService {
                 return new VerificationResult(false, "유효하지 않은 이메일 주소입니다.", null);
             }
             
-            // 2. 기존 토큰 확인 및 시간 기반 재발송 허용
-            EmailVerification existingVerification = emailVerificationDAO.findByEmail(email);
-            if (existingVerification != null && existingVerification.isValidForVerification()) {
-                // 기존 토큰이 5분 이내에 생성된 경우만 재발송 방지
-                long timeDiffMinutes = (System.currentTimeMillis() - existingVerification.getCreatedAt().getTime()) / (1000 * 60);
-                if (timeDiffMinutes < 5) {
-                    System.out.println("=== DEBUG: 최근 토큰 존재 (생성 후 " + timeDiffMinutes + "분), 재발송 방지 ===");
-                    return new VerificationResult(false, "이미 인증 메일이 발송되었습니다. 이메일을 확인해주세요.", null);
-                } else {
-                    System.out.println("=== DEBUG: 기존 토큰이 " + timeDiffMinutes + "분 전 생성됨, 재발송 허용 ===");
+            // 2. 기존 토큰 확인 및 시간 기반 재발송 허용 (재발송이 아닌 경우에만)
+            if (!isResend) {
+                EmailVerification existingVerification = emailVerificationDAO.findByEmail(email);
+                if (existingVerification != null && existingVerification.isValidForVerification()) {
+                    // 기존 토큰이 5분 이내에 생성된 경우만 재발송 방지
+                    long timeDiffMinutes = (System.currentTimeMillis() - existingVerification.getCreatedAt().getTime()) / (1000 * 60);
+                    if (timeDiffMinutes < 5) {
+                        System.out.println("=== DEBUG: 최근 토큰 존재 (생성 후 " + timeDiffMinutes + "분), 재발송 방지 ===");
+                        return new VerificationResult(false, "이미 인증 메일이 발송되었습니다. 이메일을 확인해주세요.", null);
+                    } else {
+                        System.out.println("=== DEBUG: 기존 토큰이 " + timeDiffMinutes + "분 전 생성됨, 재발송 허용 ===");
+                    }
                 }
+            } else {
+                System.out.println("=== DEBUG: 재발송 요청으로 시간 제한 무시 ===");
             }
             
             // 3. 기존 토큰 정리 (같은 이메일의 이전 토큰들 삭제)
@@ -225,8 +240,8 @@ public class EmailVerificationService {
                 return new VerificationResult(false, "이미 인증이 완료된 이메일입니다.", email);
             }
             
-            // 2. 기존 토큰들 삭제하고 새로 생성
-            return createAndSendVerification(email, baseUrl);
+            // 2. 재발송용 메서드 호출 (시간 제한 없이)
+            return createAndSendVerification(email, baseUrl, true);
             
         } catch (Exception e) {
             System.err.println("인증 메일 재발송 실패: " + e.getMessage());

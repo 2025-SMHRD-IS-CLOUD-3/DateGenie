@@ -99,15 +99,7 @@
 
     <!-- 관심도 추이 조회 -->
     <select id="getInterestTrends" parameterType="string" resultType="map">
-        SELECT 
-            TO_CHAR(trend_date, 'MM월 DD일') as date,
-            interest_value as value,
-            message_count as messageCount,
-            response_time_avg as avgResponseTime,
-            emoji_usage_count as emojiCount
-        FROM interest_trends 
-        WHERE session_id = #{sessionId}
-        ORDER BY trend_date
+        SELECT TO_CHAR(trend_date, 'YYYY-MM-DD') as date, interest_value as value, message_count as messageCount, response_time_avg as avgResponseTime, emoji_usage_count as emojiCount FROM interest_trends WHERE session_id = #{sessionId} ORDER BY trend_date
     </select>
 
     <!-- 감정 분석 조회 -->
@@ -140,16 +132,7 @@
 
     <!-- 대표 호감 메시지 조회 -->
     <select id="getFavoriteMessage" parameterType="string" resultType="map">
-        SELECT 
-            message_text as text,
-            confidence_percentage as confidence,
-            TO_CHAR(message_date, 'MM월 DD일 오후 HH:MI') as date,
-            analysis_reason as reason,
-            sender_type as sender
-        FROM favorite_messages 
-        WHERE session_id = #{sessionId}
-        ORDER BY confidence_percentage DESC
-        FETCH FIRST 1 ROW ONLY
+        SELECT message_text as text, confidence_percentage as confidence, analysis_reason as reason, sender_type as sender FROM (SELECT * FROM favorite_messages WHERE session_id = #{sessionId} ORDER BY confidence_percentage DESC) WHERE ROWNUM = 1
     </select>
 
     <!-- 맞춤 조언 조회 -->

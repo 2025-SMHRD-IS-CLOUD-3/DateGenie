@@ -958,17 +958,40 @@
             }
 
             updateHeroDashboard() {
-                // Update success rate
-                setTimeout(() => {
-                    document.getElementById('successPercentage').textContent = this.data.successRate + '%';
-                    document.getElementById('successCircle').style.background = 
-                        `conic-gradient(from 0deg, #ec4899 0%, #8b5cf6 ${this.data.successRate}%, #f3f4f6 ${this.data.successRate}%)`;
-                }, 500);
+                // 로딩 상태일 때는 hero-dashboard 전체를 재구성
+                const heroSection = document.querySelector('.hero-dashboard');
+                if (!heroSection) return;
                 
-                // Update other hero elements
-                document.getElementById('relationshipStage').textContent = this.data.relationshipStage;
-                document.getElementById('heroInsight').textContent = this.data.heroInsight;
-                document.getElementById('confidenceLevel').textContent = this.data.confidenceLevel + '%';
+                // 원본 HTML 구조로 복원
+                heroSection.innerHTML = `
+                    <div class="relationship-status">
+                        <div class="status-badge" id="relationshipStage">${this.data.relationshipStage}</div>
+                    </div>
+                    
+                    <div class="success-meter">
+                        <div class="success-circle" id="successCircle">
+                            <div class="success-percentage" id="successPercentage">${this.data.successRate}%</div>
+                        </div>
+                    </div>
+
+                    <h1 class="hero-insight" id="heroInsight">
+                        ${this.data.heroInsight}
+                    </h1>
+
+                    <div class="confidence-level">
+                        <i class="fas fa-shield-check"></i>
+                        <span>분석 신뢰도: <strong id="confidenceLevel">${this.data.confidenceLevel}%</strong></span>
+                    </div>
+                `;
+                
+                // Success rate 애니메이션
+                setTimeout(() => {
+                    const successCircle = document.getElementById('successCircle');
+                    if (successCircle) {
+                        successCircle.style.background = 
+                            `conic-gradient(from 0deg, #ec4899 0%, #8b5cf6 ${this.data.successRate}%, #f3f4f6 ${this.data.successRate}%)`;
+                    }
+                }, 500);
             }
 
             renderSignals() {

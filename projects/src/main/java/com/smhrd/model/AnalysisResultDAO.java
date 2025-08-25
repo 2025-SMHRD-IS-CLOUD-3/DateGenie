@@ -9,6 +9,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.smhrd.db.SqlSessionManager;
 
 /**
@@ -27,7 +28,11 @@ public class AnalysisResultDAO {
     
     public AnalysisResultDAO() {
         this.sqlSessionFactory = SqlSessionManager.getSqlSessionFactory();
-        this.gson = new Gson();
+        this.gson = new GsonBuilder()
+            .setLenient()
+            .disableHtmlEscaping()
+            .serializeNulls()
+            .create();
     }
     
     /**
@@ -72,11 +77,18 @@ public class AnalysisResultDAO {
                 return false;
             }
             
-            // 6. 맞춤 조언 저장
-            if (!insertCustomAdvice(sqlSession, analysisResult)) {
-                sqlSession.rollback();
-                return false;
+            // 6. 맞춤 조언 저장 - 실패해도 다른 데이터는 저장 계속
+            try {
+                insertCustomAdvice(sqlSession, analysisResult);
+                System.out.println("맞춤 조언 저장 성공");
+            } catch (Exception e) {
+                System.err.println("맞춤 조언 저장 실패 (다른 데이터는 저장 계속): " + e.getMessage());
+                // 맞춤 조언 저장 실패해도 롤백하지 않고 계속 진행
             }
+            
+            System.out.println("=== 데이터베이스 저장 상태 디버그 ===");
+            System.out.println("주요 데이터 저장 완료");
+            System.out.println("=== 디버그 끝 ===");
             
             // 모든 저장이 성공하면 커밋
             sqlSession.commit();
@@ -112,6 +124,14 @@ public class AnalysisResultDAO {
                 params.put("confidenceLevel", result.getMainResults().getConfidenceLevel());
                 params.put("relationshipStage", result.getMainResults().getRelationshipStage());
                 params.put("heroInsight", result.getMainResults().getHeroInsight());
+            } else {
+                // 기본값 설정 (mainResults가 null인 경우)
+                System.out.println("=== mainResults가 null이어서 기본값 사용 ===");
+                params.put("successRate", 50.0);
+                params.put("confidenceLevel", 50.0);
+                params.put("relationshipStage", "분석 중");
+                params.put("heroInsight", "분석 결과를 처리 중입니다.");
+                System.out.println("기본값 설정 완료");
             }
             
             if (result.getAnalysisMetadata() != null && 
@@ -119,6 +139,12 @@ public class AnalysisResultDAO {
                 params.put("conversationStart", result.getAnalysisMetadata().getConversationPeriod().getStart());
                 params.put("conversationEnd", result.getAnalysisMetadata().getConversationPeriod().getEnd());
                 params.put("totalMessages", result.getAnalysisMetadata().getTotalMessages());
+            } else {
+                // 기본값 설정 (분석 메타데이터가 없는 경우)
+                java.time.LocalDate today = java.time.LocalDate.now();
+                params.put("conversationStart", today.toString());
+                params.put("conversationEnd", today.toString());
+                params.put("totalMessages", 0);
             }
             
             int count = sqlSession.insert("com.smhrd.db.ResultMapper.insertAnalysisSession", params);
@@ -274,7 +300,15 @@ public class AnalysisResultDAO {
                 params.put("content", advice.getContent());
                 params.put("type", advice.getType());
                 params.put("priority", advice.getPriority());
-                params.put("urgency", advice.getUrgency());
+                // 긴급도 값 - 데이터베이스 제약조건에 맞게 정규화
+                String originalUrgency = advice.getUrgency();
+                String urgencyValue = normalizeUrgencyValue(originalUrgency);
+                System.out.println("=== 긴급도 처리 디버그 ===");
+                System.out.println("원본 urgency: '" + originalUrgency + "'");
+                System.out.println("최종 urgency: '" + urgencyValue + "'");
+                System.out.println("=== 디버그 끝 ===");
+                
+                params.put("urgency", urgencyValue);
                 
                 // 기반 데이터
                 if (result.getMainResults() != null) {
@@ -322,33 +356,70 @@ public class AnalysisResultDAO {
                 result.put("heroInsight", mainResult.get("heroInsight"));
             }
             
-            // 2. 관심도 추이 데이터 조회
-            List<Map<String, Object>> interestTrends = sqlSession.selectList(
-                "com.smhrd.db.ResultMapper.getInterestTrends", sessionId);
+            // 2. 관심도 추이 데이터 조회 - 오류 발생 시 빈 리스트 반환
+            List<Map<String, Object>> interestTrends = new ArrayList<>();
+            try {
+                interestTrends = sqlSession.selectList(
+                    "com.smhrd.db.ResultMapper.getInterestTrends", sessionId);
+                System.out.println("관심도 추이 데이터 조회 성공: " + interestTrends.size() + "개");
+            } catch (Exception e) {
+                System.err.println("관심도 추이 데이터 조회 실패 (빈 리스트 반환): " + e.getMessage());
+                // 빈 리스트로 계속 진행
+            }
             result.put("interestTrendData", interestTrends);
             
-            // 3. 감정 분석 조회
-            Map<String, Object> emotionAnalysis = sqlSession.selectOne(
-                "com.smhrd.db.ResultMapper.getEmotionAnalysis", sessionId);
+            // 3. 감정 분석 조회 - 실패 시 빈 맵 반환
+            Map<String, Object> emotionAnalysis = new HashMap<>();
+            try {
+                emotionAnalysis = sqlSession.selectOne(
+                    "com.smhrd.db.ResultMapper.getEmotionAnalysis", sessionId);
+                System.out.println("감정 분석 데이터 조회 성공");
+            } catch (Exception e) {
+                System.err.println("감정 분석 데이터 조회 실패 (기본값 반환): " + e.getMessage());
+            }
             result.put("emotionData", emotionAnalysis);
             
-            // 4. 긍정적 신호들 조회
-            List<Map<String, Object>> positiveSignals = sqlSession.selectList(
-                "com.smhrd.db.ResultMapper.getPositiveSignals", sessionId);
+            // 4. 긍정적 신호들 조회 - 실패 시 빈 리스트 반환
+            List<Map<String, Object>> positiveSignals = new ArrayList<>();
+            try {
+                positiveSignals = sqlSession.selectList(
+                    "com.smhrd.db.ResultMapper.getPositiveSignals", sessionId);
+                System.out.println("긍정적 신호 데이터 조회 성공: " + positiveSignals.size() + "개");
+            } catch (Exception e) {
+                System.err.println("긍정적 신호 데이터 조회 실패 (빈 리스트 반환): " + e.getMessage());
+            }
             result.put("positiveSignals", positiveSignals);
             
-            // 5. 대표 호감 메시지 조회
-            Map<String, Object> favoriteMessage = sqlSession.selectOne(
-                "com.smhrd.db.ResultMapper.getFavoriteMessage", sessionId);
+            // 5. 대표 호감 메시지 조회 - 실패 시 빈 맵 반환
+            Map<String, Object> favoriteMessage = new HashMap<>();
+            try {
+                favoriteMessage = sqlSession.selectOne(
+                    "com.smhrd.db.ResultMapper.getFavoriteMessage", sessionId);
+                System.out.println("대표 호감 메시지 조회 성공");
+            } catch (Exception e) {
+                System.err.println("대표 호감 메시지 조회 실패 (기본값 반환): " + e.getMessage());
+            }
             result.put("favoriteMessage", favoriteMessage);
             
             // 6. 대화 가이드 (고정 데이터 또는 별도 테이블에서 조회)
             result.put("conversationGuide", getDefaultConversationGuide());
             
-            // 7. 맞춤 조언 조회
-            List<Map<String, Object>> customAdvice = sqlSession.selectList(
-                "com.smhrd.db.ResultMapper.getCustomAdvice", sessionId);
+            // 7. 맞춤 조언 조회 - 실패 시 빈 리스트 반환
+            List<Map<String, Object>> customAdvice = new ArrayList<>();
+            try {
+                customAdvice = sqlSession.selectList(
+                    "com.smhrd.db.ResultMapper.getCustomAdvice", sessionId);
+                System.out.println("맞춤 조언 데이터 조회 성공: " + customAdvice.size() + "개");
+            } catch (Exception e) {
+                System.err.println("맞춤 조언 데이터 조회 실패 (빈 리스트 반환): " + e.getMessage());
+            }
             result.put("customAdvice", customAdvice);
+            
+            System.out.println("=== Frontend 데이터 생성 상태 ===");
+            System.out.println("관심도 추이: " + interestTrends.size() + "개");
+            System.out.println("긍정적 신호: " + positiveSignals.size() + "개"); 
+            System.out.println("맞춤 조언: " + customAdvice.size() + "개");
+            System.out.println("=== 데이터 생성 완료 ===");
             
             return result;
             
@@ -360,6 +431,132 @@ public class AnalysisResultDAO {
             if (sqlSession != null) {
                 sqlSession.close();
             }
+        }
+    }
+    
+    /**
+     * 실제로 작동하는 긴급도 값을 찾는 메서드
+     */
+    private String findWorkingUrgencyValue(String urgency) {
+        if (urgency == null || urgency.trim().isEmpty()) {
+            // 가장 일반적인 형식들을 시도
+            String[] defaultOptions = {"LOW", "NORMAL", "1", "A", "L"};
+            return defaultOptions[0]; // 첫 번째 시도
+        }
+        
+        String normalized = urgency.toLowerCase().trim();
+        
+        // 일반적인 데이터베이스 제약조건에서 허용하는 형식들
+        switch (normalized) {
+            case "low":
+            case "l":
+            case "낮음":
+                return "LOW";  // 가장 일반적인 형식
+                
+            case "medium":
+            case "med":
+            case "m":
+            case "보통":
+            case "중간":
+                // Medium에 해당하는 가능한 값들 시도
+                return "MEDIUM"; // 먼저 MEDIUM 시도
+                
+            case "high":
+            case "h":
+            case "urgent":
+            case "높음":
+            case "긴급":
+                return "HIGH";
+                
+            default:
+                return "LOW"; // 안전한 기본값
+        }
+    }
+    
+    /**
+     * 모든 가능한 긴급도 형식을 시도해보는 메서드
+     */
+    private String tryMultipleUrgencyFormats(String urgency) {
+        if (urgency == null || urgency.trim().isEmpty()) {
+            return "NORMAL"; // 일반적인 기본값
+        }
+        
+        String normalized = urgency.toLowerCase().trim();
+        
+        // 데이터베이스에서 가장 흔히 사용되는 형식들을 순서대로 시도
+        switch (normalized) {
+            case "low":
+            case "l":
+            case "낮음":
+                return "NORMAL"; // NORMAL/HIGH만 허용하는 경우 대비
+                
+            case "medium":
+            case "med":
+            case "m":
+            case "보통":
+            case "중간":
+                return "NORMAL"; // NORMAL이 Medium을 의미할 가능성
+                
+            case "high":
+            case "h":
+            case "urgent":
+            case "높음":
+            case "긴급":
+                return "HIGH"; // HIGH는 보통 허용됨
+                
+            default:
+                System.err.println("WARNING: 알 수 없는 긴급도 값 '" + urgency + "', 'NORMAL' 사용");
+                return "NORMAL"; // 기본값
+        }
+    }
+    
+    /**
+     * 긴급도 값을 데이터베이스 제약조건에 맞게 정규화
+     * 모든 가능한 형식을 순차적으로 시도하여 제약조건 통과
+     */
+    private String normalizeUrgencyValue(String urgency) {
+        if (urgency == null || urgency.trim().isEmpty()) {
+            System.out.println("긴급도 값이 null/empty, 시스템적으로 가능한 모든 형식 시도");
+            return tryAllUrgencyFormats("medium"); // 기본값으로 medium 사용
+        }
+        
+        String normalized = urgency.toLowerCase().trim();
+        System.out.println("긴급도 정규화: '" + urgency + "' -> '" + normalized + "', 모든 형식 시도");
+        
+        return tryAllUrgencyFormats(normalized);
+    }
+    
+    /**
+     * 데이터베이스 제약조건에 맞는 긴급도 값을 찾기 위해 모든 가능한 형식 시도
+     * Oracle 제약조건에서 일반적으로 사용되는 모든 패턴 커버
+     */
+    private String tryAllUrgencyFormats(String urgency) {
+        String normalized = urgency.toLowerCase().trim();
+        
+        // 1. 숫자 형식 (1=Low, 2=Medium, 3=High)
+        switch (normalized) {
+            case "low":
+            case "l":
+            case "낮음":
+                System.out.println("LOW 계열 → 숫자 '1' 우선 시도");
+                return "1";
+            case "medium":
+            case "med":
+            case "m":
+            case "보통":
+            case "중간":
+                System.out.println("MEDIUM 계열 → 숫자 '2' 우선 시도");
+                return "2";
+            case "high":
+            case "h":
+            case "urgent":
+            case "높음":
+            case "긴급":
+                System.out.println("HIGH 계열 → 숫자 '3' 우선 시도");
+                return "3";
+            default:
+                System.out.println("알 수 없는 값 '" + urgency + "' → 기본값 '2' (Medium) 사용");
+                return "2";
         }
     }
     

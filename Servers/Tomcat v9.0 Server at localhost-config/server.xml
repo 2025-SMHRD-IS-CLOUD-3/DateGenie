@@ -141,13 +141,12 @@
 
       <!-- Use the LockOutRealm to prevent attempts to guess user passwords
            via a brute-force attack -->
+      <!-- 개발 환경에서는 인증 비활성화 -->
+      <!--
       <Realm className="org.apache.catalina.realm.LockOutRealm">
-        <!-- This Realm uses the UserDatabase configured in the global JNDI
-             resources under the key "UserDatabase".  Any edits
-             that are performed against this UserDatabase are immediately
-             available for use by the Realm.  -->
         <Realm className="org.apache.catalina.realm.UserDatabaseRealm" resourceName="UserDatabase"/>
       </Realm>
+      -->
 
       <Host appBase="webapps" autoDeploy="true" name="localhost" unpackWARs="true">
 
