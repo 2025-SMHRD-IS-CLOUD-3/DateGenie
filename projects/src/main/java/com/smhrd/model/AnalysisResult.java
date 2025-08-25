@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Gemini API 분석 결과를 담는 메인 클래스
- * Database 저장과 Frontend 응답에 모두 사용됨
+ * Gemini API 분석 결과를 담는 종합적인 데이터 모델
+ * UI 표시 및 DB 저장에 필요한 모든 필드를 포함
  */
 public class AnalysisResult {
     
@@ -13,54 +13,17 @@ public class AnalysisResult {
     private String userId;
     private String partnerName;
     
-    private AnalysisMetadata analysisMetadata;
     private MainResults mainResults;
-    private List<InterestTrend> interestTrends;
     private EmotionAnalysis emotionAnalysis;
+    private List<CustomAdvice> customAdvice;
+    
+    // 추가 필드들 - UI 표시용
+    private List<InterestTrend> interestTrends;
     private List<PositiveSignal> positiveSignals;
     private FavoriteMessage favoriteMessage;
     private List<ConversationGuide> conversationGuides;
-    private List<CustomAdvice> customAdvice;
-    private CommunicationPatterns communicationPatterns;
     
     // === Inner Classes ===
-    
-    /**
-     * 분석 메타데이터
-     */
-    public static class AnalysisMetadata {
-        private String analysisDate;
-        private ConversationPeriod conversationPeriod;
-        private int totalMessages;
-        private String analysisVersion;
-        
-        // Getters and Setters
-        public String getAnalysisDate() { return analysisDate; }
-        public void setAnalysisDate(String analysisDate) { this.analysisDate = analysisDate; }
-        
-        public ConversationPeriod getConversationPeriod() { return conversationPeriod; }
-        public void setConversationPeriod(ConversationPeriod conversationPeriod) { this.conversationPeriod = conversationPeriod; }
-        
-        public int getTotalMessages() { return totalMessages; }
-        public void setTotalMessages(int totalMessages) { this.totalMessages = totalMessages; }
-        
-        public String getAnalysisVersion() { return analysisVersion; }
-        public void setAnalysisVersion(String analysisVersion) { this.analysisVersion = analysisVersion; }
-    }
-    
-    /**
-     * 대화 기간 정보
-     */
-    public static class ConversationPeriod {
-        private String start;
-        private String end;
-        
-        public String getStart() { return start; }
-        public void setStart(String start) { this.start = start; }
-        
-        public String getEnd() { return end; }
-        public void setEnd(String end) { this.end = end; }
-    }
     
     /**
      * 메인 분석 결과
@@ -69,8 +32,8 @@ public class AnalysisResult {
         private double successRate;
         private double confidenceLevel;
         private String relationshipStage;
-        private String heroInsight;
         private String summary;
+        private String heroInsight;
         
         public double getSuccessRate() { return successRate; }
         public void setSuccessRate(double successRate) { this.successRate = successRate; }
@@ -81,11 +44,43 @@ public class AnalysisResult {
         public String getRelationshipStage() { return relationshipStage; }
         public void setRelationshipStage(String relationshipStage) { this.relationshipStage = relationshipStage; }
         
-        public String getHeroInsight() { return heroInsight; }
-        public void setHeroInsight(String heroInsight) { this.heroInsight = heroInsight; }
-        
         public String getSummary() { return summary; }
         public void setSummary(String summary) { this.summary = summary; }
+        
+        public String getHeroInsight() { return heroInsight; }
+        public void setHeroInsight(String heroInsight) { this.heroInsight = heroInsight; }
+    }
+    
+    /**
+     * 감정 분석 결과 (간소화됨)
+     */
+    public static class EmotionAnalysis {
+        private double positive;
+        private double neutral;
+        private double negative;
+        
+        public double getPositive() { return positive; }
+        public void setPositive(double positive) { this.positive = positive; }
+        
+        public double getNeutral() { return neutral; }
+        public void setNeutral(double neutral) { this.neutral = neutral; }
+        
+        public double getNegative() { return negative; }
+        public void setNegative(double negative) { this.negative = negative; }
+    }
+    
+    /**
+     * 맞춤 조언
+     */
+    public static class CustomAdvice {
+        private String title;
+        private String content;
+        
+        public String getTitle() { return title; }
+        public void setTitle(String title) { this.title = title; }
+        
+        public String getContent() { return content; }
+        public void setContent(String content) { this.content = content; }
     }
     
     /**
@@ -115,49 +110,12 @@ public class AnalysisResult {
     }
     
     /**
-     * 감정 분석 결과
-     */
-    public static class EmotionAnalysis {
-        private double positive;
-        private double neutral;
-        private double negative;
-        private String dominantEmotion;
-        private double stabilityScore;
-        private List<String> positiveKeywords;
-        private List<String> negativeKeywords;
-        
-        public double getPositive() { return positive; }
-        public void setPositive(double positive) { this.positive = positive; }
-        
-        public double getNeutral() { return neutral; }
-        public void setNeutral(double neutral) { this.neutral = neutral; }
-        
-        public double getNegative() { return negative; }
-        public void setNegative(double negative) { this.negative = negative; }
-        
-        public String getDominantEmotion() { return dominantEmotion; }
-        public void setDominantEmotion(String dominantEmotion) { this.dominantEmotion = dominantEmotion; }
-        
-        public double getStabilityScore() { return stabilityScore; }
-        public void setStabilityScore(double stabilityScore) { this.stabilityScore = stabilityScore; }
-        
-        public List<String> getPositiveKeywords() { return positiveKeywords; }
-        public void setPositiveKeywords(List<String> positiveKeywords) { this.positiveKeywords = positiveKeywords; }
-        
-        public List<String> getNegativeKeywords() { return negativeKeywords; }
-        public void setNegativeKeywords(List<String> negativeKeywords) { this.negativeKeywords = negativeKeywords; }
-    }
-    
-    /**
      * 긍정적 신호
      */
     public static class PositiveSignal {
         private String text;
         private String description;
         private int confidence;
-        private String type;
-        private double metricValue;
-        private String metricUnit;
         
         public String getText() { return text; }
         public void setText(String text) { this.text = text; }
@@ -167,15 +125,6 @@ public class AnalysisResult {
         
         public int getConfidence() { return confidence; }
         public void setConfidence(int confidence) { this.confidence = confidence; }
-        
-        public String getType() { return type; }
-        public void setType(String type) { this.type = type; }
-        
-        public double getMetricValue() { return metricValue; }
-        public void setMetricValue(double metricValue) { this.metricValue = metricValue; }
-        
-        public String getMetricUnit() { return metricUnit; }
-        public void setMetricUnit(String metricUnit) { this.metricUnit = metricUnit; }
     }
     
     /**
@@ -183,36 +132,31 @@ public class AnalysisResult {
      */
     public static class FavoriteMessage {
         private String text;
-        private double confidence;
+        private int confidence;
         private String date;
         private String reason;
-        private String sender;
         
         public String getText() { return text; }
         public void setText(String text) { this.text = text; }
         
-        public double getConfidence() { return confidence; }
-        public void setConfidence(double confidence) { this.confidence = confidence; }
+        public int getConfidence() { return confidence; }
+        public void setConfidence(int confidence) { this.confidence = confidence; }
         
         public String getDate() { return date; }
         public void setDate(String date) { this.date = date; }
         
         public String getReason() { return reason; }
         public void setReason(String reason) { this.reason = reason; }
-        
-        public String getSender() { return sender; }
-        public void setSender(String sender) { this.sender = sender; }
     }
     
     /**
-     * 대화 가이드
+     * 실전 대화 가이드
      */
     public static class ConversationGuide {
         private String type;
         private String text;
         private String timing;
-        private String category;
-        private int difficultyLevel;
+        private String context;
         
         public String getType() { return type; }
         public void setType(String type) { this.type = type; }
@@ -223,67 +167,8 @@ public class AnalysisResult {
         public String getTiming() { return timing; }
         public void setTiming(String timing) { this.timing = timing; }
         
-        public String getCategory() { return category; }
-        public void setCategory(String category) { this.category = category; }
-        
-        public int getDifficultyLevel() { return difficultyLevel; }
-        public void setDifficultyLevel(int difficultyLevel) { this.difficultyLevel = difficultyLevel; }
-    }
-    
-    /**
-     * 맞춤 조언
-     */
-    public static class CustomAdvice {
-        private String title;
-        private String content;
-        private String type;
-        private int priority;
-        private String urgency;
-        
-        public String getTitle() { return title; }
-        public void setTitle(String title) { this.title = title; }
-        
-        public String getContent() { return content; }
-        public void setContent(String content) { this.content = content; }
-        
-        public String getType() { return type; }
-        public void setType(String type) { this.type = type; }
-        
-        public int getPriority() { return priority; }
-        public void setPriority(int priority) { this.priority = priority; }
-        
-        public String getUrgency() { return urgency; }
-        public void setUrgency(String urgency) { this.urgency = urgency; }
-    }
-    
-    /**
-     * 커뮤니케이션 패턴 분석
-     */
-    public static class CommunicationPatterns {
-        private double responseSpeed;
-        private double initiationRate;
-        private double engagementLevel;
-        private String communicationStyle;
-        private List<String> frequentTopics;
-        private double conversationMaintenance;
-        
-        public double getResponseSpeed() { return responseSpeed; }
-        public void setResponseSpeed(double responseSpeed) { this.responseSpeed = responseSpeed; }
-        
-        public double getInitiationRate() { return initiationRate; }
-        public void setInitiationRate(double initiationRate) { this.initiationRate = initiationRate; }
-        
-        public double getEngagementLevel() { return engagementLevel; }
-        public void setEngagementLevel(double engagementLevel) { this.engagementLevel = engagementLevel; }
-        
-        public String getCommunicationStyle() { return communicationStyle; }
-        public void setCommunicationStyle(String communicationStyle) { this.communicationStyle = communicationStyle; }
-        
-        public List<String> getFrequentTopics() { return frequentTopics; }
-        public void setFrequentTopics(List<String> frequentTopics) { this.frequentTopics = frequentTopics; }
-        
-        public double getConversationMaintenance() { return conversationMaintenance; }
-        public void setConversationMaintenance(double conversationMaintenance) { this.conversationMaintenance = conversationMaintenance; }
+        public String getContext() { return context; }
+        public void setContext(String context) { this.context = context; }
     }
     
     // === Main Class Getters and Setters ===
@@ -297,17 +182,17 @@ public class AnalysisResult {
     public String getPartnerName() { return partnerName; }
     public void setPartnerName(String partnerName) { this.partnerName = partnerName; }
     
-    public AnalysisMetadata getAnalysisMetadata() { return analysisMetadata; }
-    public void setAnalysisMetadata(AnalysisMetadata analysisMetadata) { this.analysisMetadata = analysisMetadata; }
-    
     public MainResults getMainResults() { return mainResults; }
     public void setMainResults(MainResults mainResults) { this.mainResults = mainResults; }
     
-    public List<InterestTrend> getInterestTrends() { return interestTrends; }
-    public void setInterestTrends(List<InterestTrend> interestTrends) { this.interestTrends = interestTrends; }
-    
     public EmotionAnalysis getEmotionAnalysis() { return emotionAnalysis; }
     public void setEmotionAnalysis(EmotionAnalysis emotionAnalysis) { this.emotionAnalysis = emotionAnalysis; }
+    
+    public List<CustomAdvice> getCustomAdvice() { return customAdvice; }
+    public void setCustomAdvice(List<CustomAdvice> customAdvice) { this.customAdvice = customAdvice; }
+    
+    public List<InterestTrend> getInterestTrends() { return interestTrends; }
+    public void setInterestTrends(List<InterestTrend> interestTrends) { this.interestTrends = interestTrends; }
     
     public List<PositiveSignal> getPositiveSignals() { return positiveSignals; }
     public void setPositiveSignals(List<PositiveSignal> positiveSignals) { this.positiveSignals = positiveSignals; }
@@ -318,12 +203,6 @@ public class AnalysisResult {
     public List<ConversationGuide> getConversationGuides() { return conversationGuides; }
     public void setConversationGuides(List<ConversationGuide> conversationGuides) { this.conversationGuides = conversationGuides; }
     
-    public List<CustomAdvice> getCustomAdvice() { return customAdvice; }
-    public void setCustomAdvice(List<CustomAdvice> customAdvice) { this.customAdvice = customAdvice; }
-    
-    public CommunicationPatterns getCommunicationPatterns() { return communicationPatterns; }
-    public void setCommunicationPatterns(CommunicationPatterns communicationPatterns) { this.communicationPatterns = communicationPatterns; }
-    
     /**
      * Frontend에서 사용할 수 있는 형태로 변환
      */
@@ -332,22 +211,13 @@ public class AnalysisResult {
         
         // 메인 분석 결과
         if (mainResults != null) {
-            result.put("successRate", mainResults.getSuccessRate());
-            result.put("confidenceLevel", mainResults.getConfidenceLevel());
-            result.put("relationshipStage", mainResults.getRelationshipStage());
-            result.put("heroInsight", mainResults.getHeroInsight());
-        }
-        
-        // 관심도 추이 데이터 변환
-        if (interestTrends != null) {
-            List<Map<String, Object>> trendData = new java.util.ArrayList<>();
-            for (InterestTrend trend : interestTrends) {
-                Map<String, Object> trendMap = new java.util.HashMap<>();
-                trendMap.put("date", trend.getDate());
-                trendMap.put("value", trend.getValue());
-                trendData.add(trendMap);
-            }
-            result.put("interestTrendData", trendData);
+            Map<String, Object> mainData = new java.util.HashMap<>();
+            mainData.put("successRate", mainResults.getSuccessRate());
+            mainData.put("confidenceLevel", mainResults.getConfidenceLevel());
+            mainData.put("relationshipStage", mainResults.getRelationshipStage());
+            mainData.put("summary", mainResults.getSummary());
+            mainData.put("heroInsight", mainResults.getHeroInsight());
+            result.put("mainResults", mainData);
         }
         
         // 감정 분석 데이터
@@ -356,55 +226,71 @@ public class AnalysisResult {
             emotionData.put("positive", emotionAnalysis.getPositive());
             emotionData.put("neutral", emotionAnalysis.getNeutral());
             emotionData.put("negative", emotionAnalysis.getNegative());
-            result.put("emotionData", emotionData);
+            result.put("emotionAnalysis", emotionData);
         }
         
-        // 긍정적 신호들
+        // 관심도 추이
+        if (interestTrends != null) {
+            List<Map<String, Object>> trendList = new java.util.ArrayList<>();
+            for (InterestTrend trend : interestTrends) {
+                Map<String, Object> trendMap = new java.util.HashMap<>();
+                trendMap.put("date", trend.getDate());
+                trendMap.put("value", trend.getValue());
+                trendMap.put("messageCount", trend.getMessageCount());
+                trendMap.put("avgResponseTime", trend.getAvgResponseTime());
+                trendMap.put("emojiCount", trend.getEmojiCount());
+                trendList.add(trendMap);
+            }
+            result.put("interestTrends", trendList);
+        }
+        
+        // 긍정적 신호
         if (positiveSignals != null) {
-            List<Map<String, Object>> signals = new java.util.ArrayList<>();
+            List<Map<String, Object>> signalList = new java.util.ArrayList<>();
             for (PositiveSignal signal : positiveSignals) {
                 Map<String, Object> signalMap = new java.util.HashMap<>();
                 signalMap.put("text", signal.getText());
                 signalMap.put("description", signal.getDescription());
                 signalMap.put("confidence", signal.getConfidence());
-                signals.add(signalMap);
+                signalList.add(signalMap);
             }
-            result.put("positiveSignals", signals);
+            result.put("positiveSignals", signalList);
         }
         
         // 대표 호감 메시지
         if (favoriteMessage != null) {
-            Map<String, Object> favMsg = new java.util.HashMap<>();
-            favMsg.put("text", favoriteMessage.getText());
-            favMsg.put("confidence", favoriteMessage.getConfidence());
-            favMsg.put("date", favoriteMessage.getDate());
-            favMsg.put("reason", favoriteMessage.getReason());
-            result.put("favoriteMessage", favMsg);
+            Map<String, Object> messageData = new java.util.HashMap<>();
+            messageData.put("text", favoriteMessage.getText());
+            messageData.put("confidence", favoriteMessage.getConfidence());
+            messageData.put("date", favoriteMessage.getDate());
+            messageData.put("reason", favoriteMessage.getReason());
+            result.put("favoriteMessage", messageData);
         }
         
-        // 대화 가이드
+        // 실전 대화 가이드
         if (conversationGuides != null) {
-            List<Map<String, Object>> guides = new java.util.ArrayList<>();
+            List<Map<String, Object>> guideList = new java.util.ArrayList<>();
             for (ConversationGuide guide : conversationGuides) {
                 Map<String, Object> guideMap = new java.util.HashMap<>();
                 guideMap.put("type", guide.getType());
                 guideMap.put("text", guide.getText());
                 guideMap.put("timing", guide.getTiming());
-                guides.add(guideMap);
+                guideMap.put("context", guide.getContext());
+                guideList.add(guideMap);
             }
-            result.put("conversationGuide", guides);
+            result.put("conversationGuides", guideList);
         }
         
         // 맞춤 조언
         if (customAdvice != null) {
-            List<Map<String, Object>> advice = new java.util.ArrayList<>();
-            for (CustomAdvice adv : customAdvice) {
+            List<Map<String, Object>> adviceList = new java.util.ArrayList<>();
+            for (CustomAdvice advice : customAdvice) {
                 Map<String, Object> adviceMap = new java.util.HashMap<>();
-                adviceMap.put("title", adv.getTitle());
-                adviceMap.put("content", adv.getContent());
-                advice.add(adviceMap);
+                adviceMap.put("title", advice.getTitle());
+                adviceMap.put("content", advice.getContent());
+                adviceList.add(adviceMap);
             }
-            result.put("customAdvice", advice);
+            result.put("customAdvice", adviceList);
         }
         
         return result;

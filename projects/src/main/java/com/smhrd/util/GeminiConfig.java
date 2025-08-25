@@ -45,7 +45,7 @@ public class GeminiConfig {
      */
     private static void loadDefaultConfig() {
         properties.setProperty("gemini.api.key", "AIzaSyBhLDHAb5guEGF0fXvyQRX7t6gHs7XOYqM");
-        properties.setProperty("gemini.api.url", "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent");
+        properties.setProperty("gemini.api.url", "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent");
         properties.setProperty("gemini.temperature", "0.1");
         properties.setProperty("gemini.top_k", "1");
         properties.setProperty("gemini.top_p", "0.8");

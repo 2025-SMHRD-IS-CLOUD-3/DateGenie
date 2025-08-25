@@ -96,6 +96,11 @@ jdbc.properties
 *.key
 *.pfx
 
+# API Keys and Sensitive Configuration
+**/anthropic.properties
+**/config/anthropic.properties
+anthropic.properties
+
 # OAuth tokens and sessions
 oauth-tokens.json
 session-storage/

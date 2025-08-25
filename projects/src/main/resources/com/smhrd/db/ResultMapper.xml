@@ -247,7 +247,7 @@
     </select>
     
     <!-- 분석 통계 - 최근 분석 시간 -->
-    <select id="getLastAnalysisTime" parameterType="string" resultType="timestamp">
+    <select id="getLastAnalysisTime" parameterType="string" resultType="java.sql.Timestamp">
         SELECT MAX(analysis_date) 
         FROM analysis_sessions 
         WHERE user_id = #{userEmail}

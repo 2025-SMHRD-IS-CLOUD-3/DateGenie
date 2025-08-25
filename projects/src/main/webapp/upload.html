@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>파일 업로드 - Date Genie</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="cache-version" content="2.1-20250825-2045">
+    <title>파일 업로드 - Date Genie (v2.1)</title>
     <link rel="icon" type="image/svg+xml" href="images/icon.svg">
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
@@ -603,6 +607,9 @@
             }
         }
 
+		// 캐시 무효화 - 버전 2.1 (2025-08-25 20:45)
+		console.log('Upload.html v2.1 로드됨 - 타임스탬프:', new Date().toISOString());
+		
 		// 전역 변수 선언
 		let uploadedFiles = [];
 
@@ -837,17 +844,41 @@
 
 		// 실제 분석 수행 함수
 		async function startAnalysis() {
+			console.log('=== startAnalysis v2.0 시작 ===');
 			const analyzeBtn = document.getElementById('analyzeBtn');
 			const analysisText = document.getElementById('analysisText');
 			const analysisBar = document.getElementById('analysisProgress');
 			
+			// progressInterval을 함수 최상위에서 선언 (catch 블록에서도 접근 가능)
+			let progressInterval = null;
+			console.log('progressInterval 초기화 완료:', progressInterval);
+			
 			try {
 				// 로그인 상태 확인
 				const userInfo = localStorage.getItem('user');
+				console.log('로컬 저장소 사용자 정보:', userInfo);
+				
 				if (!userInfo) {
 					alert('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.');
 					window.location.href = '/DateGenie/login.html';
 					return;
+				}
+				
+				// 서버 세션 상태도 확인
+				try {
+					const sessionCheck = await fetch('/DateGenie/AnthropicAnalysisController?action=checkSession', {
+						method: 'POST',
+						credentials: 'include'
+					});
+					console.log('세션 확인 응답:', sessionCheck.status);
+					if (!sessionCheck.ok) {
+						console.warn('서버 세션이 만료되었을 수 있습니다.');
+						alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+						window.location.href = '/DateGenie/login.html';
+						return;
+					}
+				} catch (sessionError) {
+					console.warn('세션 확인 실패:', sessionError);
 				}
 				
 				// 버튼 비활성화
@@ -855,12 +886,12 @@
 				analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 분석 중...';
 				
 				// 진행률 초기화
-				analysisText.textContent = 'Gemini AI가 대화를 분석 중입니다... (최대 45초 소요)';
+				analysisText.textContent = 'Anthropic Claude AI가 대화를 분석 중입니다... (최대 60초 소요)';
 				analysisBar.style.width = '10%';
 				
 				// 시각적 피드백을 위한 진행률 애니메이션
 				let progressStep = 10;
-				const progressInterval = setInterval(() => {
+				progressInterval = setInterval(() => {
 					if (progressStep < 40) {
 						progressStep += 2;
 						analysisBar.style.width = progressStep + '%';
@@ -883,25 +914,48 @@
 				analysisBar.style.width = '50%';
 				analysisText.textContent = 'AI 분석 엔진 호출 중...';
 				
-				// 분석 API 호출 (45초 타임아웃 설정)
+				// Anthropic API 호출 (60초 타임아웃 설정)
 				const controller = new AbortController();
 				const timeoutId = setTimeout(() => {
 					controller.abort();
-				}, 45000); // 45초 타임아웃
+				}, 60000); // 60초 타임아웃 (Anthropic API는 더 오래 걸릴 수 있음)
 				
 				let response;
 				try {
-					response = await fetch('/DateGenie/AnalysisService', {
+					// 먼저 Anthropic API 시도
+					analysisText.textContent = 'Anthropic Claude AI가 대화를 분석 중입니다...';
+					response = await fetch('/DateGenie/AnthropicAnalysisController?action=analyze', {
 						method: 'POST',
+						credentials: 'include', // 세션 쿠키 포함
 						headers: {
-							'Content-Type': 'application/json; charset=UTF-8'
+							'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 						},
-						body: JSON.stringify({
+						body: new URLSearchParams({
 							conversationData: conversationData,
 							partnerName: partnerName
 						}),
 						signal: controller.signal
 					});
+					
+					// Anthropic API 실패시 기존 Gemini로 폴백
+					if (!response.ok || response.status !== 200) {
+						console.log('Anthropic API 실패, Gemini API로 폴백 시도');
+						analysisText.textContent = 'Gemini AI가 대화를 분석 중입니다... (폴백)';
+						
+						response = await fetch('/DateGenie/AnalysisService', {
+							method: 'POST',
+							credentials: 'include', // 세션 쿠키 포함
+							headers: {
+								'Content-Type': 'application/json; charset=UTF-8'
+							},
+							body: JSON.stringify({
+								conversationData: conversationData,
+								partnerName: partnerName
+							}),
+							signal: controller.signal
+						});
+					}
+					
 					clearTimeout(timeoutId);
 				} catch (fetchError) {
 					clearTimeout(timeoutId);

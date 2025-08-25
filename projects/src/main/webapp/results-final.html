@@ -953,27 +953,43 @@
             }
         }
         
-        // API에서 분석 결과 가져오기
+        // API에서 분석 결과 가져오기 (Anthropic + 기존 지원)
         async function fetchAnalysisResult(sessionId) {
             try {
-                console.log('API 호출 시작:', `/DateGenie/AnalysisService?action=getResult&sessionId=${sessionId}`);
+                console.log('API 호출 시작 - sessionId:', sessionId);
                 
-                const response = await fetch(`/DateGenie/AnalysisService?action=getResult&sessionId=${sessionId}`, {
+                // 우선 Anthropic 컨트롤러에서 시도
+                let response = await fetch(`/DateGenie/AnthropicAnalysisController?action=getResult&sessionId=${sessionId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json; charset=UTF-8',
                         'Accept': 'application/json'
                     },
-                    credentials: 'same-origin' // 세션 쿠키 포함
+                    credentials: 'same-origin'
                 });
                 
-                console.log('API 응답 상태:', response.status, response.statusText);
+                console.log('Anthropic API 응답 상태:', response.status);
+                
+                // Anthropic API 실패시 기존 AnalysisService로 폴백
+                if (!response.ok || response.status !== 200) {
+                    console.log('Anthropic API 실패, 기존 AnalysisService로 폴백 시도');
+                    
+                    response = await fetch(`/DateGenie/AnalysisService?action=getResult&sessionId=${sessionId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json; charset=UTF-8',
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'same-origin'
+                    });
+                    
+                    console.log('기존 API 응답 상태:', response.status);
+                }
                 
                 if (!response.ok) {
                     if (response.status === 404) {
                         throw new Error('분석 결과를 찾을 수 없습니다.');
                     } else if (response.status === 401) {
-                        // 로그인 페이지로 리다이렉트
                         window.location.href = '/DateGenie/login.html?message=로그인이 필요합니다';
                         return;
                     } else {

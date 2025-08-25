@@ -71,9 +71,9 @@ public class GeminiAnalysisService {
             String prompt = buildAnalysisPrompt(conversationData, partnerName);
             System.out.println("1-1. 프롬프트 생성 완료 - 길이: " + prompt.length());
             
-            // 2. Gemini API 호출
+            // 2. Gemini API 호출 (재시도 포함)
             System.out.println("2. Gemini API 호출 시작");
-            String apiResponse = callGeminiAPI(prompt);
+            String apiResponse = callGeminiAPIWithRetry(prompt);
             System.out.println("2-1. Gemini API 호출 완료 - 응답 길이: " + (apiResponse != null ? apiResponse.length() : 0));
             
             // 3. 응답 파싱 및 검증
@@ -156,18 +156,86 @@ public class GeminiAnalysisService {
      * 대화 데이터를 분석에 적합한 형태로 포맷팅
      */
     private String formatConversationData(String conversationData) {
-        // 대화 데이터가 JSON이면 파싱해서 정리
-        // 아니면 텍스트 그대로 사용
+        String formattedData;
+        
         try {
             // JSON 파싱 시도
             Map<?, ?> parsed = gson.fromJson(conversationData, Map.class);
-            return gson.toJson(parsed);
+            formattedData = gson.toJson(parsed);
         } catch (Exception e) {
             // JSON이 아니면 텍스트로 처리
-            return conversationData;
+            formattedData = conversationData;
         }
+        
+        // 데이터 길이 제한 (2000자로 제한 - 2.5-flash의 thinking token 문제 해결)
+        if (formattedData.length() > 2000) {
+            System.out.println("=== 대화 데이터 길이 제한 적용 ===");
+            System.out.println("원본 길이: " + formattedData.length() + "자");
+            formattedData = formattedData.substring(0, 2000) + "...[truncated]";
+            System.out.println("제한된 길이: " + formattedData.length() + "자");
+        }
+        
+        return formattedData;
     }
     
+    /**
+     * Gemini API 호출 (재시도 포함)
+     */
+    private String callGeminiAPIWithRetry(String prompt) throws Exception {
+        int maxAttempts = GeminiConfig.getMaxRetryAttempts();
+        long delayMs = GeminiConfig.getRetryDelayMs();
+        
+        Exception lastException = null;
+        
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                System.out.println("=== API 호출 시도 " + attempt + "/" + maxAttempts + " ===");
+                return callGeminiAPI(prompt);
+                
+            } catch (Exception e) {
+                lastException = e;
+                System.err.println("API 호출 시도 " + attempt + " 실패: " + e.getMessage());
+                
+                // 500 에러 또는 일시적 오류인 경우에만 재시도
+                if (attempt < maxAttempts && isRetryableError(e)) {
+                    System.out.println("재시도 대기: " + delayMs + "ms");
+                    try {
+                        Thread.sleep(delayMs);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        throw new Exception("재시도 중 인터럽트 발생", ie);
+                    }
+                    // 다음 시도에서는 더 오랜 시간 대기 (exponential backoff)
+                    delayMs *= 2;
+                } else {
+                    break;
+                }
+            }
+        }
+        
+        throw new Exception("Gemini API 호출 실패 (최대 " + maxAttempts + "회 시도)", lastException);
+    }
+    
+    /**
+     * 재시도 가능한 오류인지 확인
+     */
+    private boolean isRetryableError(Exception e) {
+        String message = e.getMessage();
+        if (message == null) return false;
+        
+        // 500, 502, 503, 504 등 서버 오류나 일시적 오류인 경우 재시도
+        return message.contains("코드: 500") || 
+               message.contains("코드: 502") || 
+               message.contains("코드: 503") || 
+               message.contains("코드: 504") ||
+               message.contains("internal error") ||
+               message.contains("timeout") ||
+               message.contains("timed out") ||
+               message.contains("Read timed out") ||
+               message.contains("Connect timed out") ||
+               message.contains("temporarily unavailable");
+    }
+
     /**
      * Gemini API 호출
      */
@@ -226,7 +294,25 @@ public class GeminiAnalysisService {
             "    \"topP\": " + GeminiConfig.getTopP() + ",\n" +
             "    \"maxOutputTokens\": " + GeminiConfig.getMaxOutputTokens() + ",\n" +
             "    \"candidateCount\": 1\n" +
-            "  }\n" +
+            "  },\n" +
+            "  \"safetySettings\": [\n" +
+            "    {\n" +
+            "      \"category\": \"HARM_CATEGORY_HARASSMENT\",\n" +
+            "      \"threshold\": \"BLOCK_MEDIUM_AND_ABOVE\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"category\": \"HARM_CATEGORY_HATE_SPEECH\",\n" +
+            "      \"threshold\": \"BLOCK_MEDIUM_AND_ABOVE\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"category\": \"HARM_CATEGORY_SEXUALLY_EXPLICIT\",\n" +
+            "      \"threshold\": \"BLOCK_MEDIUM_AND_ABOVE\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"category\": \"HARM_CATEGORY_DANGEROUS_CONTENT\",\n" +
+            "      \"threshold\": \"BLOCK_MEDIUM_AND_ABOVE\"\n" +
+            "    }\n" +
+            "  ]\n" +
             "}";
         
         return requestJson;
@@ -261,6 +347,11 @@ public class GeminiAnalysisService {
             // Gemini API 응답 파싱
             Map<?, ?> responseJson = gson.fromJson(apiResponse, Map.class);
             
+            // 전체 응답 구조 디버깅
+            System.out.println("=== 전체 Gemini API 응답 구조 ===");
+            System.out.println("Response JSON: " + gson.toJson(responseJson));
+            System.out.println("Top level keys: " + responseJson.keySet());
+            
             // candidates[0].content.parts[0].text에서 실제 응답 추출
             @SuppressWarnings("unchecked")
             java.util.List<Map<String, Object>> candidates = 
@@ -273,11 +364,102 @@ public class GeminiAnalysisService {
             @SuppressWarnings("unchecked")
             Map<String, Object> content = (Map<String, Object>) candidates.get(0).get("content");
             
+            String analysisText = null;
+            
+            // parts 필드가 존재하는 경우의 파싱 시도
             @SuppressWarnings("unchecked")
             java.util.List<Map<String, Object>> parts = 
                 (java.util.List<Map<String, Object>>) content.get("parts");
             
-            String analysisText = (String) parts.get(0).get("text");
+            if (parts != null && !parts.isEmpty()) {
+                // 표준 응답 구조: content.parts[0].text
+                Map<String, Object> firstPart = parts.get(0);
+                if (firstPart != null && firstPart.containsKey("text")) {
+                    analysisText = (String) firstPart.get("text");
+                    System.out.println("=== 표준 응답 구조로 텍스트 추출 성공 ===");
+                }
+            }
+            
+            // finishReason 확인 - 안전 필터나 기타 문제로 조기 종료되었는지 검사
+            String finishReason = (String) candidates.get(0).get("finishReason");
+            System.out.println("=== finishReason 분석 ===");
+            System.out.println("finishReason: " + finishReason);
+            
+            if ("SAFETY".equals(finishReason)) {
+                throw new Exception("Gemini API 안전 필터에 의해 차단됨. 프롬프트 내용을 검토해주세요.");
+            } else if ("RECITATION".equals(finishReason)) {
+                throw new Exception("Gemini API 반복 탐지로 인해 차단됨.");
+            } else if ("OTHER".equals(finishReason)) {
+                throw new Exception("Gemini API 기타 이유로 인해 차단됨.");
+            } else if ("STOP".equals(finishReason) && analysisText == null) {
+                // STOP 상태이지만 텍스트가 없는 경우 - 파라미터 문제일 가능성
+                System.out.println("=== STOP 상태이지만 텍스트 없음 - 파라미터 재검토 필요 ===");
+                throw new Exception("Gemini API가 정상 완료되었으나 응답 텍스트가 없습니다. API 파라미터를 확인해주세요.");
+            }
+            
+            // parts가 null이거나 비어있는 경우 대체 파싱 시도
+            if (analysisText == null) {
+                System.out.println("=== 대체 파싱 시도: parts 필드가 null 또는 비어있음 ===");
+                
+                // 응답 구조 디버깅
+                System.out.println("=== 응답 구조 디버그 정보 ===");
+                System.out.println("content keys: " + content.keySet());
+                System.out.println("candidate keys: " + candidates.get(0).keySet());
+                
+                // 대체 1: content에 직접 text 필드가 있는 경우
+                if (content.containsKey("text")) {
+                    analysisText = (String) content.get("text");
+                    System.out.println("대체 방법 1: content.text에서 추출 성공");
+                }
+                // 대체 2: content에 message 필드가 있는 경우
+                else if (content.containsKey("message")) {
+                    analysisText = (String) content.get("message");
+                    System.out.println("대체 방법 2: content.message에서 추출 성공");
+                }
+                // 대체 3: candidates[0]에 직접 text가 있는 경우
+                else {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> candidate = (Map<String, Object>) candidates.get(0);
+                    if (candidate.containsKey("text")) {
+                        analysisText = (String) candidate.get("text");
+                        System.out.println("대체 방법 3: candidates[0].text에서 추출 성공");
+                    }
+                }
+            }
+            
+            // MAX_TOKENS로 인한 빈 응답 처리
+            if (analysisText == null && "MAX_TOKENS".equals(finishReason)) {
+                System.err.println("=== MAX_TOKENS 감지: 기본 JSON 응답 생성 ===");
+                analysisText = "{\n" +
+                    "  \"mainResults\": {\n" +
+                    "    \"successRate\": 50,\n" +
+                    "    \"relationshipStage\": \"분석 진행 중\",\n" +
+                    "    \"summary\": \"토큰 제한으로 기본값 사용\"\n" +
+                    "  },\n" +
+                    "  \"emotionAnalysis\": {\n" +
+                    "    \"positive\": 60,\n" +
+                    "    \"neutral\": 30,\n" +
+                    "    \"negative\": 10\n" +
+                    "  },\n" +
+                    "  \"customAdvice\": [\n" +
+                    "    {\n" +
+                    "      \"title\": \"분석 상태\",\n" +
+                    "      \"content\": \"프롬프트를 단축하여 다시 시도하세요\"\n" +
+                    "    }\n" +
+                    "  ]\n" +
+                    "}";
+                System.out.println("기본 JSON 응답 생성 완료");
+            }
+            
+            // 모든 파싱 시도가 실패한 경우
+            else if (analysisText == null) {
+                System.err.println("=== 응답 구조 디버그 정보 ===");
+                System.err.println("content keys: " + content.keySet());
+                @SuppressWarnings("unchecked")
+                Map<String, Object> candidate = (Map<String, Object>) candidates.get(0);
+                System.err.println("candidate keys: " + candidate.keySet());
+                throw new Exception("Gemini API 응답에서 텍스트를 추출할 수 없습니다. 응답 구조가 예상과 다릅니다.");
+            }
             
             // JSON 응답에서 실제 분석 결과 추출
             String cleanJsonText = extractJsonFromResponse(analysisText);
@@ -415,7 +597,7 @@ public class GeminiAnalysisService {
         System.out.println("result 객체 타입: " + result.getClass().getSimpleName());
         System.out.println("mainResults: " + result.getMainResults());
         System.out.println("emotionAnalysis: " + result.getEmotionAnalysis());
-        System.out.println("communicationPatterns: " + result.getCommunicationPatterns());
+        System.out.println("customAdvice: " + result.getCustomAdvice());
         System.out.println("=== 검증 디버그 끝 ===");
         
         // 필수 필드 검증 및 기본값 설정
@@ -424,9 +606,7 @@ public class GeminiAnalysisService {
             // 완전한 기본값 생성
             AnalysisResult.MainResults defaultMainResults = new AnalysisResult.MainResults();
             defaultMainResults.setSuccessRate(50.0);
-            defaultMainResults.setConfidenceLevel(50.0);
             defaultMainResults.setRelationshipStage("분석 진행 중");
-            defaultMainResults.setHeroInsight("대화 분석을 진행하고 있습니다.");
             defaultMainResults.setSummary("분석 결과를 가져오는데 문제가 있어 기본값을 사용합니다.");
             result.setMainResults(defaultMainResults);
             System.out.println("완전한 mainResults 기본값 설정 완료");
@@ -447,25 +627,6 @@ public class GeminiAnalysisService {
             if (Math.abs(total - 100.0) > 0.1) {
                 throw new Exception("감정 분석 비율 합계가 100%가 아닙니다: " + total);
             }
-        }
-        
-        // 분석 메타데이터 기본값 설정
-        if (result.getAnalysisMetadata() == null) {
-            System.err.println("WARNING: analysisMetadata가 없어서 기본값으로 설정합니다");
-            AnalysisResult.AnalysisMetadata defaultMetadata = new AnalysisResult.AnalysisMetadata();
-            defaultMetadata.setAnalysisDate(java.time.LocalDateTime.now().toString());
-            defaultMetadata.setTotalMessages(0);
-            defaultMetadata.setAnalysisVersion("1.0");
-            
-            // 대화 기간 기본값
-            AnalysisResult.ConversationPeriod defaultPeriod = new AnalysisResult.ConversationPeriod();
-            String today = java.time.LocalDate.now().toString();
-            defaultPeriod.setStart(today);
-            defaultPeriod.setEnd(today);
-            defaultMetadata.setConversationPeriod(defaultPeriod);
-            
-            result.setAnalysisMetadata(defaultMetadata);
-            System.out.println("analysisMetadata 기본값 설정 완료");
         }
         
         // 기타 필수 검증 로직...
