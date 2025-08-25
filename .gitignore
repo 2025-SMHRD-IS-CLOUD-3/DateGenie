@@ -257,6 +257,7 @@ site/
 
 # Claude Code automation tools
 .playwright-mcp/
+.claude/
 
 # User-specific IDE settings
 *.userprefs
