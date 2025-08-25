@@ -274,6 +274,255 @@
             background: rgba(255, 255, 255, 0.1);
         }
     </style>
+    <style>
+/* 모달 기본 스타일 */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.9) translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1) translateY(0); 
+    }
+}
+
+/* 삭제 확인 모달 */
+.modal-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 450px;
+    overflow: hidden;
+    animation: slideUp 0.3s ease;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    padding: 2rem;
+    text-align: center;
+    border-bottom: 1px solid #fee2e2;
+}
+
+.modal-icon {
+    font-size: 3rem;
+    color: #dc2626;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.modal-header h3 {
+    color: #991b1b;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.modal-body {
+    padding: 2rem;
+    text-align: center;
+}
+
+.modal-body p {
+    color: #374151;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.warning-text {
+    color: #dc2626;
+    font-weight: 600;
+    font-size: 0.95rem !important;
+    background: #fee2e2;
+    padding: 1rem;
+    border-radius: 10px;
+    border-left: 4px solid #dc2626;
+}
+
+.modal-footer {
+    padding: 1.5rem 2rem 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.modal-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 100px;
+    justify-content: center;
+}
+
+.modal-btn-cancel {
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 2px solid #e5e7eb;
+}
+
+.modal-btn-cancel:hover {
+    background: #e5e7eb;
+    color: #374151;
+    transform: translateY(-1px);
+}
+
+.modal-btn-danger {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: white;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+}
+
+.modal-btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+}
+
+/* 알림 모달 스타일 */
+.notification-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+    overflow: hidden;
+    animation: slideUp 0.3s ease;
+}
+
+.notification-header {
+    padding: 2rem 2rem 1rem;
+    text-align: center;
+}
+
+.notification-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.notification-icon.success {
+    color: #10b981;
+}
+
+.notification-icon.error {
+    color: #dc2626;
+}
+
+.notification-header h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+    color: #1f2937;
+}
+
+.notification-body {
+    padding: 0 2rem 1.5rem;
+    text-align: center;
+}
+
+.notification-body p {
+    color: #6b7280;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.notification-footer {
+    padding: 0 2rem 2rem;
+    text-align: center;
+}
+
+.modal-btn-primary {
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    color: white;
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+}
+
+.modal-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+}
+
+/* 다크모드 지원 */
+body.dark-mode .modal-container,
+body.dark-mode .notification-container {
+    background: #1f2937;
+    color: #e5e7eb;
+}
+
+body.dark-mode .modal-header {
+    background: linear-gradient(135deg, #7f1d1d, #991b1b);
+}
+
+body.dark-mode .modal-header h3 {
+    color: #fca5a5;
+}
+
+body.dark-mode .notification-header h3 {
+    color: #e5e7eb;
+}
+
+body.dark-mode .modal-body p,
+body.dark-mode .notification-body p {
+    color: #d1d5db;
+}
+
+body.dark-mode .warning-text {
+    background: #7f1d1d;
+    color: #fca5a5;
+    border-left-color: #fca5a5;
+}
+
+body.dark-mode .modal-btn-cancel {
+    background: #374151;
+    color: #d1d5db;
+    border-color: #4b5563;
+}
+
+body.dark-mode .modal-btn-cancel:hover {
+    background: #4b5563;
+    color: #f9fafb;
+}
+</style>
 </head>
 <body class="settings-page">
     <nav class="navbar">
@@ -472,9 +721,9 @@
                             <p>모든 데이터와 함께 계정을 영구적으로 삭제합니다</p>
                         </div>
                     </div>
-                    <button class="btn-danger" onclick="deleteAccount()">
-                        <i class="fas fa-user-times"></i> 삭제
-                    </button>
+                    <button id="delete-button" class="btn-danger">
+    					<i class="fas fa-user-times"></i> 삭제
+					</button>
                 </div>
             </section>
 
@@ -742,16 +991,6 @@
             }
         }
 
-        function deleteAccount() {
-            if (confirm('정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-                if (confirm('마지막 확인: 모든 데이터가 영구적으로 삭제됩니다. 계속하시겠습니까?')) {
-                    localStorage.clear();
-                    alert('계정이 삭제되었습니다.');
-                    window.location.href = 'login.html';
-                }
-            }
-        }
-
         // 설정 로드
         function loadSettings() {
             const notifications = localStorage.getItem('notifications') !== 'false';
@@ -796,6 +1035,130 @@
             loadSettings();
         });
     </script>
+    <script src="js/deleteAccount.js"></script>
     <script src="js/footer.js"></script>
+    
+    <!-- 계정 삭제 확인 모달 -->
+<div id="deleteModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <i class="fas fa-exclamation-triangle modal-icon"></i>
+            <h3>계정 삭제</h3>
+        </div>
+        <div class="modal-body">
+            <p>정말로 계정을 삭제하시겠습니까?</p>
+            <p class="warning-text">이 작업은 되돌릴 수 없으며, 모든 데이터가 영구적으로 삭제됩니다.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-cancel" onclick="closeDeleteModal()">
+                <i class="fas fa-times"></i> 취소
+            </button>
+            <button class="modal-btn modal-btn-danger" onclick="confirmDelete()">
+                <i class="fas fa-trash"></i> 삭제
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// 모달 관리 JavaScript
+function showDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+function showNotificationModal(type, title, message) {
+    // 기존 알림 모달이 있다면 제거
+    let modal = document.getElementById('notificationModal');
+    if (!modal) {
+        // 동적으로 알림 모달 생성
+        modal = document.createElement('div');
+        modal.id = 'notificationModal';
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="notification-container">
+                <div class="notification-header">
+                    <i id="notificationIcon" class="notification-icon"></i>
+                    <h3 id="notificationTitle">알림</h3>
+                </div>
+                <div class="notification-body">
+                    <p id="notificationMessage">메시지</p>
+                </div>
+                <div class="notification-footer">
+                    <button class="modal-btn modal-btn-primary" onclick="closeNotificationModal()">
+                        확인
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    const icon = document.getElementById('notificationIcon');
+    const titleEl = document.getElementById('notificationTitle');
+    const messageEl = document.getElementById('notificationMessage');
+    
+    // 아이콘과 스타일 설정
+    if (type === 'success') {
+        icon.className = 'notification-icon fas fa-check-circle success';
+    } else if (type === 'error') {
+        icon.className = 'notification-icon fas fa-exclamation-circle error';
+    }
+    
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeNotificationModal() {
+    const modal = document.getElementById('notificationModal');
+    if (modal) {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+}
+
+function showDeleteModalWithCallback(callback) {
+    showDeleteModal();
+    
+    // 확인 버튼에 콜백 연결
+    const confirmBtn = document.querySelector('#deleteModal .modal-btn-danger');
+    if (confirmBtn) {
+        confirmBtn.onclick = () => {
+            closeDeleteModal();
+            callback();
+        };
+    }
+}
+
+// 모달 외부 클릭 시 닫기
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) {
+        if (e.target.id === 'deleteModal') {
+            closeDeleteModal();
+        } else if (e.target.id === 'notificationModal') {
+            closeNotificationModal();
+        }
+    }
+});
+
+// ESC 키로 모달 닫기
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeDeleteModal();
+        closeNotificationModal();
+    }
+});
+</script>
+
 </body>
 </html>

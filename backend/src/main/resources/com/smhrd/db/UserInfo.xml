@@ -12,13 +12,6 @@
 		WHERE EMAIL=#{email} AND PW=#{pw}
 	</select>
 	
-	<update id="update" parameterType="com.smhrd.model.UserInfo">
-		UPDATE USER_INFO SET PW=#{pw}, TEL=#{tel}, ADDRESS=#{address} WHERE EMAIL=#{email}
-	</update>
-	
-	<select id="select" resultType="com.smhrd.model.UserInfo">
-		select * from USER_INFO
-	</select>
 	
 	<!-- 이메일 중복 체크 -->
 	<select id="checkEmailExists" parameterType="String" resultType="int">
@@ -26,6 +19,28 @@
 		FROM USER_INFO 
 		WHERE EMAIL = #{email}
 	</select>
+	
+		<update id="update" parameterType="com.smhrd.model.UserInfo">
+		UPDATE USER_INFO 
+		<set>
+			<if test="pw != null and pw != ''">
+				PW=#{pw},
+			</if>
+			<if test="nickname != null and nickname != ''">
+				NICKNAME=#{nickname}
+			</if>
+		</set>
+		WHERE 
+			EMAIL=#{email}
+	</update>
+	
+	<select id="selectMemberByEmail" parameterType="string" resultType="com.smhrd.model.UserInfo">
+        SELECT * FROM USER_INFO WHERE EMAIL = #{email}
+    </select>
+	
+	<delete id="delete" parameterType="string">
+    DELETE FROM USER_INFO WHERE EMAIL = #{email}
+	</delete>
 	
 	
 </mapper>

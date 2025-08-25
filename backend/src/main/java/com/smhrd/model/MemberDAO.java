@@ -81,7 +81,7 @@ public class MemberDAO {
 		return result;
 	}
 	
-	// 이메일 중복 체크 메서드 (새로 추가)
+	// 이메일 중복 체크 메서드 
 	public boolean isEmailExists(String email) {
 		System.out.println("=== MemberDAO.isEmailExists 메서드 시작 ===");
 		System.out.println("체크할 이메일: " + email);
@@ -111,6 +111,14 @@ public class MemberDAO {
 		}
 	}
 	
+	// 회원 삭제 메서드
+		public int delete(String email) {
+		    SqlSession session = sqlSessionFactory.openSession(true);
+		    // 네임스페이스와 쿼리 ID를 함께 지정하여 오류 해결
+		    int cnt = session.delete("com.smhrd.db.UserInfo.delete", email);
+		    session.close();
+		    return cnt;
+		}
 	
 	
 }
