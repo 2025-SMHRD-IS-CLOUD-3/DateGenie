@@ -3,6 +3,7 @@ package com.smhrd.controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,11 +109,36 @@ public class AnalysisService extends HttpServlet {
             System.out.println("대화 데이터 길이: " + conversationData.length());
             
             System.out.println("10. Gemini API 호출 시작");
-            AnalysisResult analysisResult = geminiService.analyzeConversation(
-                conversationData, 
-                loginMember.getEmail(), 
-                partnerName
-            );
+            AnalysisResult analysisResult = null;
+            
+            try {
+                // 기본 방식 시도
+                analysisResult = geminiService.analyzeConversation(
+                    conversationData, 
+                    loginMember.getEmail(), 
+                    partnerName
+                );
+                System.out.println("11. 기본 방식 성공");
+            } catch (Exception mainException) {
+                System.err.println("11-1. 기본 방식 실패, 단계적 방식 시도: " + mainException.getMessage());
+                
+                try {
+                    // 단계적 분석 시도
+                    com.smhrd.service.IterativeAnalysisService iterativeService = 
+                        new com.smhrd.service.IterativeAnalysisService();
+                    
+                    analysisResult = iterativeService.analyzeConversationIteratively(
+                        conversationData, 
+                        loginMember.getEmail(), 
+                        partnerName
+                    );
+                    System.out.println("11-2. 단계적 방식 성공");
+                } catch (Exception iterativeException) {
+                    System.err.println("11-3. 모든 방식 실패");
+                    throw new Exception("분석 실패: " + iterativeException.getMessage(), iterativeException);
+                }
+            }
+            
             System.out.println("11. Gemini API 호출 완료");
             
             System.out.println("분석 완료. 세션 ID: " + analysisResult.getSessionId());
@@ -134,6 +160,13 @@ public class AnalysisService extends HttpServlet {
             Map<String, Object> frontendData = analysisDAO.getAnalysisResultForFrontend(
                 analysisResult.getSessionId()
             );
+            
+            // DB에서 조회 실패시 메모리 데이터 사용 (백업)
+            if (frontendData.isEmpty()) {
+                System.out.println("DB 조회 실패, 메모리 데이터 사용");
+                frontendData = analysisResult.toFrontendFormat();
+            }
+            
             System.out.println("15. Frontend 데이터 생성 완료 - 데이터 크기: " + frontendData.size());
             
             // 성공 응답
@@ -235,6 +268,18 @@ public class AnalysisService extends HttpServlet {
                 Map<String, Object> responseData = new HashMap<>();
                 responseData.put("success", true);
                 responseData.put("history", analysisDAO.getUserAnalysisHistory(loginMember.getEmail()));
+                
+                PrintWriter out = response.getWriter();
+                out.print(gson.toJson(responseData));
+                out.flush();
+                
+            } else if ("getStats".equals(action)) {
+                // 사용자 분석 통계 조회
+                Map<String, Object> stats = analysisDAO.getAnalysisStats(loginMember.getEmail());
+                
+                Map<String, Object> responseData = new HashMap<>();
+                responseData.put("success", true);
+                responseData.put("stats", stats);
                 
                 PrintWriter out = response.getWriter();
                 out.print(gson.toJson(responseData));

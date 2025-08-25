@@ -3,40 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>썸 관계 분석 결과 - Date Genie</title>
+    <title>관계 분석 결과 - Date Genie | AI 기반 심리 분석 서비스</title>
+    <meta name="description" content="AI 기반 대화 분석을 통한 정확한 관계 상태 파악과 맞춤화된 발전 전략 제공">
+    <meta name="keywords" content="대화분석, 심리분석, 관계분석, AI분석, 연애조언">
+    <meta name="author" content="Date Genie Team">
+    <meta property="og:title" content="관계 분석 결과 - Date Genie">
+    <meta property="og:description" content="AI 기반 대화 분석 결과와 맞춤화된 관계 발전 전략">
+    <meta property="og:type" content="website">
     <link rel="icon" type="image/svg+xml" href="images/icon.svg">
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* === Core Reset & Variables === */
+        /* === Enhanced CSS Variables & System === */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
         :root {
+            /* Color System */
+            --color-primary-50: #faf5ff;
+            --color-primary-100: #f3e8ff;
+            --color-primary-500: #8b5cf6;
+            --color-primary-600: #7c3aed;
+            --color-primary-700: #6d28d9;
+            
+            --color-accent-50: #fdf2f8;
+            --color-accent-500: #ec4899;
+            --color-accent-600: #db2777;
+            
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --color-info: #3b82f6;
+            
+            --color-gray-50: #f9fafb;
+            --color-gray-100: #f3f4f6;
+            --color-gray-200: #e5e7eb;
+            --color-gray-500: #6b7280;
+            --color-gray-900: #1f1d3a;
+            
+            /* Spacing System */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            
+            /* Typography */
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 2rem;
+            
+            /* Component Variables */
             --navbar-height: 70px;
-            --primary-gradient: linear-gradient(135deg, #ec4899, #8b5cf6);
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --info-color: #3b82f6;
-            --text-primary: #1f1d3a;
-            --text-secondary: #6b7280;
+            --primary-gradient: linear-gradient(135deg, var(--color-accent-500), var(--color-primary-500));
+            --success-color: var(--color-success);
+            --warning-color: var(--color-warning);
+            --danger-color: var(--color-danger);
+            --info-color: var(--color-info);
+            --text-primary: var(--color-gray-900);
+            --text-secondary: var(--color-gray-500);
             --bg-card: rgba(255, 255, 255, 0.95);
             --shadow-primary: 0 10px 30px rgba(0, 0, 0, 0.08);
             --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
+            
+            /* Accessibility */
+            --focus-outline: 3px solid var(--color-primary-500);
+            --focus-outline-offset: 2px;
+            
+            /* Animation */
+            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
             line-height: 1.6;
             color: var(--text-primary);
-            background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 40%, #eef2ff 100%);
+            background: linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-accent-50) 40%, #eef2ff 100%);
             min-height: 100vh;
+            scroll-behavior: smooth;
+        }
+        
+        body:focus {
+            outline: none;
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --bg-card: rgba(255, 255, 255, 1);
+                --shadow-primary: 0 2px 8px rgba(0, 0, 0, 0.25);
+            }
         }
 
         /* === Navigation === */
@@ -555,7 +630,7 @@
             }
         }
 
-        /* === Accessibility === */
+        /* === Enhanced Accessibility === */
         .sr-only {
             position: absolute;
             width: 1px;
@@ -567,11 +642,80 @@
             white-space: nowrap;
             border: 0;
         }
-
+        
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--color-primary-600);
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 9999;
+        }
+        
+        .skip-link:focus {
+            top: 6px;
+        }
+        
+        /* Enhanced focus styles */
+        button:focus,
         .btn-primary:focus,
-        .btn-secondary:focus {
-            outline: 3px solid rgba(124, 58, 237, 0.5);
+        .btn-secondary:focus,
+        a:focus {
+            outline: var(--focus-outline);
+            outline-offset: var(--focus-outline-offset);
+        }
+        
+        /* Focus indicators for interactive elements */
+        .result-card:focus-within {
+            outline: 2px solid var(--color-primary-500);
             outline-offset: 2px;
+        }
+        
+        /* Reduced motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            .success-circle {
+                animation: none;
+            }
+            
+            .result-card,
+            .column-card {
+                transition: none;
+            }
+        }
+        
+        /* High contrast mode enhancements */
+        @media (prefers-contrast: high) {
+            .signal-icon,
+            .section-icon {
+                border: 2px solid currentColor;
+            }
+            
+            .btn-primary,
+            .btn-secondary {
+                border: 2px solid currentColor;
+            }
+        }
+        
+        /* Print styles */
+        @media print {
+            .navbar,
+            .action-buttons {
+                display: none;
+            }
+            
+            .results-container {
+                padding-top: 0;
+            }
+            
+            .result-card,
+            .column-card {
+                box-shadow: none;
+                border: 1px solid #000;
+                background: white;
+            }
         }
     </style>
 </head>
@@ -747,21 +891,48 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const sessionId = urlParams.get('sessionId');
                 
-                // localStorage에서 분석 결과 확인
-                const storedResult = localStorage.getItem('analysisResult');
+                console.log('데이터 초기화 시작 - sessionId:', sessionId);
                 
-                if (storedResult) {
-                    // localStorage에 있는 데이터 사용
-                    console.log('localStorage에서 분석 데이터 로드');
-                    analysisData = JSON.parse(storedResult);
-                } else if (sessionId) {
-                    // API에서 분석 결과 가져오기
-                    console.log('API에서 분석 데이터 로드:', sessionId);
-                    analysisData = await fetchAnalysisResult(sessionId);
+                if (sessionId) {
+                    // 1. 우선 API에서 최신 데이터 가져오기 시도
+                    console.log('API에서 분석 데이터 로드 시도:', sessionId);
+                    try {
+                        analysisData = await fetchAnalysisResult(sessionId);
+                        
+                        if (analysisData && Object.keys(analysisData).length > 0) {
+                            // API에서 성공적으로 데이터를 가져온 경우 localStorage에 저장
+                            localStorage.setItem('analysisResult', JSON.stringify(analysisData));
+                            localStorage.setItem('analysisSessionId', sessionId);
+                            console.log('API 데이터 로드 성공 및 localStorage 저장 완료');
+                        } else {
+                            throw new Error('API에서 빈 데이터 응답');
+                        }
+                    } catch (apiError) {
+                        console.warn('API 데이터 로드 실패, localStorage 확인:', apiError.message);
+                        
+                        // 2. API 실패시 localStorage에서 확인
+                        const storedResult = localStorage.getItem('analysisResult');
+                        const storedSessionId = localStorage.getItem('analysisSessionId');
+                        
+                        if (storedResult && storedSessionId === sessionId) {
+                            console.log('localStorage에서 일치하는 데이터 발견');
+                            analysisData = JSON.parse(storedResult);
+                        } else {
+                            throw new Error('로컬 저장소에 일치하는 데이터 없음');
+                        }
+                    }
                 } else {
-                    // 데모 데이터 사용
-                    console.log('데모 데이터 사용');
-                    analysisData = getDefaultAnalysisData();
+                    // sessionId가 없는 경우 localStorage에서 최근 분석 결과 확인
+                    const storedResult = localStorage.getItem('analysisResult');
+                    
+                    if (storedResult) {
+                        console.log('sessionId 없음, localStorage에서 최근 데이터 사용');
+                        analysisData = JSON.parse(storedResult);
+                    } else {
+                        console.log('저장된 데이터 없음, 업로드 페이지로 리다이렉트');
+                        window.location.href = '/DateGenie/upload.html?message=분석할 데이터가 없습니다';
+                        return;
+                    }
                 }
                 
                 // 데이터 검증 및 기본값 설정
@@ -772,52 +943,94 @@
             } catch (error) {
                 console.error('분석 데이터 로드 실패:', error);
                 
-                // 에러 발생 시 데모 데이터 사용
-                analysisData = getDefaultAnalysisData();
+                // 최종 실패시 처리
+                console.log('모든 데이터 로드 방법 실패, 업로드 페이지로 이동');
                 
-                // 사용자에게 알림
-                if (window.showNotification) {
-                    window.showNotification('분석 결과를 불러오는데 실패했습니다. 데모 데이터를 표시합니다.', 'warning');
-                }
+                // 사용자에게 알림 후 업로드 페이지로 리다이렉트
+                alert('분석 결과를 불러올 수 없습니다. 새로운 분석을 시작해주세요.');
+                window.location.href = '/DateGenie/upload.html?message=분석 결과를 불러올 수 없습니다';
+                return;
             }
         }
         
         // API에서 분석 결과 가져오기
         async function fetchAnalysisResult(sessionId) {
-            const response = await fetch(`/DateGenie/AnalysisService?action=getResult&sessionId=${sessionId}`);
-            
-            if (!response.ok) {
-                throw new Error('분석 결과를 가져올 수 없습니다.');
+            try {
+                console.log('API 호출 시작:', `/DateGenie/AnalysisService?action=getResult&sessionId=${sessionId}`);
+                
+                const response = await fetch(`/DateGenie/AnalysisService?action=getResult&sessionId=${sessionId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8',
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'same-origin' // 세션 쿠키 포함
+                });
+                
+                console.log('API 응답 상태:', response.status, response.statusText);
+                
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('분석 결과를 찾을 수 없습니다.');
+                    } else if (response.status === 401) {
+                        // 로그인 페이지로 리다이렉트
+                        window.location.href = '/DateGenie/login.html?message=로그인이 필요합니다';
+                        return;
+                    } else {
+                        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+                    }
+                }
+                
+                const result = await response.json();
+                console.log('API 응답 데이터:', result);
+                
+                if (!result.success) {
+                    throw new Error(result.message || '분석 결과 조회에 실패했습니다.');
+                }
+                
+                if (!result.analysisData || Object.keys(result.analysisData).length === 0) {
+                    throw new Error('분석 데이터가 비어있습니다.');
+                }
+                
+                console.log('API에서 성공적으로 데이터 수신:', Object.keys(result.analysisData));
+                return result.analysisData;
+                
+            } catch (error) {
+                console.error('fetchAnalysisResult 오류:', error);
+                throw error;
             }
-            
-            const result = await response.json();
-            
-            if (!result.success) {
-                throw new Error(result.message || '분석 결과를 가져올 수 없습니다.');
-            }
-            
-            return result.analysisData;
         }
         
-        // 데이터 검증 및 정규화
+        // 향상된 데이터 검증 및 정규화 시스템
         function validateAndNormalizeData(data) {
+            console.log('데이터 검증 시작:', data);
+            
+            // 데이터 무결성 검사
+            const dataIntegrityScore = calculateDataIntegrity(data);
+            console.log('데이터 무결성 점수:', dataIntegrityScore);
+            
+            // 새로운 JSON 스키마에 맞게 데이터 매핑
+            const mainResults = data.mainResults || {};
+            const emotionAnalysis = data.emotionAnalysis || {};
+            
             // 기본 구조 확인 및 기본값 설정
             const normalized = {
-                successRate: data.successRate || 0,
-                confidenceLevel: data.confidenceLevel || 0,
-                relationshipStage: data.relationshipStage || "분석 중",
-                heroInsight: data.heroInsight || "분석을 진행하고 있습니다.",
+                successRate: validateNumericRange(mainResults.successRate, 0, 100, 0),
+                confidenceLevel: validateNumericRange(mainResults.confidenceLevel, 0, 100, 0),
+                relationshipStage: mainResults.relationshipStage || "분석 중",
+                heroInsight: mainResults.heroInsight || mainResults.summary || "분석을 진행하고 있습니다.",
+                dataQualityScore: dataIntegrityScore,
                 
-                interestTrendData: data.interestTrendData || [],
-                emotionData: data.emotionData || { positive: 0, neutral: 0, negative: 0 },
-                positiveSignals: data.positiveSignals || [],
+                interestTrendData: validateTrendData(data.interestTrends),
+                emotionData: validateEmotionData(emotionAnalysis),
+                positiveSignals: validateSignalsData(data.positiveSignals),
                 favoriteMessage: data.favoriteMessage || {
                     text: "분석된 메시지가 없습니다.",
                     confidence: 0,
                     date: "날짜 없음",
                     reason: "메시지 분석 중"
                 },
-                conversationGuide: data.conversationGuide || [],
+                conversationGuide: data.conversationGuides || [],
                 customAdvice: data.customAdvice || []
             };
             
@@ -830,7 +1043,122 @@
                 normalized.conversationGuide = getDefaultConversationGuide();
             }
             
+            if (normalized.customAdvice.length === 0) {
+                normalized.customAdvice = getDefaultCustomAdvice();
+            }
+            
+            // 최종 데이터 무결성 재검증
+            const finalIntegrityCheck = performFinalValidation(normalized);
+            if (!finalIntegrityCheck.valid) {
+                console.warn('데이터 무결성 경고:', finalIntegrityCheck.issues);
+                // 사용자에게 알림 (UI 개선 전에는 주석 처리)
+                // showDataQualityWarning(finalIntegrityCheck.issues);
+            }
+            
+            console.log('정규화 완료:', normalized);
             return normalized;
+        }
+        
+        // 수치 범위 검증 함수
+        function validateNumericRange(value, min, max, defaultValue) {
+            const num = Number(value);
+            if (isNaN(num) || num < min || num > max) {
+                console.warn(`수치 범위 오류: ${value} (범위: ${min}-${max})`);
+                return defaultValue;
+            }
+            return Math.round(num * 10) / 10; // 소수점 1자리로 제한
+        }
+        
+        // 추이 데이터 검증
+        function validateTrendData(trendData) {
+            if (!Array.isArray(trendData) || trendData.length === 0) {
+                return getDefaultTrendData();
+            }
+            
+            return trendData.map(item => ({
+                date: item.date || '날짜 없음',
+                value: validateNumericRange(item.value, 0, 100, 0),
+                messageCount: validateNumericRange(item.messageCount, 0, 1000, 0),
+                avgResponseTime: validateNumericRange(item.avgResponseTime, 0, 1440, 0) // 24시간 최대
+            }));
+        }
+        
+        // 감정 데이터 검증
+        function validateEmotionData(emotionData) {
+            if (!emotionData || typeof emotionData !== 'object') {
+                return { positive: 0, neutral: 0, negative: 0 };
+            }
+            
+            const positive = validateNumericRange(emotionData.positive, 0, 100, 0);
+            const neutral = validateNumericRange(emotionData.neutral, 0, 100, 0);
+            const negative = validateNumericRange(emotionData.negative, 0, 100, 0);
+            
+            // 합계 100% 맞추기
+            const total = positive + neutral + negative;
+            if (total === 0) {
+                return { positive: 0, neutral: 0, negative: 0 };
+            }
+            
+            return {
+                positive: Math.round((positive / total) * 1000) / 10,
+                neutral: Math.round((neutral / total) * 1000) / 10,
+                negative: Math.round((negative / total) * 1000) / 10
+            };
+        }
+        
+        // 신호 데이터 검증
+        function validateSignalsData(signalsData) {
+            if (!Array.isArray(signalsData) || signalsData.length === 0) {
+                return [];
+            }
+            
+            return signalsData.map(signal => ({
+                text: signal.text || '알 수 없는 신호',
+                description: signal.description || '설명 없음',
+                confidence: validateNumericRange(signal.confidence, 1, 5, 1),
+                type: signal.type || 'unknown',
+                metricValue: signal.metricValue || 0,
+                metricUnit: signal.metricUnit || ''
+            }));
+        }
+        
+        // 데이터 무결성 계산
+        function calculateDataIntegrity(data) {
+            let score = 100;
+            
+            // 필수 필드 검사
+            const requiredFields = ['successRate', 'confidenceLevel', 'relationshipStage', 'heroInsight'];
+            requiredFields.forEach(field => {
+                if (!data[field]) score -= 10;
+            });
+            
+            // 데이터 타입 검사
+            if (typeof data.successRate !== 'number') score -= 5;
+            if (typeof data.confidenceLevel !== 'number') score -= 5;
+            
+            // 데이터 논리성 검사
+            if (data.successRate > 100 || data.successRate < 0) score -= 15;
+            if (data.confidenceLevel > 100 || data.confidenceLevel < 0) score -= 15;
+            
+            return Math.max(0, score);
+        }
+        
+        // 최종 검증
+        function performFinalValidation(data) {
+            const issues = [];
+            
+            if (data.dataQualityScore < 80) {
+                issues.push('데이터 품질이 낮습니다.');
+            }
+            
+            if (data.successRate === 0 && data.confidenceLevel === 0) {
+                issues.push('분석 데이터가 부족합니다.');
+            }
+            
+            return {
+                valid: issues.length === 0,
+                issues: issues
+            };
         }
         
         // 기본 추이 데이터
@@ -854,18 +1182,51 @@
             return [
                 {
                     type: "일상 공유",
-                    text: "오늘 날씨 진짜 좋다! 밖에 나가고 싶어지는 날씨야 😄",
-                    timing: "오후 2-6시 추천"
+                    text: "오늘 하루 어때? 나는 좋은 일이 있어서 기분이 좋아 ㅎㅎ",
+                    timing: "오후 6-9시 추천",
+                    category: "casual",
+                    difficultyLevel: 1
                 },
                 {
                     type: "관심사 질문",
-                    text: "요즘 뭐 재밌는 거 있어? 나도 새로운 취미 찾고 있어서 ㅎㅎ",
-                    timing: "저녁 시간대 추천"
+                    text: "요즘 뭐 재밌는 거 있어? 나도 새로운 거 찾고 있어서~",
+                    timing: "저녁 시간대",
+                    category: "interest",
+                    difficultyLevel: 2
                 },
                 {
-                    type: "만남 제안",
-                    text: "혹시 시간 되면 커피 한 잔 어때? 오랜만에 수다 떨고 싶어 ☕",
-                    timing: "주말 오전 추천"
+                    type: "가벼운 제안",
+                    text: "날씨 좋은 날 산책이라도 한번 해볼까? 부담없이~",
+                    timing: "주말 오전",
+                    category: "meetup",
+                    difficultyLevel: 3
+                }
+            ];
+        }
+        
+        // 기본 맞춤 조언
+        function getDefaultCustomAdvice() {
+            return [
+                {
+                    title: "현재 단계에서는",
+                    content: "자연스럽고 부담스럽지 않은 대화를 이어가는 것이 좋습니다. 상대방의 반응을 살피며 점진적으로 관심을 표현하세요.",
+                    type: "current_stage",
+                    priority: 1,
+                    urgency: "Medium"
+                },
+                {
+                    title: "다음 단계 준비",
+                    content: "공통 관심사를 찾아 가벼운 활동을 함께 할 수 있는 기회를 만들어보세요.",
+                    type: "next_step",
+                    priority: 2,
+                    urgency: "Low"
+                },
+                {
+                    title: "주의사항",
+                    content: "너무 급하게 관계를 발전시키려 하지 말고, 상대방의 페이스를 존중하며 소통하세요.",
+                    type: "caution",
+                    priority: 3,
+                    urgency: "Medium"
                 }
             ];
         }
@@ -943,18 +1304,107 @@
             }
 
             init() {
+                // 데이터 품질 채크
+                this.performQualityCheck();
+                
+                // 접근성 초기화
+                this.setupAccessibility();
+                
+                // UI 컴포넌트 렌더링
                 this.updateHeroDashboard();
                 this.renderSignals();
                 this.renderFavoriteMessage();
                 this.renderConversationGuide();
                 this.renderCustomAdvice();
-                this.startAnimations();
-                this.setupInteractions();
                 
-                // 차트 초기화
+                // 인터렉션 및 애니메이션
+                this.setupInteractions();
+                this.startAnimations();
+                
+                // 성능 모니터링
+                this.setupPerformanceMonitoring();
+                
+                // 점진적 강화 - 차트 렌더링을 대역폭 및 기기 성능을 고려하여 지연 처리
+                this.scheduleChartInitialization();
+            }
+            
+            performQualityCheck() {
+                console.log('데이터 품질 채크:', this.data.dataQualityScore || '점수 없음');
+                
+                if (this.data.dataQualityScore && this.data.dataQualityScore < 70) {
+                    this.showQualityWarning();
+                }
+            }
+            
+            setupAccessibility() {
+                // ARIA labels 및 역할 설정
+                document.querySelectorAll('.chart-container canvas').forEach((canvas, index) => {
+                    canvas.setAttribute('role', 'img');
+                    canvas.setAttribute('aria-label', `분석 차트 ${index + 1}`);
+                });
+                
+                // 키보드 네비게이션 개선
+                this.setupKeyboardNavigation();
+                
+                // 스크린 리더 공지사항 설정
+                this.setupScreenReaderAnnouncements();
+            }
+            
+            setupKeyboardNavigation() {
+                // 카드에 tabindex 추가로 키보드 네비게이션 가능
+                document.querySelectorAll('.result-card, .column-card').forEach(card => {
+                    card.setAttribute('tabindex', '0');
+                    card.setAttribute('role', 'article');
+                });
+            }
+            
+            setupScreenReaderAnnouncements() {
+                const announcements = document.getElementById('announcements');
+                if (announcements) {
+                    // 초기 로드 완료 공지
+                    setTimeout(() => {
+                        announcements.textContent = '분석 결과 페이지가 로드되었습니다.';
+                    }, 1000);
+                }
+            }
+            
+            setupPerformanceMonitoring() {
+                // 성능 측정 시작
+                performance.mark('results-page-start');
+                
+                // 렌더링 완료 후 성능 측정
+                requestAnimationFrame(() => {
+                    performance.mark('results-page-end');
+                    performance.measure('results-page-render', 'results-page-start', 'results-page-end');
+                    
+                    const measure = performance.getEntriesByName('results-page-render')[0];
+                    console.log(`페이지 렌더링 시간: ${measure.duration.toFixed(2)}ms`);
+                });
+            }
+            
+            scheduleChartInitialization() {
+                // 네트워크 및 기기 상태에 따른 최적화
+                const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                let delay = 1000; // 기본 지연
+                
+                if (connection) {
+                    // 느린 네트워크에서는 더 오래 대기
+                    if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
+                        delay = 2000;
+                    } else if (connection.effectiveType === '3g') {
+                        delay = 1500;
+                    }
+                }
+                
                 setTimeout(() => {
                     this.initCharts();
-                }, 1000);
+                }, delay);
+            }
+            
+            showQualityWarning() {
+                // 데이터 품질 경고 메시지 표시 (미래 개선에 비해 주석 처리)
+                console.warn('데이터 품질 경고: 분석 결과의 정확도가 낮을 수 있습니다.');
+                // TODO: UI로 사용자에게 알림 표시
             }
 
             updateHeroDashboard() {
@@ -1134,29 +1584,104 @@
             }
 
             startAnimations() {
-                // Animate cards
+                // 모션 감소 설정 고려
+                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                
+                if (prefersReducedMotion) {
+                    // 모션 감소 사용자를 위한 처리
+                    document.querySelectorAll('.result-card, .column-card').forEach(card => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'none';
+                    });
+                    return;
+                }
+                
+                // 일반 애니메이션
                 const cards = document.querySelectorAll('.result-card, .column-card');
                 cards.forEach((card, index) => {
                     card.style.opacity = '0';
                     card.style.transform = 'translateY(20px)';
-                    setTimeout(() => {
-                        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateY(0)';
-                    }, index * 100);
+                    
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                setTimeout(() => {
+                                    entry.target.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                                    entry.target.style.opacity = '1';
+                                    entry.target.style.transform = 'translateY(0)';
+                                }, index * 100);
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, {
+                        threshold: 0.1
+                    });
+                    
+                    observer.observe(card);
                 });
             }
 
             setupInteractions() {
-                // Setup accessibility announcements
+                // 상세 접근성 공지
                 setTimeout(() => {
-                    const announcement = `분석 완료. 썸 성공 확률 ${this.data.successRate}퍼센트입니다.`;
-                    document.getElementById('announcements').textContent = announcement;
+                    const announcement = `분석 완료. 관계 성공 확률 ${this.data.successRate}퍼센트, 신뢰도 ${this.data.confidenceLevel}퍼센트입니다. 자세한 분석 결과를 확인하세요.`;
+                    const announcements = document.getElementById('announcements');
+                    if (announcements) {
+                        announcements.textContent = announcement;
+                    }
                 }, 2000);
+                
+                // 키보드 단축키 설정
+                this.setupKeyboardShortcuts();
+                
+                // 스크롤 기반 진전 항목 선택 표시
+                this.setupScrollBasedHighlighting();
+            }
+            
+            setupKeyboardShortcuts() {
+                document.addEventListener('keydown', (e) => {
+                    // Alt + H: 현재 결과로 이동
+                    if (e.altKey && e.key === 'h') {
+                        e.preventDefault();
+                        document.querySelector('.hero-dashboard').focus();
+                    }
+                    
+                    // Alt + C: 차트로 이동
+                    if (e.altKey && e.key === 'c') {
+                        e.preventDefault();
+                        const firstChart = document.querySelector('.chart-container');
+                        if (firstChart) firstChart.focus();
+                    }
+                    
+                    // Alt + A: 조언로 이동
+                    if (e.altKey && e.key === 'a') {
+                        e.preventDefault();
+                        const advice = document.getElementById('customAdvice');
+                        if (advice) advice.focus();
+                    }
+                });
+            }
+            
+            setupScrollBasedHighlighting() {
+                const cards = document.querySelectorAll('.result-card, .column-card');
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('in-view');
+                        } else {
+                            entry.target.classList.remove('in-view');
+                        }
+                    });
+                }, {
+                    threshold: 0.5
+                });
+                
+                cards.forEach(card => observer.observe(card));
             }
         }
 
-        // === Initialize App ===
+        // === 향상된 앱 초기화 ===
         document.addEventListener('DOMContentLoaded', async () => {
             // 로딩 표시
             showLoadingState();
@@ -1186,17 +1711,37 @@
             }
         });
         
-        // 로딩 상태 표시
+        // 향상된 로딩 상태 처리
         function showLoadingState() {
             const heroSection = document.querySelector('.hero-dashboard');
             if (heroSection) {
                 heroSection.innerHTML = `
-                    <div style="text-align: center; padding: 2rem;">
-                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #8b5cf6; margin-bottom: 1rem;"></i>
-                        <h2>분석 결과를 불러오는 중...</h2>
-                        <p>잠시만 기다려주세요.</p>
+                    <div style="text-align: center; padding: 2rem;" role="status" aria-live="polite">
+                        <div class="loading-animation" style="margin: 0 auto 1rem; width: 60px; height: 60px;">
+                            <i class="fas fa-heart" style="font-size: 2rem; color: #ec4899; animation: pulse 1.5s ease-in-out infinite;"></i>
+                        </div>
+                        <h2 style="color: var(--text-primary); margin-bottom: 0.5rem;">분석 결과를 불러오는 중...</h2>
+                        <p style="color: var(--text-secondary);">잠시만 기다려주세요. AI가 대화를 분석하고 있습니다.</p>
+                        <div class="progress-indicator" style="width: 100%; height: 4px; background: #f3f4f6; border-radius: 2px; margin-top: 1rem; overflow: hidden;">
+                            <div class="progress-bar" style="width: 0%; height: 100%; background: var(--primary-gradient); animation: progress 3s ease-in-out infinite;"></div>
+                        </div>
                     </div>
                 `;
+                
+                // CSS 애니메이션 동적 추가
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes pulse {
+                        0%, 100% { transform: scale(1); opacity: 1; }
+                        50% { transform: scale(1.1); opacity: 0.7; }
+                    }
+                    @keyframes progress {
+                        0% { width: 0%; }
+                        50% { width: 70%; }
+                        100% { width: 100%; }
+                    }
+                `;
+                document.head.appendChild(style);
             }
         }
         
@@ -1204,6 +1749,26 @@
         function hideLoadingState() {
             // 로딩 메시지는 ResultsFinalController에서 실제 데이터로 교체됨
         }
+    </script>
+    
+    <!-- 접근성 개선: Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- JSON-LD 구조화 데이터 -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Date Genie - AI 관계 분석",
+        "description": "AI 기반 대화 분석을 통한 정확한 관계 진단 및 맞춤화된 전략 제공",
+        "applicationCategory": "RelationshipAnalysisApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "KRW"
+        }
+    }
     </script>
 </body>
 </html>

@@ -171,4 +171,93 @@
         WHERE session_id = #{sessionId}
     </select>
 
+    <!-- AnalysisResultDAO에서 사용하는 쿼리들 -->
+    
+    <!-- 분석 결과 객체로 삽입 (AnalysisResult 객체용) -->
+    <insert id="insertAnalysisResult" parameterType="com.smhrd.model.AnalysisResult">
+        INSERT INTO analysis_sessions (
+            session_id, user_id, session_name, partner_name,
+            success_rate, confidence_level, relationship_stage, hero_insight,
+            analysis_date, total_messages, analysis_status, created_at, updated_at
+        ) VALUES (
+            #{sessionId}, #{userEmail}, #{sessionName, jdbcType=VARCHAR}, #{partnerName},
+            #{mainResults.successRate}, #{mainResults.confidenceLevel}, #{mainResults.relationshipStage}, #{mainResults.heroInsight},
+            SYSDATE, #{conversationMetadata.totalMessages, jdbcType=INTEGER}, 'completed', SYSDATE, SYSDATE
+        )
+    </insert>
+    
+    <!-- 분석 결과 업데이트 -->
+    <update id="updateAnalysisResult" parameterType="com.smhrd.model.AnalysisResult">
+        UPDATE analysis_sessions SET
+            success_rate = #{mainResults.successRate},
+            confidence_level = #{mainResults.confidenceLevel},
+            relationship_stage = #{mainResults.relationshipStage},
+            hero_insight = #{mainResults.heroInsight},
+            analysis_status = 'completed',
+            updated_at = SYSDATE
+        WHERE session_id = #{sessionId}
+    </update>
+    
+    <!-- 세션 ID로 AnalysisResult 객체 조회 -->
+    <select id="getBySessionId" parameterType="string" resultType="com.smhrd.model.AnalysisResult">
+        SELECT 
+            session_id as sessionId,
+            user_id as userEmail,
+            session_name as sessionName,
+            partner_name as partnerName,
+            success_rate,
+            confidence_level,
+            relationship_stage,
+            hero_insight,
+            analysis_date as analysisDate,
+            total_messages,
+            analysis_status
+        FROM analysis_sessions 
+        WHERE session_id = #{sessionId}
+    </select>
+    
+    <!-- 세션 삭제 -->
+    <delete id="deleteBySessionId" parameterType="string">
+        DELETE FROM analysis_sessions WHERE session_id = #{sessionId}
+    </delete>
+    
+    <!-- 사용자 히스토리 조회 (AnalysisResultDAO용) -->
+    <select id="getUserHistory" parameterType="map" resultType="map">
+        SELECT * FROM (
+            SELECT 
+                session_id as sessionId,
+                session_name as sessionName,
+                partner_name as partnerName,
+                success_rate as successRate,
+                confidence_level as confidenceLevel,
+                relationship_stage as relationshipStage,
+                TO_CHAR(analysis_date, 'YYYY-MM-DD HH24:MI') as analysisDate,
+                total_messages as totalMessages
+            FROM analysis_sessions 
+            WHERE user_id = #{userEmail}
+            ORDER BY analysis_date DESC
+        ) WHERE ROWNUM &lt;= #{limit}
+    </select>
+    
+    <!-- 분석 통계 - 총 분석 횟수 -->
+    <select id="getTotalAnalysisCount" parameterType="string" resultType="int">
+        SELECT COUNT(*) 
+        FROM analysis_sessions 
+        WHERE user_id = #{userEmail}
+    </select>
+    
+    <!-- 분석 통계 - 최근 분석 시간 -->
+    <select id="getLastAnalysisTime" parameterType="string" resultType="timestamp">
+        SELECT MAX(analysis_date) 
+        FROM analysis_sessions 
+        WHERE user_id = #{userEmail}
+    </select>
+    
+    <!-- 분석 통계 - 평균 성공률 -->
+    <select id="getAverageSuccessRate" parameterType="string" resultType="double">
+        SELECT AVG(success_rate) 
+        FROM analysis_sessions 
+        WHERE user_id = #{userEmail}
+    </select>
+
 </mapper>
