@@ -478,7 +478,7 @@
             gap: 0.5rem;
             padding: 0.5rem 0.75rem;
             border-radius: 12px;
-            background: rgba(124, 58, 237, 0.1);
+            background: transparent;
             color: var(--text-primary);
         }
 
@@ -486,12 +486,8 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: var(--primary-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1rem;
+            object-fit: cover;
+            border: none;
         }
 
         /* === Footer Styles === */
@@ -553,7 +549,7 @@
         }
 
         .footer-description {
-            color: rgba(255, 255, 255, 0.8);
+            color: #6b7280;
             font-size: 0.9rem;
         }
 
@@ -564,7 +560,7 @@
         }
 
         .footer-section h4 {
-            color: white;
+            color: #374151;
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 1rem;
@@ -581,7 +577,7 @@
         }
 
         .footer-section a {
-            color: rgba(255, 255, 255, 0.7);
+            color: #6b7280;
             text-decoration: none;
             font-size: 0.9rem;
             transition: color var(--transition-fast);
@@ -592,12 +588,12 @@
         }
 
         .footer-section .menu-item {
-            color: rgba(255, 255, 255, 0.5);
+            color: #9ca3af;
             font-size: 0.9rem;
         }
 
         .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid #e5e7eb;
             padding-top: 1.5rem;
             display: flex;
             flex-direction: column;
@@ -607,7 +603,7 @@
         }
 
         .footer-legal {
-            color: rgba(255, 255, 255, 0.6);
+            color: #6b7280;
             font-size: 0.8rem;
             display: flex;
             flex-wrap: wrap;
@@ -616,7 +612,7 @@
         }
 
         .footer-legal a {
-            color: rgba(255, 255, 255, 0.6);
+            color: #6b7280;
             text-decoration: none;
             transition: color var(--transition-fast);
         }
@@ -1236,12 +1232,6 @@
                 </a>
             </div>
             
-            <ul class="nav-menu" id="primaryMenu" aria-hidden="true">
-                <li><a href="/DateGenie/index.html#home">홈</a></li>
-                <li><a href="/DateGenie/index.html#features">기능</a></li>
-                <li><a href="/DateGenie/index.html#pricing">요금제</a></li>
-                <li><a href="/DateGenie/index.html#faq">FAQ</a></li>
-            </ul>
             
             <div class="nav-auth-buttons" id="authButtons">
                 <a href="/DateGenie/login.html" class="nav-btn-login">로그인</a>
@@ -2606,8 +2596,6 @@
                         <h4>지원 & 도움말</h4>
                         <ul>
                             <li><a href="index.html#faq">자주하는 질문</a></li>
-                            <li><a href="index.html#support">고객센터</a></li>
-                            <li><a href="index.html#guide">사용 가이드</a></li>
                             <li><a href="index.html#contact">문의하기</a></li>
                         </ul>
                     </div>
@@ -2638,11 +2626,6 @@
             </div>
         </div>
     </footer>
-
-    <button class="dark-mode-toggle" id="darkModeToggle">
-        <i class="fas fa-sun sun-icon"></i>
-        <i class="fas fa-moon moon-icon"></i>
-    </button>
     
     <!-- 접근성 개선: Skip Link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>

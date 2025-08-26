@@ -565,8 +565,6 @@
                         <h4>지원 & 도움말</h4>
                         <ul>
                             <li><a href="index.html#faq">자주하는 질문</a></li>
-                            <li><a href="index.html#support">고객센터</a></li>
-                            <li><a href="index.html#guide">사용 가이드</a></li>
                             <li><a href="index.html#contact">문의하기</a></li>
                         </ul>
                     </div>
@@ -598,10 +596,6 @@
         </div>
     </footer>
 
-    <button class="dark-mode-toggle" id="darkModeToggleBtn">
-        <i class="fas fa-sun sun-icon"></i>
-        <i class="fas fa-moon moon-icon"></i>
-    </button>
 
     <script src="js/main.js"></script>
     <script>
@@ -745,9 +739,24 @@
         function deleteAccount() {
             if (confirm('정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
                 if (confirm('마지막 확인: 모든 데이터가 영구적으로 삭제됩니다. 계속하시겠습니까?')) {
+                    // Google 로그아웃 처리
+                    if (typeof google !== 'undefined' && google.accounts) {
+                        google.accounts.id.disableAutoSelect();
+                    }
+                    
+                    // 모든 로그인 관련 데이터 삭제
                     localStorage.clear();
-                    alert('계정이 삭제되었습니다.');
-                    window.location.href = '/DateGenie/login.html';
+                    sessionStorage.clear();
+                    
+                    // 쿠키 삭제 (Google OAuth 등)
+                    document.cookie.split(";").forEach(function(c) { 
+                        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                    });
+                    
+                    alert('계정이 삭제되었습니다. 로그인 페이지로 이동합니다.');
+                    
+                    // 강제로 홈페이지로 이동 (로그인되지 않은 상태)
+                    window.location.href = '/DateGenie/index.html';
                 }
             }
         }
