@@ -183,14 +183,8 @@ public class AnalysisResultDAO {
                 frontendData.put("favoriteMessage", defaultMessage);
             }
             
-            // 7. 맞춤 조언 조회
-            List<Map<String, Object>> customAdvice = session.selectList("ResultMapper.getCustomAdvice", sessionId);
-            if (customAdvice != null && !customAdvice.isEmpty()) {
-                frontendData.put("customAdvice", customAdvice);
-                System.out.println("맞춤 조언 조회됨: " + customAdvice.size() + "건");
-            } else {
-                frontendData.put("customAdvice", generateDefaultAdvice());
-            }
+            // 7. 맞춤 조언 (테이블 삭제로 인해 기본값 제공)
+            frontendData.put("customAdvice", generateDefaultAdvice());
             
             // 8. 실전 대화 가이드 생성 (DB에 없는 경우 기본값)
             frontendData.put("conversationGuides", generateDefaultConversationGuide());

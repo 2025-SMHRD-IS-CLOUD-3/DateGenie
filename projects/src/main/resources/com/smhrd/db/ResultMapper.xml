@@ -2,82 +2,63 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.smhrd.db.ResultMapper">
 
-    <!-- 분석 세션 저장 -->
+    <!-- 분석 세션 저장 (최적화: 중복 날짜 컬럼 제거) -->
     <insert id="insertAnalysisSession" parameterType="map">
         INSERT INTO analysis_sessions (
             session_id, user_id, session_name, partner_name,
             success_rate, confidence_level, relationship_stage, hero_insight,
-            analysis_date, conversation_period_start, conversation_period_end,
-            total_messages, analysis_status, created_at, updated_at
+            total_messages, analysis_status, created_at
         ) VALUES (
             #{sessionId}, #{userId}, #{sessionName}, #{partnerName},
             #{successRate}, #{confidenceLevel}, #{relationshipStage}, #{heroInsight},
-            SYSDATE, TO_DATE(#{conversationStart}, 'YYYY-MM-DD'), TO_DATE(#{conversationEnd}, 'YYYY-MM-DD'),
-            #{totalMessages}, 'completed', SYSDATE, SYSDATE
+            #{totalMessages}, 'completed', SYSDATE
         )
     </insert>
 
-    <!-- 관심도 추이 데이터 저장 -->
+    <!-- 관심도 추이 데이터 저장 (created_at 제거) -->
     <insert id="insertInterestTrend" parameterType="map">
         INSERT INTO interest_trends (
             trend_id, session_id, trend_date, interest_value,
-            message_count, response_time_avg, emoji_usage_count, created_at
+            message_count, response_time_avg, emoji_usage_count
         ) VALUES (
             interest_trends_seq.NEXTVAL, #{sessionId}, TO_DATE(#{trendDate}, 'YYYY-MM-DD'), #{interestValue},
-            #{messageCount}, #{avgResponseTime}, #{emojiCount}, SYSDATE
+            #{messageCount}, #{avgResponseTime}, #{emojiCount}
         )
     </insert>
 
-    <!-- 감정 분석 결과 저장 -->
+    <!-- 감정 분석 결과 저장 (최적화: 불필요한 컬럼 제거) -->
     <insert id="insertEmotionAnalysis" parameterType="map">
         INSERT INTO emotion_analysis (
-            emotion_id, session_id, positive_percentage, neutral_percentage, negative_percentage,
-            dominant_emotion, emotional_stability_score, positive_keywords, negative_keywords, created_at
+            emotion_id, session_id, positive_percentage, neutral_percentage, negative_percentage
         ) VALUES (
-            emotion_analysis_seq.NEXTVAL, #{sessionId}, #{positive}, #{neutral}, #{negative},
-            #{dominantEmotion}, #{stabilityScore}, #{positiveKeywords}, #{negativeKeywords}, SYSDATE
+            emotion_analysis_seq.NEXTVAL, #{sessionId}, #{positive}, #{neutral}, #{negative}
         )
     </insert>
 
-    <!-- 긍정적 신호 저장 -->
+    <!-- 긍정적 신호 저장 (최종 최적화 - 6개 컬럼만 유지) -->
     <insert id="insertPositiveSignal" parameterType="map">
         INSERT INTO positive_signals (
             signal_id, session_id, signal_text, signal_description, confidence_score,
-            signal_type, metric_value, metric_unit, detection_method, signal_priority, created_at
+            signal_type
         ) VALUES (
             positive_signals_seq.NEXTVAL, #{sessionId}, #{text}, #{description}, #{confidence},
-            #{type}, #{metricValue}, #{metricUnit}, 'ai_analysis', #{priority, jdbcType=INTEGER}, SYSDATE
+            #{type}
         )
     </insert>
 
-    <!-- 대표 호감 메시지 저장 -->
+    <!-- 대표 호감 메시지 저장 (최적화: 불필요한 컬럼 제거) -->
     <insert id="insertFavoriteMessage" parameterType="map">
         INSERT INTO favorite_messages (
             message_id, session_id, message_text, confidence_percentage, analysis_reason,
-            message_date, sender_type, message_length, contains_emoji,
-            sentiment_score, intimacy_level, action_type, created_at
+            message_date
         ) VALUES (
             favorite_messages_seq.NEXTVAL, #{sessionId}, #{text}, #{confidence}, #{reason},
-            TO_TIMESTAMP(#{messageDate}, 'YYYY-MM-DD HH24:MI:SS'), #{sender}, LENGTH(#{text}), 
-            CASE WHEN REGEXP_LIKE(#{text}, '[😀-🙏]') THEN 1 ELSE 0 END,
-            #{sentimentScore, jdbcType=DECIMAL}, #{intimacyLevel, jdbcType=INTEGER}, #{actionType}, SYSDATE
+            TO_TIMESTAMP(#{messageDate}, 'YYYY-MM-DD HH24:MI:SS')
         )
     </insert>
 
-    <!-- 맞춤 조언 저장 -->
-    <insert id="insertCustomAdvice" parameterType="map">
-        INSERT INTO custom_advice (
-            advice_id, session_id, advice_title, advice_content,
-            advice_type, priority_order, urgency_level,
-            based_on_success_rate, based_on_signals, created_at
-        ) VALUES (
-            custom_advice_seq.NEXTVAL, #{sessionId}, #{title}, #{content},
-            #{type}, #{priority}, #{urgency},
-            #{basedOnSuccessRate, jdbcType=DECIMAL}, #{basedOnSignals}, SYSDATE
-        )
-    </insert>
 
-    <!-- 분석 결과 조회 -->
+    <!-- 분석 결과 조회 (최적화: created_at을 analysis_date 대신 사용) -->
     <select id="getAnalysisResult" parameterType="string" resultType="map">
         SELECT 
             session_id as sessionId,
@@ -88,80 +69,76 @@
             confidence_level as confidenceLevel,
             relationship_stage as relationshipStage,
             hero_insight as heroInsight,
-            analysis_date as analysisDate,
-            conversation_period_start as conversationStart,
-            conversation_period_end as conversationEnd,
+            created_at as analysisDate,
             total_messages as totalMessages,
             analysis_status as analysisStatus
         FROM analysis_sessions 
         WHERE session_id = #{sessionId}
     </select>
 
-    <!-- 관심도 추이 조회 -->
+    <!-- 관심도 추이 조회 (최적화: 인덱스 힌트 및 필요한 컬럼만 선택) -->
     <select id="getInterestTrends" parameterType="string" resultType="map">
-        SELECT TO_CHAR(trend_date, 'YYYY-MM-DD') as date, interest_value as value, message_count as messageCount, response_time_avg as avgResponseTime, emoji_usage_count as emojiCount FROM interest_trends WHERE session_id = #{sessionId} ORDER BY trend_date
+        SELECT /*+ INDEX(interest_trends IDX_INTEREST_SESSION_DATE) */
+               TO_CHAR(trend_date, 'YYYY-MM-DD') as date, 
+               interest_value as value, 
+               message_count as messageCount, 
+               response_time_avg as avgResponseTime, 
+               emoji_usage_count as emojiCount 
+        FROM interest_trends 
+        WHERE session_id = #{sessionId} 
+        ORDER BY trend_date
     </select>
 
-    <!-- 감정 분석 조회 -->
+    <!-- 감정 분석 조회 (최적화: 필요한 컬럼만 선택) -->
     <select id="getEmotionAnalysis" parameterType="string" resultType="map">
         SELECT 
             positive_percentage as positive,
             neutral_percentage as neutral,
-            negative_percentage as negative,
-            dominant_emotion as dominantEmotion,
-            emotional_stability_score as stabilityScore,
-            positive_keywords as positiveKeywords,
-            negative_keywords as negativeKeywords
+            negative_percentage as negative
         FROM emotion_analysis 
         WHERE session_id = #{sessionId}
     </select>
 
-    <!-- 긍정적 신호 조회 -->
+    <!-- 긍정적 신호 조회 (최종 최적화 - confidence_score만으로 정렬) -->
     <select id="getPositiveSignals" parameterType="string" resultType="map">
         SELECT 
             signal_text as text,
             signal_description as description,
             confidence_score as confidence,
-            signal_type as type,
-            metric_value as metricValue,
-            metric_unit as metricUnit
+            signal_type as type
         FROM positive_signals 
         WHERE session_id = #{sessionId}
-        ORDER BY confidence_score DESC, signal_priority
+        ORDER BY confidence_score DESC
     </select>
 
-    <!-- 대표 호감 메시지 조회 -->
+    <!-- 대표 호감 메시지 조회 (최적화: 필요한 컬럼만 선택) -->
     <select id="getFavoriteMessage" parameterType="string" resultType="map">
-        SELECT message_text as text, confidence_percentage as confidence, analysis_reason as reason, sender_type as sender FROM (SELECT * FROM favorite_messages WHERE session_id = #{sessionId} ORDER BY confidence_percentage DESC) WHERE ROWNUM = 1
+        SELECT /*+ INDEX(favorite_messages IDX_FAVORITE_SESSION_CONF) */
+               message_text as text, 
+               confidence_percentage as confidence, 
+               analysis_reason as reason,
+               TO_CHAR(message_date, 'YYYY-MM-DD HH24:MI:SS') as messageDate
+        FROM favorite_messages 
+        WHERE session_id = #{sessionId} 
+          AND ROWNUM = 1
+        ORDER BY confidence_percentage DESC
     </select>
 
-    <!-- 맞춤 조언 조회 -->
-    <select id="getCustomAdvice" parameterType="string" resultType="map">
-        SELECT 
-            advice_title as title,
-            advice_content as content,
-            advice_type as type,
-            priority_order as priority,
-            urgency_level as urgency
-        FROM custom_advice 
-        WHERE session_id = #{sessionId}
-        ORDER BY priority_order
-    </select>
 
-    <!-- 사용자별 분석 히스토리 조회 -->
+    <!-- 사용자별 분석 히스토리 조회 (최적화: created_at 기반 조회) -->
     <select id="getUserAnalysisHistory" parameterType="string" resultType="map">
-        SELECT 
+        SELECT /*+ INDEX(analysis_sessions IDX_ANALYSIS_USER_CREATED) */
             session_id as sessionId,
             session_name as sessionName,
             partner_name as partnerName,
             success_rate as successRate,
             confidence_level as confidenceLevel,
             relationship_stage as relationshipStage,
-            TO_CHAR(analysis_date, 'YYYY-MM-DD HH24:MI') as analysisDate,
+            TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI') as analysisDate,
             total_messages as totalMessages
         FROM analysis_sessions 
         WHERE user_id = #{userId}
-        ORDER BY analysis_date DESC
+        ORDER BY created_at DESC
     </select>
 
     <!-- 세션 존재 확인 -->
@@ -173,43 +150,42 @@
 
     <!-- AnalysisResultDAO에서 사용하는 쿼리들 -->
     
-    <!-- 분석 결과 객체로 삽입 (AnalysisResult 객체용) -->
+    <!-- 분석 결과 객체로 삽입 (AnalysisResult 객체용, 중복 컬럼 제거) -->
     <insert id="insertAnalysisResult" parameterType="com.smhrd.model.AnalysisResult">
         INSERT INTO analysis_sessions (
             session_id, user_id, session_name, partner_name,
             success_rate, confidence_level, relationship_stage, hero_insight,
-            analysis_date, total_messages, analysis_status, created_at, updated_at
+            total_messages, analysis_status, created_at
         ) VALUES (
-            #{sessionId}, #{userEmail}, #{sessionName, jdbcType=VARCHAR}, #{partnerName},
+            #{sessionId}, #{userId}, #{sessionName, jdbcType=VARCHAR}, #{partnerName},
             #{mainResults.successRate}, #{mainResults.confidenceLevel}, #{mainResults.relationshipStage}, #{mainResults.heroInsight},
-            SYSDATE, #{conversationMetadata.totalMessages, jdbcType=INTEGER}, 'completed', SYSDATE, SYSDATE
+            0, 'completed', SYSDATE
         )
     </insert>
     
-    <!-- 분석 결과 업데이트 -->
+    <!-- 분석 결과 업데이트 (updated_at 제거) -->
     <update id="updateAnalysisResult" parameterType="com.smhrd.model.AnalysisResult">
         UPDATE analysis_sessions SET
             success_rate = #{mainResults.successRate},
             confidence_level = #{mainResults.confidenceLevel},
             relationship_stage = #{mainResults.relationshipStage},
             hero_insight = #{mainResults.heroInsight},
-            analysis_status = 'completed',
-            updated_at = SYSDATE
+            analysis_status = 'completed'
         WHERE session_id = #{sessionId}
     </update>
     
-    <!-- 세션 ID로 AnalysisResult 객체 조회 -->
+    <!-- 세션 ID로 AnalysisResult 객체 조회 (created_at 사용) -->
     <select id="getBySessionId" parameterType="string" resultType="com.smhrd.model.AnalysisResult">
         SELECT 
             session_id as sessionId,
-            user_id as userEmail,
+            user_id as userId,
             session_name as sessionName,
             partner_name as partnerName,
             success_rate,
             confidence_level,
             relationship_stage,
             hero_insight,
-            analysis_date as analysisDate,
+            created_at as analysisDate,
             total_messages,
             analysis_status
         FROM analysis_sessions 
@@ -221,7 +197,7 @@
         DELETE FROM analysis_sessions WHERE session_id = #{sessionId}
     </delete>
     
-    <!-- 사용자 히스토리 조회 (AnalysisResultDAO용) -->
+    <!-- 사용자 히스토리 조회 (AnalysisResultDAO용, created_at 기반) -->
     <select id="getUserHistory" parameterType="map" resultType="map">
         SELECT * FROM (
             SELECT 
@@ -231,11 +207,11 @@
                 success_rate as successRate,
                 confidence_level as confidenceLevel,
                 relationship_stage as relationshipStage,
-                TO_CHAR(analysis_date, 'YYYY-MM-DD HH24:MI') as analysisDate,
+                TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI') as analysisDate,
                 total_messages as totalMessages
             FROM analysis_sessions 
             WHERE user_id = #{userEmail}
-            ORDER BY analysis_date DESC
+            ORDER BY created_at DESC
         ) WHERE ROWNUM &lt;= #{limit}
     </select>
     
@@ -246,9 +222,9 @@
         WHERE user_id = #{userEmail}
     </select>
     
-    <!-- 분석 통계 - 최근 분석 시간 -->
+    <!-- 분석 통계 - 최근 분석 시간 (created_at 기반) -->
     <select id="getLastAnalysisTime" parameterType="string" resultType="java.sql.Timestamp">
-        SELECT MAX(analysis_date) 
+        SELECT MAX(created_at) 
         FROM analysis_sessions 
         WHERE user_id = #{userEmail}
     </select>

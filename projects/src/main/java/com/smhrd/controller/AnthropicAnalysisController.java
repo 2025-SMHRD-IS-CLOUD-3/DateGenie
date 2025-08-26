@@ -336,33 +336,15 @@ public class AnthropicAnalysisController extends HttpServlet {
                 emotionData.put("positive", analysisResult.getEmotionAnalysis().getPositive());
                 emotionData.put("neutral", analysisResult.getEmotionAnalysis().getNeutral());
                 emotionData.put("negative", analysisResult.getEmotionAnalysis().getNegative());
-                
-                // 주요 감정과 안정성 점수 계산
-                double maxEmotion = Math.max(Math.max(
-                    analysisResult.getEmotionAnalysis().getPositive(),
-                    analysisResult.getEmotionAnalysis().getNeutral()),
-                    analysisResult.getEmotionAnalysis().getNegative());
-                
-                String dominantEmotion = "neutral";
-                if (maxEmotion == analysisResult.getEmotionAnalysis().getPositive()) {
-                    dominantEmotion = "positive";
-                } else if (maxEmotion == analysisResult.getEmotionAnalysis().getNegative()) {
-                    dominantEmotion = "negative";
-                }
-                
-                emotionData.put("dominantEmotion", dominantEmotion);
-                emotionData.put("stabilityScore", maxEmotion); // 간단한 안정성 지수
-                emotionData.put("positiveKeywords", "긍정적 키워드 추출 필요"); // AI에서 추출 필요
-                emotionData.put("negativeKeywords", "부정적 키워드 추출 필요"); // AI에서 추출 필요
+                // 불필요한 컬럼들 제거됨: dominantEmotion, stabilityScore, positiveKeywords, negativeKeywords
                 
                 insertDataToDatabase("ResultMapper.insertEmotionAnalysis", emotionData);
                 System.out.println("감정 분석 저장 완료");
             }
             
-            // 긍정적 신호 저장
+            // 긍정적 신호 저장 (최종 간소화)
             if (analysisResult.getPositiveSignals() != null && !analysisResult.getPositiveSignals().isEmpty()) {
                 System.out.println("긍정 신호 저장 중...");
-                int priority = 1;
                 for (AnalysisResult.PositiveSignal signal : analysisResult.getPositiveSignals()) {
                     Map<String, Object> signalData = new HashMap<>();
                     signalData.put("sessionId", sessionId);
@@ -370,9 +352,6 @@ public class AnthropicAnalysisController extends HttpServlet {
                     signalData.put("description", signal.getDescription());
                     signalData.put("confidence", signal.getConfidence());
                     signalData.put("type", "positive_indicator");
-                    signalData.put("metricValue", 0); // 필요시 추가 메트릭
-                    signalData.put("metricUnit", "");
-                    signalData.put("priority", priority++);
                     
                     insertDataToDatabase("ResultMapper.insertPositiveSignal", signalData);
                 }
@@ -388,36 +367,13 @@ public class AnthropicAnalysisController extends HttpServlet {
                 messageData.put("confidence", analysisResult.getFavoriteMessage().getConfidence());
                 messageData.put("reason", analysisResult.getFavoriteMessage().getReason());
                 messageData.put("messageDate", analysisResult.getFavoriteMessage().getDate());
-                messageData.put("sender", "partner"); // 기본값
-                messageData.put("sentimentScore", analysisResult.getFavoriteMessage().getConfidence()); 
-                messageData.put("intimacyLevel", Math.min(5, analysisResult.getFavoriteMessage().getConfidence() / 20));
-                messageData.put("actionType", "affection_expression");
+                // 불필요한 컬럼들 제거됨: sender, sentimentScore, intimacyLevel, actionType
                 
                 insertDataToDatabase("ResultMapper.insertFavoriteMessage", messageData);
                 System.out.println("대표 메시지 저장 완료");
             }
             
-            // 맞춤 조언 저장
-            if (analysisResult.getCustomAdvice() != null && !analysisResult.getCustomAdvice().isEmpty()) {
-                System.out.println("맞춤 조언 저장 중...");
-                int priority = 1;
-                for (AnalysisResult.CustomAdvice advice : analysisResult.getCustomAdvice()) {
-                    Map<String, Object> adviceData = new HashMap<>();
-                    adviceData.put("sessionId", sessionId);
-                    adviceData.put("title", advice.getTitle());
-                    adviceData.put("content", advice.getContent());
-                    adviceData.put("type", "general_advice");
-                    adviceData.put("priority", priority++);
-                    adviceData.put("urgency", "medium");
-                    adviceData.put("basedOnSuccessRate", analysisResult.getMainResults() != null ? 
-                        analysisResult.getMainResults().getSuccessRate() : 0);
-                    adviceData.put("basedOnSignals", analysisResult.getPositiveSignals() != null ? 
-                        analysisResult.getPositiveSignals().size() : 0);
-                    
-                    insertDataToDatabase("ResultMapper.insertCustomAdvice", adviceData);
-                }
-                System.out.println("맞춤 조언 저장 완료: " + analysisResult.getCustomAdvice().size() + "건");
-            }
+            // 맞춤 조언 저장 (테이블 삭제로 인해 제거됨)
             
         } catch (Exception e) {
             System.err.println("상세 데이터 저장 중 오류: " + e.getMessage());

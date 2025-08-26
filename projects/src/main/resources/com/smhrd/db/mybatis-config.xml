@@ -3,6 +3,22 @@
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+  <!-- 성능 최적화 설정 -->
+  <settings>
+    <!-- 지연 로딩 활성화 -->
+    <setting name="lazyLoadingEnabled" value="true"/>
+    <!-- 자동 매핑 레벨 설정 -->
+    <setting name="autoMappingBehavior" value="PARTIAL"/>
+    <!-- 캐시 활성화 -->
+    <setting name="cacheEnabled" value="true"/>
+    <!-- 실행자 타입 설정 (SIMPLE: 기본, REUSE: PreparedStatement 재사용, BATCH: 배치 실행) -->
+    <setting name="defaultExecutorType" value="REUSE"/>
+    <!-- 타임아웃 설정 (초) -->
+    <setting name="defaultStatementTimeout" value="30"/>
+    <!-- 페치 사이즈 설정 -->
+    <setting name="defaultFetchSize" value="100"/>
+  </settings>
+  
   <environments default="development">
     <environment id="development">
       <transactionManager type="JDBC"/>
@@ -11,6 +27,15 @@
         <property name="url" value="jdbc:oracle:thin:@project-db-campus.smhrd.com:1524:xe"/>
         <property name="username" value="campus_24IS_CLOUD3_p2_4"/>
         <property name="password" value="smhrd4"/>
+        <!-- 커넥션 풀 최적화 설정 -->
+        <property name="poolMaximumActiveConnections" value="20"/>
+        <property name="poolMaximumIdleConnections" value="5"/>
+        <property name="poolMaximumCheckoutTime" value="20000"/>
+        <property name="poolTimeToWait" value="20000"/>
+        <property name="poolMaximumLocalBadConnectionTolerance" value="3"/>
+        <property name="poolPingEnabled" value="true"/>
+        <property name="poolPingQuery" value="SELECT 1 FROM DUAL"/>
+        <property name="poolPingConnectionsNotUsedFor" value="0"/>
       </dataSource>
     </environment>
   </environments>

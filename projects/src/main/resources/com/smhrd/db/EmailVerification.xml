@@ -21,9 +21,10 @@
         WHERE VERIFICATION_TOKEN = #{token}
     </select>
     
-    <!-- 이메일로 최신 인증 정보 조회 (가장 최근 생성된 것) -->
+    <!-- 이메일로 최신 인증 정보 조회 (최적화: 인덱스 활용) -->
     <select id="findByEmail" resultType="com.smhrd.model.EmailVerification" parameterType="String">
-        SELECT ID as id, 
+        SELECT /*+ INDEX(USER_EMAIL_AUTH IDX_EMAIL_AUTH_EMAIL_CREATED) */
+               ID as id, 
                EMAIL as email, 
                VERIFICATION_TOKEN as verificationToken, 
                CREATED_AT as createdAt, 

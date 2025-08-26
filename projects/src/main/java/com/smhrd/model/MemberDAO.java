@@ -93,12 +93,21 @@ public class MemberDAO {
 		return result;
 	}
 	
-	// update 기능 메서드
+	// update 기능 메서드 (네임스페이스 명시)
 	public int update(UserInfo updateMem) {
 		SqlSession sqlsession = sqlSessionFactory.openSession(true);
-		int cnt = sqlsession.update("update", updateMem);
+		int cnt = 0;
 		
-		sqlsession.close();
+		try {
+			cnt = sqlsession.update("com.smhrd.db.UserInfo.update", updateMem);
+		} catch (Exception e) {
+			System.err.println("MemberDAO.update() 오류: " + e.getMessage());
+		} finally {
+			if (sqlsession != null) {
+				sqlsession.close();
+			}
+		}
+		
 		return cnt;
 	}
 	// 전체회원정보 조회 기능
@@ -116,7 +125,7 @@ public class MemberDAO {
 		//	DB의 전체 데이터를 리턴값으로 받을때,
 		//	-> MavenMember자료형의 데이터를 여러개 가져올 수 있도록!
 		//	-> list를 활용하겠다!
-		List<UserInfo> result = sqlsession.selectList("select");
+		List<UserInfo> result = sqlsession.selectList("com.smhrd.db.UserInfo.select");
 		// 3. sqlSession 닫기
 		sqlsession.close();
 		// 4. 리턴값 정의

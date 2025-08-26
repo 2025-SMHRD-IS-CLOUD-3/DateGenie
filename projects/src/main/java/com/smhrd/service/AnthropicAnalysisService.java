@@ -303,20 +303,7 @@ public class AnthropicAnalysisService {
             result.setConversationGuides(conversationGuides);
         }
         
-        // 조언 파싱
-        if (apiResponse.containsKey("customAdvice")) {
-            List<?> adviceList = (List<?>) apiResponse.get("customAdvice");
-            List<AnalysisResult.CustomAdvice> customAdviceList = new ArrayList<>();
-            
-            for (Object adviceObj : adviceList) {
-                Map<?, ?> adviceData = (Map<?, ?>) adviceObj;
-                AnalysisResult.CustomAdvice advice = new AnalysisResult.CustomAdvice();
-                advice.setTitle((String) adviceData.get("title"));
-                advice.setContent((String) adviceData.get("content"));
-                customAdviceList.add(advice);
-            }
-            result.setCustomAdvice(customAdviceList);
-        }
+        // 조언 파싱 (테이블 삭제로 인해 제거됨)
         
         System.out.println("AnalysisResult 변환 완료 - 모든 필드 포함");
         return result;

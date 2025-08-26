@@ -15,9 +15,8 @@ public class AnalysisResult {
     
     private MainResults mainResults;
     private EmotionAnalysis emotionAnalysis;
-    private List<CustomAdvice> customAdvice;
     
-    // 추가 필드들 - UI 표시용
+    // UI 표시용 필드들 - 실제 사용되는 것만 유지
     private List<InterestTrend> interestTrends;
     private List<PositiveSignal> positiveSignals;
     private FavoriteMessage favoriteMessage;
@@ -69,19 +68,6 @@ public class AnalysisResult {
         public void setNegative(double negative) { this.negative = negative; }
     }
     
-    /**
-     * 맞춤 조언
-     */
-    public static class CustomAdvice {
-        private String title;
-        private String content;
-        
-        public String getTitle() { return title; }
-        public void setTitle(String title) { this.title = title; }
-        
-        public String getContent() { return content; }
-        public void setContent(String content) { this.content = content; }
-    }
     
     /**
      * 관심도 추이 데이터
@@ -188,8 +174,6 @@ public class AnalysisResult {
     public EmotionAnalysis getEmotionAnalysis() { return emotionAnalysis; }
     public void setEmotionAnalysis(EmotionAnalysis emotionAnalysis) { this.emotionAnalysis = emotionAnalysis; }
     
-    public List<CustomAdvice> getCustomAdvice() { return customAdvice; }
-    public void setCustomAdvice(List<CustomAdvice> customAdvice) { this.customAdvice = customAdvice; }
     
     public List<InterestTrend> getInterestTrends() { return interestTrends; }
     public void setInterestTrends(List<InterestTrend> interestTrends) { this.interestTrends = interestTrends; }
@@ -281,17 +265,7 @@ public class AnalysisResult {
             result.put("conversationGuides", guideList);
         }
         
-        // 맞춤 조언
-        if (customAdvice != null) {
-            List<Map<String, Object>> adviceList = new java.util.ArrayList<>();
-            for (CustomAdvice advice : customAdvice) {
-                Map<String, Object> adviceMap = new java.util.HashMap<>();
-                adviceMap.put("title", advice.getTitle());
-                adviceMap.put("content", advice.getContent());
-                adviceList.add(adviceMap);
-            }
-            result.put("customAdvice", adviceList);
-        }
+        // 맞춤 조언 (테이블 삭제로 인해 제거됨)
         
         return result;
     }
