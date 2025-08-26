@@ -137,6 +137,11 @@
             justify-content: space-between;
         }
 
+        .nav-logo {
+            display: flex;
+            align-items: center;
+        }
+
         .brand-logo {
             display: flex;
             align-items: center;
@@ -145,6 +150,150 @@
             color: var(--text-primary);
             font-weight: 700;
             font-size: 1.25rem;
+        }
+
+        .nav-menu {
+            display: none;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-menu li a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+
+        .nav-menu li a:hover {
+            color: var(--color-primary-600);
+        }
+
+        .nav-auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-btn-login, .nav-btn-signup {
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+        }
+
+        .nav-btn-login {
+            color: var(--text-primary);
+        }
+
+        .nav-btn-login:hover {
+            background: var(--color-gray-100);
+        }
+
+        .nav-btn-signup {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .nav-btn-signup:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .user-dropdown {
+            position: relative;
+            margin-left: auto;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            border: none;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .user-name {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .user-name-text {
+            font-weight: 600;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            text-decoration-thickness: 2px;
+            cursor: pointer;
+        }
+
+        .user-greet {
+            cursor: default;
+            text-decoration: none;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-primary);
+            border: 1px solid var(--color-gray-200);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all var(--transition-fast);
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: background var(--transition-fast);
+        }
+
+        .dropdown-item:hover {
+            background: var(--color-gray-50);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--color-gray-200);
+            margin: 0.5rem 0;
+        }
+
+        @media (min-width: 768px) {
+            .nav-menu {
+                display: flex;
+            }
         }
 
         .heart-icon {
@@ -172,6 +321,176 @@
             justify-content: center;
             color: white;
             font-size: 1rem;
+        }
+
+        /* === Footer Styles === */
+        .site-footer {
+            background: linear-gradient(135deg, #1f1d3a 0%, #2d1b69 100%);
+            color: white;
+            padding: 3rem 0 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .site-footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-brand {
+            text-align: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-logo i {
+            color: #ec4899;
+            font-size: 1.5rem;
+        }
+
+        .footer-logo span {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            display: grid;
+            gap: 1.5rem;
+            text-align: center;
+        }
+
+        .footer-section h4 {
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color var(--transition-fast);
+        }
+
+        .footer-section a:hover {
+            color: #ec4899;
+        }
+
+        .footer-section .menu-item {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .footer-legal {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .footer-legal a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .footer-legal a:hover {
+            color: #ec4899;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all var(--transition-fast);
+        }
+
+        .social-links a:hover {
+            background: #ec4899;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .social-links svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr 2fr;
+                text-align: left;
+            }
+
+            .footer-brand {
+                text-align: left;
+            }
+
+            .footer-logo {
+                justify-content: flex-start;
+            }
+
+            .footer-links {
+                grid-template-columns: repeat(3, 1fr);
+                text-align: left;
+            }
+
+            .footer-bottom {
+                flex-direction: row;
+                justify-content: space-between;
+                text-align: left;
+            }
         }
 
         /* === Main Container === */
@@ -723,15 +1042,56 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="/DateGenie/index.html" class="brand-logo">
-                <i class="fas fa-heart heart-icon"></i>
-                <span>Date Genie</span>
-            </a>
-            <div class="user-info">
-                <div class="user-avatar">
-                    <i class="fas fa-user"></i>
+            <div class="nav-logo">
+                <a href="#" id="logoHomeLink" class="brand-logo" aria-label="Date Genie Home">
+                    <i class="fas fa-heart heart-icon" aria-hidden="true"></i>
+                    <span class="logo-text">Date Genie</span>
+                </a>
+            </div>
+            
+            <ul class="nav-menu" id="primaryMenu" aria-hidden="true">
+                <li><a href="/DateGenie/index.html#home">홈</a></li>
+                <li><a href="/DateGenie/index.html#features">기능</a></li>
+                <li><a href="/DateGenie/index.html#pricing">요금제</a></li>
+                <li><a href="/DateGenie/index.html#faq">FAQ</a></li>
+            </ul>
+            
+            <div class="nav-auth-buttons" id="authButtons">
+                <a href="/DateGenie/login.html" class="nav-btn-login">로그인</a>
+                <a href="/DateGenie/signup.html" class="nav-btn-signup">회원가입</a>
+            </div>
+            
+            <!-- User Dropdown Menu (로그인 후 표시) -->
+            <div class="user-dropdown" id="userDropdown" style="display: none;">
+                <div class="user-info" id="userDropdownToggle">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiNmM2Y0ZjYiLz4KPGNpcmNsZSBjeD0iMzIiIGN5PSIyNiIgcj0iMTAiIGZpbGw9IiM2YjczODAiLz4KPHBhdGggZD0iTTMyIDQ0Yy04IDAtMTUgNC0xNSAxMnYyaDMwdi0yYzAtOC03LTEyLTE1LTEyeiIgZmlsbD0iIzZiNzM4MCIvPgo8L3N2Zz4K" alt="프로필" class="user-avatar" id="userAvatar">
+                    <span class="user-name">
+                        <span id="userNameText" class="user-name-text">사용자</span><span class="user-greet">님 환영합니다</span>
+                    </span>
                 </div>
-                <span id="userName">사용자님</span>
+                <div class="dropdown-menu" id="userDropdownMenu">
+                    <a href="/DateGenie/upload.html" class="dropdown-item">
+                        <i class="fas fa-upload"></i>
+                        <span>파일 업로드</span>
+                    </a>
+                    <a href="/DateGenie/dashboard.html" class="dropdown-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>마이페이지</span>
+                    </a>
+                    <a href="/DateGenie/profile-edit.html" class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        <span>회원정보 수정</span>
+                    </a>
+                    <a href="/DateGenie/settings.html" class="dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        <span>설정</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>로그아웃</span>
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
@@ -769,7 +1129,7 @@
                     </div>
                     <div class="section-title">
                         <h3>호감도 변화 추이</h3>
-                        <p class="section-subtitle">최근 10일간 관심도 변화</p>
+                        <p class="section-subtitle" id="trendPeriodText">분석 기간 계산 중...</p>
                     </div>
                 </div>
                 <div class="chart-container">
@@ -1184,18 +1544,89 @@
         
         // 기본 추이 데이터
         function getDefaultTrendData() {
-            return [
-                { date: '8월 13일', value: 45 },
-                { date: '8월 14일', value: 52 },
-                { date: '8월 15일', value: 48 },
-                { date: '8월 16일', value: 58 },
-                { date: '8월 17일', value: 62 },
-                { date: '8월 18일', value: 59 },
-                { date: '8월 19일', value: 67 },
-                { date: '8월 20일', value: 71 },
-                { date: '8월 21일', value: 69 },
-                { date: '8월 22일', value: 76 }
-            ];
+            // 동적으로 최근 7-14일간 데이터 생성
+            const today = new Date();
+            const data = [];
+            const daysCount = Math.floor(Math.random() * 8) + 7; // 7-14일
+            
+            let currentValue = Math.floor(Math.random() * 20) + 40; // 시작값 40-60
+            
+            for (let i = daysCount - 1; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+                
+                // 현실적인 호감도 변화 패턴 생성
+                const randomChange = (Math.random() - 0.5) * 10; // -5 ~ +5 변화
+                const trendChange = i < daysCount / 2 ? 2 : 1; // 최근으로 올수록 약간 상승 경향
+                
+                currentValue += randomChange + trendChange;
+                currentValue = Math.max(20, Math.min(85, currentValue)); // 20-85 범위로 제한
+                
+                data.push({
+                    date: formatDateForChart(date),
+                    value: Math.round(currentValue),
+                    messageCount: Math.floor(Math.random() * 30) + 5, // 5-35 메시지
+                    avgResponseTime: Math.floor(Math.random() * 120) + 10 // 10-130분
+                });
+            }
+            
+            return data;
+        }
+        
+        // 차트용 날짜 포맷팅
+        function formatDateForChart(date) {
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+            
+            if (date.toDateString() === today.toDateString()) {
+                return '오늘';
+            } else if (date.toDateString() === yesterday.toDateString()) {
+                return '어제';
+            } else {
+                return `${month}월 ${day}일`;
+            }
+        }
+        
+        // 실제 대화 데이터에서 호감도 지수 계산 (향후 API 연동용)
+        function calculateAffectionScore(dayData) {
+            if (!dayData) return 0;
+            
+            // 1. 메시지 빈도 점수 (0-100)
+            const messageFrequency = Math.min(100, (dayData.messageCount || 0) * 3);
+            
+            // 2. 응답 속도 점수 (0-100) - 빠를수록 높은 점수
+            const avgResponseMinutes = dayData.avgResponseTime || 180;
+            const responseSpeed = Math.max(0, 100 - (avgResponseMinutes / 3));
+            
+            // 3. 감정 톤 점수 (0-100)
+            const positiveRatio = dayData.positiveRatio || 0.5;
+            const emotionTone = positiveRatio * 100;
+            
+            // 4. 대화 깊이 점수 (0-100) - 메시지 길이 기반
+            const avgLength = dayData.avgMessageLength || 20;
+            const conversationDepth = Math.min(100, Math.max(0, (avgLength - 10) * 2));
+            
+            // 가중치 적용하여 종합 점수 계산
+            const weightedScore = (
+                messageFrequency * 0.30 +    // 메시지 빈도 30%
+                responseSpeed * 0.25 +       // 응답 속도 25%
+                emotionTone * 0.30 +         // 감정 톤 30%
+                conversationDepth * 0.15     // 대화 깊이 15%
+            );
+            
+            return Math.round(Math.max(0, Math.min(100, weightedScore)));
+        }
+        
+        // 대화 기간 계산
+        function calculateConversationSpan(conversationData) {
+            if (!conversationData || conversationData.length === 0) return 7;
+            
+            // 실제 구현에서는 메시지 타임스탬프를 기반으로 계산
+            // 현재는 데이터 포인트 수를 기반으로 추정
+            return Math.max(1, conversationData.length);
         }
         
         // 기본 대화 가이드
@@ -1527,14 +1958,21 @@
             }
 
             initCharts() {
-                // 관심도 변화 추이 차트
+                // 호감도 변화 추이 차트
+                const trendPeriod = this.calculateOptimalPeriod(this.data.interestTrendData);
+                const chartTitle = this.generateChartTitle(trendPeriod, this.data.interestTrendData);
+                
+                // 부제목 업데이트
+                const periodText = document.getElementById('trendPeriodText');
+                if (periodText) periodText.textContent = chartTitle.subtitle;
+                
                 const interestCtx = document.getElementById('interestChart').getContext('2d');
                 new Chart(interestCtx, {
                     type: 'line',
                     data: {
                         labels: this.data.interestTrendData.map(item => item.date),
                         datasets: [{
-                            label: '관심도 지수',
+                            label: '호감도 지수',
                             data: this.data.interestTrendData.map(item => item.value),
                             borderColor: '#8b5cf6',
                             backgroundColor: 'rgba(139, 92, 246, 0.1)',
@@ -1700,6 +2138,53 @@
                 
                 cards.forEach(card => observer.observe(card));
             }
+            
+            // 최적 기간 계산
+            calculateOptimalPeriod(trendData) {
+                if (!trendData || trendData.length === 0) {
+                    return { unit: 'day', count: 7, displayText: '최근 7일간' };
+                }
+                
+                const totalDays = trendData.length;
+                
+                if (totalDays <= 7) {
+                    return { 
+                        unit: 'day', 
+                        count: totalDays, 
+                        displayText: totalDays === 1 ? '오늘' : `최근 ${totalDays}일간`
+                    };
+                }
+                if (totalDays <= 14) {
+                    return { 
+                        unit: 'day', 
+                        count: totalDays, 
+                        displayText: `최근 ${totalDays}일간`
+                    };
+                }
+                if (totalDays <= 30) {
+                    const weeks = Math.ceil(totalDays / 7);
+                    return { 
+                        unit: 'week', 
+                        count: weeks, 
+                        displayText: `최근 ${weeks}주간`
+                    };
+                }
+                
+                const months = Math.ceil(totalDays / 30);
+                return { 
+                    unit: 'month', 
+                    count: Math.min(months, 6), 
+                    displayText: `최근 ${Math.min(months, 6)}개월간`
+                };
+            }
+            
+            // 차트 제목 생성
+            generateChartTitle(period, trendData) {
+                return {
+                    title: '호감도 변화 추이',
+                    subtitle: `${period.displayText} 호감도 변화`
+                };
+            }
         }
 
         // === 향상된 앱 초기화 ===
@@ -1770,7 +2255,149 @@
         function hideLoadingState() {
             // 로딩 메시지는 ResultsFinalController에서 실제 데이터로 교체됨
         }
+
+        // === 사용자 드롭다운 메뉴 기능 ===
+        function initUserDropdown() {
+            const dropdownToggle = document.getElementById('userDropdownToggle');
+            const dropdownMenu = document.getElementById('userDropdownMenu');
+            
+            if (!dropdownToggle || !dropdownMenu) return;
+            
+            // 드롭다운 토글 클릭 이벤트
+            dropdownToggle.addEventListener('click', function(e) {
+                // "님, 환영합니다" 부분을 클릭했을 때는 드롭다운을 열지 않음
+                if (e.target.classList.contains('user-greet')) {
+                    return;
+                }
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const isOpen = dropdownMenu.classList.contains('show');
+                
+                if (isOpen) {
+                    closeDropdown();
+                } else {
+                    openDropdown();
+                }
+            });
+            
+            // 문서 클릭 시 드롭다운 닫기
+            document.addEventListener('click', function(e) {
+                if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    closeDropdown();
+                }
+            });
+            
+            function openDropdown() {
+                dropdownMenu.classList.add('show');
+                dropdownToggle.setAttribute('aria-expanded', 'true');
+            }
+            
+            function closeDropdown() {
+                dropdownMenu.classList.remove('show');
+                dropdownToggle.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        // === 로그아웃 기능 ===
+        function logout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                // 세션 정리
+                sessionStorage.clear();
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userData');
+                
+                // 로그인 페이지로 이동
+                window.location.href = '/DateGenie/login.html';
+            }
+        }
+
+        // === 초기화 함수 ===
+        document.addEventListener('DOMContentLoaded', function() {
+            // 드롭다운 메뉴 초기화
+            initUserDropdown();
+            
+            // 홈 버튼 링크 설정
+            const logoHomeLink = document.getElementById('logoHomeLink');
+            if (logoHomeLink) {
+                logoHomeLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = '/DateGenie/index.html';
+                });
+            }
+        });
     </script>
+    
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <i class="fas fa-heart"></i>
+                        <span>Date Genie</span>
+                    </div>
+                    <p class="footer-description">AI로 분석하는 연애 전략</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-section">
+                        <h4>페이지</h4>
+                        <ul>
+                            <li><a href="/DateGenie/index.html">홈</a></li>
+                            <li><a href="/DateGenie/index.html#features">기능</a></li>
+                            <li><a href="/DateGenie/index.html#pricing">요금제</a></li>
+                            <li><a href="/DateGenie/index.html#faq">FAQ</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4>기능</h4>
+                        <ul>
+                            <li><span class="menu-item">마이페이지</span></li>
+                            <li><span class="menu-item">파일 업로드</span></li>
+                            <li><span class="menu-item">회원정보 수정</span></li>
+                            <li><span class="menu-item">설정</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4>지원 & 도움말</h4>
+                        <ul>
+                            <li><a href="/DateGenie/index.html#faq">자주하는 질문</a></li>
+                            <li><a href="#support">고객센터</a></li>
+                            <li><a href="#guide">사용 가이드</a></li>
+                            <li><a href="#contact">문의하기</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <a href="/DateGenie/terms.html">이용약관</a>
+                    <span aria-hidden="true">·</span>
+                    <a href="/DateGenie/privacy.html">개인정보처리방침</a>
+                    <span aria-hidden="true">·</span>
+                    <span>© <span id="footerYear">2025</span> Date Genie. All rights reserved.</span>
+                </div>
+                <div class="social-links">
+                    <a href="https://github.com/2025-SMHRD-IS-CLOUD-3/DateGenie" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@%EC%A0%95%EA%B4%80%EC%98%81-v2i" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://www.instagram.com/kwanhh25/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.40s-.644-1.44-1.439-1.40z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
     
     <!-- 접근성 개선: Skip Link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
