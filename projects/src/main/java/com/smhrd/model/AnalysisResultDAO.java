@@ -35,17 +35,34 @@ public class AnalysisResultDAO {
         try {
             session = sqlSessionFactory.openSession();
             
+            // 저장할 데이터 정보 출력 (디버깅)
+            System.out.println("저장할 분석 결과:");
+            System.out.println("  sessionId: " + analysisResult.getSessionId());
+            System.out.println("  userId: " + analysisResult.getUserId());
+            System.out.println("  partnerName: " + analysisResult.getPartnerName());
+            System.out.println("  sessionName: " + analysisResult.getSessionName());
+            if (analysisResult.getMainResults() != null) {
+                System.out.println("  successRate: " + analysisResult.getMainResults().getSuccessRate());
+                System.out.println("  relationshipStage: " + analysisResult.getMainResults().getRelationshipStage());
+            } else {
+                System.out.println("  mainResults: null");
+            }
+            
             // 기존 결과가 있는지 확인
             AnalysisResult existing = session.selectOne("com.smhrd.db.ResultMapper.getBySessionId", analysisResult.getSessionId());
             
             if (existing != null) {
                 // 업데이트
+                System.out.println("기존 결과 업데이트 시도");
                 int result = session.update("com.smhrd.db.ResultMapper.updateAnalysisResult", analysisResult);
                 success = (result > 0);
+                System.out.println("업데이트 결과: " + result);
             } else {
                 // 새로 삽입
+                System.out.println("새 결과 삽입 시도");
                 int result = session.insert("com.smhrd.db.ResultMapper.insertAnalysisResult", analysisResult);
                 success = (result > 0);
+                System.out.println("삽입 결과: " + result);
             }
             
             if (success) {
@@ -288,15 +305,32 @@ public class AnalysisResultDAO {
         List<Map<String, Object>> history = null;
         
         try {
+            System.out.println("SqlSession 팩토리 생성 시작");
             session = sqlSessionFactory.openSession();
+            System.out.println("SqlSession 생성 완료");
             
             Map<String, Object> params = new HashMap<>();
             params.put("userEmail", userEmail);
             params.put("limit", 20); // 최근 20개만
             
+            System.out.println("히스토리 조회 파라미터: " + params);
+            System.out.println("매퍼 쿼리 실행 시작: com.smhrd.db.ResultMapper.getUserHistory");
+            
             history = session.selectList("com.smhrd.db.ResultMapper.getUserHistory", params);
+            System.out.println("매퍼 쿼리 실행 완료");
             
             System.out.println("사용자 히스토리 조회 - 사용자: " + userEmail + ", 건수: " + (history != null ? history.size() : 0));
+            
+            // 첫 번째 결과 상세 정보 출력 (디버깅)
+            if (history != null && !history.isEmpty()) {
+                System.out.println("첫 번째 히스토리 항목:");
+                Map<String, Object> first = history.get(0);
+                for (Map.Entry<String, Object> entry : first.entrySet()) {
+                    System.out.println("  " + entry.getKey() + ": " + entry.getValue());
+                }
+            } else {
+                System.out.println("히스토리가 비어있습니다. analysis_sessions 테이블 확인 필요");
+            }
             
         } catch (Exception e) {
             System.err.println("사용자 히스토리 조회 중 오류: " + e.getMessage());
@@ -344,6 +378,24 @@ public class AnalysisResultDAO {
         }
         
         return success;
+    }
+    
+    /**
+     * 세션 ID로 분석 결과 존재 여부 확인
+     * @param sessionId 세션 ID
+     * @return 분석 결과 또는 null
+     */
+    public AnalysisResult findBySessionId(String sessionId) {
+        return getAnalysisResult(sessionId);
+    }
+    
+    /**
+     * 분석 결과 삽입 (saveHistory용)
+     * @param analysisResult 분석 결과
+     * @return 삽입 성공 여부
+     */
+    public boolean insert(AnalysisResult analysisResult) {
+        return saveAnalysisResult(analysisResult);
     }
     
     /**

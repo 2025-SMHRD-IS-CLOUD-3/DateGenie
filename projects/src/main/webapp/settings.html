@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="cache-version" content="3.3-20250826-2255">
     <title>설정 - Date Genie</title>
     <link rel="icon" type="image/svg+xml" href="images/icon.svg">
 
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
                  /* 설정 페이지 전용 스타일 */
@@ -608,12 +610,15 @@
 
         function loadUserInfo() {
             const userInfo = localStorage.getItem('user');
+            const authProvider = localStorage.getItem('authProvider');
             if (!userInfo) { 
+                console.log('로컬 스토리지에서 사용자 정보를 찾을 수 없음');
                 window.location.href = '/DateGenie/login.html'; 
                 return; 
             }
             
             const user = JSON.parse(userInfo);
+            console.log('사용자 정보 로드됨:', user.name, user.email);
             let profilePicture = user.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiNmM2Y0ZjYiLz4KPGNpcmNsZSBjeD0iMzIiIGN5PSIyNiIgcj0iMTAiIGZpbGw9IiM2YjczODAiLz4KPHBhdGggZD0iTTMyIDQ0Yy04IDAtMTUgNC0xNSAxMnYyaDMwdi0yYzAtOC03LTEyLTE1LTEyeiIgZmlsbD0iIzZiNzM4MCIvPgo8L3N2Zz4K';
             if (profilePicture.includes('googleusercontent.com') && profilePicture.includes('=s96-c')) {
                 profilePicture = profilePicture.replace('=s96-c','=s200-c');
@@ -824,19 +829,22 @@
             });
         }
 
-        // 오른쪽 하단 다크모드 버튼 이벤트 리스너
-        document.getElementById('darkModeToggleBtn').addEventListener('click', function() {
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            const currentMode = localStorage.getItem('darkMode') === 'true';
-            const newMode = !currentMode;
-            
-            // 토글 상태 업데이트
-            darkModeToggle.checked = newMode;
-            
-            // 다크모드 적용
-            document.body.classList.toggle('dark-mode', newMode);
-            localStorage.setItem('darkMode', newMode);
-        });
+        // 오른쪽 하단 다크모드 버튼 이벤트 리스너 (요소가 있는 경우에만)
+        const darkModeToggleBtn = document.getElementById('darkModeToggleBtn');
+        if (darkModeToggleBtn) {
+            darkModeToggleBtn.addEventListener('click', function() {
+                const darkModeToggle = document.getElementById('darkModeToggle');
+                const currentMode = localStorage.getItem('darkMode') === 'true';
+                const newMode = !currentMode;
+                
+                // 토글 상태 업데이트
+                if (darkModeToggle) darkModeToggle.checked = newMode;
+                
+                // 다크모드 적용
+                document.body.classList.toggle('dark-mode', newMode);
+                localStorage.setItem('darkMode', newMode);
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', function(){
             loadUserInfo();
@@ -845,5 +853,6 @@
         });
     </script>
     <script src="js/footer.js"></script>
+    <script src="js/dark-mode.js"></script>
 </body>
 </html>

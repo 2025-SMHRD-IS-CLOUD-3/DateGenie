@@ -103,6 +103,10 @@ public class AnthropicAnalysisController extends HttpServlet {
                 handleGetHistory(request, response, user, responseData, out);
             } else if ("checkSession".equals(action)) {
                 handleCheckSession(request, response, user, responseData, out);
+            } else if ("saveHistory".equals(action)) {
+                handleSaveHistory(request, response, user, responseData, out);
+            } else if ("testInsert".equals(action)) {
+                handleTestInsert(request, response, user, responseData, out);
             } else {
                 responseData.put("success", false);
                 responseData.put("message", "지원되지 않는 액션입니다: " + action);
@@ -158,6 +162,8 @@ public class AnthropicAnalysisController extends HttpServlet {
             }
             
             System.out.println("API 분석 완료 - sessionId: " + analysisResult.getSessionId());
+            System.out.println("분석 결과 사용자 ID: " + analysisResult.getUserId());
+            System.out.println("현재 로그인 사용자: " + user.getEmail());
             
             // 데이터베이스에 저장
             boolean dbSaved = saveToDatabase(analysisResult);
@@ -255,23 +261,74 @@ public class AnthropicAnalysisController extends HttpServlet {
         
         try {
             // 사용자별 분석 히스토리 조회
-            Map<String, Object> historyData = new HashMap<>();
-            historyData.put("analysisHistory", resultDAO.getUserAnalysisHistory(user.getEmail()));
-            historyData.put("analysisStats", resultDAO.getAnalysisStats(user.getEmail()));
+            List<Map<String, Object>> analysisHistory = null;
+            Map<String, Object> analysisStats = null;
+            
+            try {
+                analysisHistory = resultDAO.getUserAnalysisHistory(user.getEmail());
+                System.out.println("분석 히스토리 조회 결과: " + (analysisHistory != null ? analysisHistory.size() : "null") + "건");
+            } catch (Exception historyError) {
+                System.err.println("분석 히스토리 조회 실패: " + historyError.getMessage());
+                historyError.printStackTrace();
+                analysisHistory = new java.util.ArrayList<>();
+            }
+            
+            try {
+                analysisStats = resultDAO.getAnalysisStats(user.getEmail());
+                System.out.println("분석 통계 조회 결과: " + (analysisStats != null ? "성공" : "null"));
+            } catch (Exception statsError) {
+                System.err.println("분석 통계 조회 실패: " + statsError.getMessage());
+                statsError.printStackTrace();
+                analysisStats = new HashMap<>();
+                analysisStats.put("totalAnalysis", 0);
+                analysisStats.put("lastAnalysisFormatted", "-");
+                analysisStats.put("averageScore", 0);
+            }
+            
+            // 디버깅 정보 출력
+            System.out.println("조회된 분석 히스토리:");
+            if (analysisHistory != null && !analysisHistory.isEmpty()) {
+                for (int i = 0; i < Math.min(3, analysisHistory.size()); i++) {
+                    Map<String, Object> record = analysisHistory.get(i);
+                    System.out.println("  [" + i + "] sessionId: " + record.get("sessionId") + 
+                                     ", partnerName: " + record.get("partnerName") + 
+                                     ", createdAt: " + record.get("createdAt"));
+                }
+            } else {
+                System.out.println("  분석 히스토리가 비어있습니다.");
+            }
+            
+            System.out.println("조회된 분석 통계:");
+            System.out.println("  totalAnalysis: " + analysisStats.get("totalAnalysis"));
+            System.out.println("  lastAnalysisFormatted: " + analysisStats.get("lastAnalysisFormatted"));
+            System.out.println("  averageScore: " + analysisStats.get("averageScore"));
             
             responseData.put("success", true);
-            responseData.put("historyData", historyData);
+            responseData.put("results", analysisHistory != null ? analysisHistory : new java.util.ArrayList<>());
+            responseData.put("stats", analysisStats != null ? analysisStats : new HashMap<>());
             
-            System.out.println("히스토리 조회 완료");
-            out.print(gson.toJson(responseData));
+            System.out.println("히스토리 조회 응답 전송 시작");
+            String jsonResponse = gson.toJson(responseData);
+            System.out.println("JSON 응답 길이: " + jsonResponse.length());
+            out.print(jsonResponse);
+            out.flush();
+            System.out.println("히스토리 조회 응답 전송 완료");
             
         } catch (Exception e) {
-            System.err.println("히스토리 조회 중 오류: " + e.getMessage());
+            System.err.println("히스토리 조회 중 예외 오류: " + e.getMessage());
             e.printStackTrace();
             
-            responseData.put("success", false);
-            responseData.put("message", "히스토리 조회 중 오류가 발생했습니다.");
-            out.print(gson.toJson(responseData));
+            try {
+                responseData.put("success", false);
+                responseData.put("message", "히스토리 조회 중 오류가 발생했습니다: " + e.getMessage());
+                responseData.put("results", new java.util.ArrayList<>());
+                responseData.put("stats", new HashMap<>());
+                out.print(gson.toJson(responseData));
+                out.flush();
+            } catch (Exception sendError) {
+                System.err.println("오류 응답 전송 실패: " + sendError.getMessage());
+                sendError.printStackTrace();
+            }
         }
     }
     
@@ -426,6 +483,135 @@ public class AnthropicAnalysisController extends HttpServlet {
             
             responseData.put("success", false);
             responseData.put("message", "세션 확인 실패: " + e.getMessage());
+            out.print(gson.toJson(responseData));
+        }
+    }
+    
+    /**
+     * 마이페이지 분석 결과 저장 처리
+     */
+    private void handleSaveHistory(HttpServletRequest request, HttpServletResponse response, 
+            UserInfo user, Map<String, Object> responseData, PrintWriter out) {
+        try {
+            System.out.println("마이페이지 분석 결과 저장 요청 - 사용자: " + user.getEmail());
+            
+            // 요청 파라미터 추출
+            String sessionId = request.getParameter("sessionId");
+            String partnerName = request.getParameter("partnerName");
+            String analysisDataJson = request.getParameter("analysisData");
+            String createdAt = request.getParameter("createdAt");
+            
+            System.out.println("저장할 데이터:");
+            System.out.println("  sessionId: " + sessionId);
+            System.out.println("  partnerName: " + partnerName);
+            System.out.println("  createdAt: " + createdAt);
+            System.out.println("  analysisData 길이: " + (analysisDataJson != null ? analysisDataJson.length() : 0));
+            
+            // 필수 파라미터 검증
+            if (sessionId == null || sessionId.trim().isEmpty()) {
+                responseData.put("success", false);
+                responseData.put("message", "세션 ID가 필요합니다.");
+                out.print(gson.toJson(responseData));
+                return;
+            }
+            
+            if (partnerName == null || partnerName.trim().isEmpty()) {
+                responseData.put("success", false);
+                responseData.put("message", "상대방 이름이 필요합니다.");
+                out.print(gson.toJson(responseData));
+                return;
+            }
+            
+            // 기존 분석 결과가 있는지 확인 (중복 방지)
+            AnalysisResult existingResult = resultDAO.findBySessionId(sessionId);
+            if (existingResult != null) {
+                System.out.println("이미 저장된 분석 결과입니다: " + sessionId);
+                responseData.put("success", true);
+                responseData.put("message", "이미 저장된 분석 결과입니다.");
+                responseData.put("sessionId", sessionId);
+                out.print(gson.toJson(responseData));
+                return;
+            }
+            
+            // 새로운 분석 결과 생성
+            AnalysisResult analysisResult = new AnalysisResult();
+            analysisResult.setSessionId(sessionId);
+            analysisResult.setUserId(user.getEmail());  // 사용자 이메일을 ID로 사용
+            analysisResult.setPartnerName(partnerName.trim());
+            analysisResult.setAnalysisData(analysisDataJson);
+            analysisResult.setCreatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+            
+            // 데이터베이스에 저장
+            boolean saveSuccess = resultDAO.insert(analysisResult);
+            
+            if (saveSuccess) {
+                System.out.println("마이페이지 분석 결과 저장 성공: " + sessionId);
+                responseData.put("success", true);
+                responseData.put("message", "마이페이지에 분석 결과가 저장되었습니다.");
+                responseData.put("sessionId", sessionId);
+            } else {
+                System.err.println("마이페이지 분석 결과 저장 실패: " + sessionId);
+                responseData.put("success", false);
+                responseData.put("message", "분석 결과 저장에 실패했습니다.");
+            }
+            
+            out.print(gson.toJson(responseData));
+            
+        } catch (Exception e) {
+            System.err.println("마이페이지 저장 중 오류: " + e.getMessage());
+            e.printStackTrace();
+            
+            responseData.put("success", false);
+            responseData.put("message", "마이페이지 저장 실패: " + e.getMessage());
+            out.print(gson.toJson(responseData));
+        }
+    }
+    
+    /**
+     * 테스트용 데이터 삽입
+     */
+    private void handleTestInsert(HttpServletRequest request, HttpServletResponse response, 
+            UserInfo user, Map<String, Object> responseData, PrintWriter out) {
+        try {
+            System.out.println("테스트 데이터 삽입 시도 - 사용자: " + user.getEmail());
+            
+            // 간단한 테스트 데이터 생성
+            AnalysisResult testResult = new AnalysisResult();
+            testResult.setSessionId("test_" + System.currentTimeMillis());
+            testResult.setUserId(user.getEmail());
+            testResult.setPartnerName("테스트 상대방");
+            testResult.setSessionName("테스트 분석 결과");
+            
+            // MainResults 설정
+            AnalysisResult.MainResults mainResults = new AnalysisResult.MainResults();
+            mainResults.setSuccessRate(85.5);
+            mainResults.setConfidenceLevel(92.0);
+            mainResults.setRelationshipStage("친밀한 단계");
+            mainResults.setHeroInsight("테스트 분석 결과입니다.");
+            testResult.setMainResults(mainResults);
+            
+            // 데이터베이스에 저장
+            boolean success = resultDAO.saveAnalysisResult(testResult);
+            
+            if (success) {
+                System.out.println("테스트 데이터 저장 성공");
+                responseData.put("success", true);
+                responseData.put("message", "테스트 데이터가 성공적으로 저장되었습니다.");
+                responseData.put("sessionId", testResult.getSessionId());
+            } else {
+                System.err.println("테스트 데이터 저장 실패");
+                responseData.put("success", false);
+                responseData.put("message", "테스트 데이터 저장에 실패했습니다.");
+            }
+            
+            out.print(gson.toJson(responseData));
+            
+        } catch (Exception e) {
+            System.err.println("테스트 삽입 중 오류: " + e.getMessage());
+            e.printStackTrace();
+            
+            responseData.put("success", false);
+            responseData.put("message", "테스트 삽입 실패: " + e.getMessage());
             out.print(gson.toJson(responseData));
         }
     }

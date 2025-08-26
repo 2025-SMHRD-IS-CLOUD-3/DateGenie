@@ -13,6 +13,8 @@ public class AnalysisResult {
     private String userId;
     private String sessionName;
     private String partnerName;
+    private String analysisData;  // JSON 형태의 분석 데이터
+    private java.sql.Timestamp createdAt;  // 생성 시간
     
     private MainResults mainResults;
     private EmotionAnalysis emotionAnalysis;
@@ -273,4 +275,11 @@ public class AnalysisResult {
         
         return result;
     }
+    
+    
+    public String getAnalysisData() { return analysisData; }
+    public void setAnalysisData(String analysisData) { this.analysisData = analysisData; }
+    
+    public java.sql.Timestamp getCreatedAt() { return createdAt; }
+    public void setCreatedAt(java.sql.Timestamp createdAt) { this.createdAt = createdAt; }
 }

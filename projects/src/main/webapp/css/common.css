@@ -1,0 +1,168 @@
+/* 다크모드 토글 버튼 */
+.dark-mode-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+/* 라이트 모드 버튼 스타일 */
+.dark-mode-toggle.light {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.dark-mode-toggle.light:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* 다크 모드 버튼 스타일 */
+.dark-mode-toggle.dark {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+}
+
+.dark-mode-toggle.dark:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(252, 182, 159, 0.4);
+}
+
+/* 다크모드 기본 변수 */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --card-bg: #ffffff;
+    --border-color: #e0e0e0;
+    --input-bg: #ffffff;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --link-color: #007bff;
+}
+
+/* 다크모드 변수 */
+[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --text-color: #ffffff;
+    --card-bg: #2d2d2d;
+    --border-color: #404040;
+    --input-bg: #2d2d2d;
+    --shadow: rgba(255, 255, 255, 0.1);
+    --link-color: #66d9ff;
+}
+
+/* 다크모드 기본 스타일 */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
+}
+
+html[data-theme="dark"] {
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
+}
+
+body {
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
+}
+
+/* 모든 컨테이너 요소들 */
+[data-theme="dark"] .container,
+[data-theme="dark"] .content,
+[data-theme="dark"] .main-content,
+[data-theme="dark"] .panel,
+[data-theme="dark"] .card,
+[data-theme="dark"] .dashboard-card,
+[data-theme="dark"] .stats-card,
+[data-theme="dark"] .sidebar-nav,
+[data-theme="dark"] .nav-container,
+[data-theme="dark"] .upload-area,
+[data-theme="dark"] .drop-zone,
+[data-theme="dark"] .analysis-container,
+[data-theme="dark"] .result-section,
+[data-theme="dark"] .settings-content,
+[data-theme="dark"] .profile-content,
+[data-theme="dark"] nav.navbar,
+[data-theme="dark"] footer,
+[data-theme="dark"] .upload-shell,
+[data-theme="dark"] .dashboard-shell,
+[data-theme="dark"] .settings-shell,
+[data-theme="dark"] .profile-edit-shell,
+[data-theme="dark"] .login-container,
+[data-theme="dark"] .signup-container,
+[data-theme="dark"] .privacy-content,
+[data-theme="dark"] .terms-content,
+[data-theme="dark"] header,
+[data-theme="dark"] section,
+[data-theme="dark"] article,
+[data-theme="dark"] aside,
+[data-theme="dark"] .wrapper {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* 입력 필드 스타일 */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+    background-color: var(--input-bg) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* 텍스트 요소들 */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6,
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] div,
+[data-theme="dark"] li,
+[data-theme="dark"] td,
+[data-theme="dark"] th,
+[data-theme="dark"] label {
+    color: var(--text-color) !important;
+}
+
+/* 링크 스타일 */
+[data-theme="dark"] a:not(.btn) {
+    color: var(--link-color) !important;
+}
+
+/* 버튼 스타일 (다크모드 버튼 제외) */
+[data-theme="dark"] button:not(#dark-mode-toggle) {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* SVG 아이콘 스타일 */
+.icon-moon, .icon-sun {
+    width: 24px;
+    height: 24px;
+    transition: all 0.3s ease;
+}
+
+/* 버튼 회전 애니메이션 */
+.dark-mode-toggle.rotating {
+    animation: rotate 0.5s ease-in-out;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

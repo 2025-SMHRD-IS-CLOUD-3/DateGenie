@@ -170,8 +170,13 @@
             success_rate, confidence_level, relationship_stage, hero_insight,
             total_messages, analysis_status, created_at
         ) VALUES (
-            #{sessionId}, #{userId}, #{sessionName, jdbcType=VARCHAR}, #{partnerName},
-            #{mainResults.successRate}, #{mainResults.confidenceLevel}, #{mainResults.relationshipStage}, #{mainResults.heroInsight},
+            #{sessionId}, #{userId}, 
+            COALESCE(#{sessionName}, CONCAT(#{partnerName}, ' 대화 분석')), 
+            #{partnerName},
+            COALESCE(#{mainResults.successRate}, 0), 
+            COALESCE(#{mainResults.confidenceLevel}, 0), 
+            COALESCE(#{mainResults.relationshipStage}, '분석 중'), 
+            COALESCE(#{mainResults.heroInsight}, '분석이 완료되었습니다.'),
             0, 'completed', SYSDATE
         )
     </insert>
@@ -235,6 +240,7 @@
                 confidence_level as confidenceLevel,
                 relationship_stage as relationshipStage,
                 TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI') as analysisDate,
+                created_at as createdAt,
                 total_messages as totalMessages
             FROM analysis_sessions 
             WHERE user_id = #{userEmail}
