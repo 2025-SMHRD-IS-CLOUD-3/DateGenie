@@ -527,7 +527,6 @@
 				<div class="list">
 					<div class="list-item"><div class="left"><i class="fas fa-id-card"></i> 이름</div><div id="profileName">-</div></div>
 					<div class="list-item"><div class="left"><i class="fas fa-envelope"></i> 이메일</div><div id="profileEmail">-</div></div>
-					<div class="list-item"><div class="left"><i class="fas fa-phone"></i> 전화번호</div><div id="profilePhone">-</div></div>
 					<div class="list-item"><div class="left"><i class="fas fa-calendar"></i> 가입일</div><div id="profileJoinDate">-</div></div>
 					<div class="list-item"><div class="left"><i class="fas fa-chart-line"></i> 분석 횟수</div><div id="profileAnalysisCount">-</div></div>
                     </div>
@@ -615,24 +614,6 @@
 			window.location.href = '/DateGenie/login.html';
 		}
 
-        		// 전화번호 포맷팅 함수
-		function formatPhoneNumber(phone) {
-			// 숫자만 추출
-			const numbers = phone.replace(/\D/g, '');
-			
-			// 11자리 휴대폰 번호인 경우
-			if (numbers.length === 11) {
-				return numbers.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-			}
-			// 10자리 휴대폰 번호인 경우
-			else if (numbers.length === 10) {
-				return numbers.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-			}
-			// 그 외의 경우 원본 반환
-			else {
-				return phone;
-			}
-		}
 
 		function loadUserInfo() {
             const userInfo = localStorage.getItem('user');
@@ -652,16 +633,6 @@
 			document.getElementById('profileName').textContent = user.name || '-';
 			document.getElementById('profileEmail').textContent = user.email || '-';
 			
-			// 전화번호 표시 (하이픈 자동 추가)
-			const phoneElement = document.getElementById('profilePhone');
-			if (phoneElement) {
-				const phone = user.phone || '';
-				if (phone) {
-					phoneElement.textContent = formatPhoneNumber(phone);
-				} else {
-					phoneElement.textContent = '-';
-				}
-			}
 			
 			// 드롭다운 메뉴 사용자 정보 업데이트
 			const userAvatar = document.getElementById('userAvatar');

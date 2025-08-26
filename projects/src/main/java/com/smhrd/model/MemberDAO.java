@@ -159,6 +159,63 @@ public class MemberDAO {
 		return cnt > 0;
 	}
 	
+	// 계정 완전 삭제 메서드 (분석 데이터도 함께 삭제)
+	public boolean deleteAccount(String email) {
+		SqlSession sqlsession = sqlSessionFactory.openSession();
+		boolean success = false;
+		
+		try {
+			// 트랜잭션 시작
+			sqlsession.getConnection().setAutoCommit(false);
+			
+			// 1. 분석 관련 데이터 삭제 (foreign key 순서 고려)
+			// 관심도 추이 데이터 삭제
+			sqlsession.delete("com.smhrd.db.UserInfo.deleteUserInterestTrends", email);
+			
+			// 감정 분석 데이터 삭제
+			sqlsession.delete("com.smhrd.db.UserInfo.deleteUserEmotionAnalysis", email);
+			
+			// 긍정적 신호 데이터 삭제
+			sqlsession.delete("com.smhrd.db.UserInfo.deleteUserPositiveSignals", email);
+			
+			// 대표 메시지 데이터 삭제
+			sqlsession.delete("com.smhrd.db.UserInfo.deleteUserFavoriteMessages", email);
+			
+			// 분석 세션 데이터 삭제
+			sqlsession.delete("com.smhrd.db.UserInfo.deleteUserAnalysisSessions", email);
+			
+			// 2. 이메일 인증 데이터 삭제
+			sqlsession.delete("com.smhrd.db.UserInfo.deleteUserEmailVerifications", email);
+			
+			// 3. 사용자 계정 삭제
+			int userDeleted = sqlsession.delete("com.smhrd.db.UserInfo.deleteUser", email);
+			
+			if (userDeleted > 0) {
+				sqlsession.commit();
+				success = true;
+				System.out.println("계정 완전 삭제 완료: " + email);
+			} else {
+				sqlsession.rollback();
+				System.err.println("계정 삭제 실패: 사용자를 찾을 수 없음 - " + email);
+			}
+			
+		} catch (Exception e) {
+			try {
+				sqlsession.rollback();
+			} catch (Exception rollbackEx) {
+				System.err.println("롤백 실패: " + rollbackEx.getMessage());
+			}
+			System.err.println("MemberDAO.deleteAccount() 오류: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			if (sqlsession != null) {
+				sqlsession.close();
+			}
+		}
+		
+		return success;
+	}
+	
 }
 
 // 메서드 선언

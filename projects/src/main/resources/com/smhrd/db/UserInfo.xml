@@ -32,4 +32,53 @@
 		WHERE EMAIL = #{email}
 	</update>
 	
+	<!-- 계정 완전 삭제 관련 쿼리들 -->
+	
+	<!-- 사용자의 관심도 추이 데이터 삭제 -->
+	<delete id="deleteUserInterestTrends" parameterType="String">
+		DELETE FROM interest_trends 
+		WHERE session_id IN (
+			SELECT session_id FROM analysis_sessions WHERE user_id = #{email}
+		)
+	</delete>
+	
+	<!-- 사용자의 감정 분석 데이터 삭제 -->
+	<delete id="deleteUserEmotionAnalysis" parameterType="String">
+		DELETE FROM emotion_analysis 
+		WHERE session_id IN (
+			SELECT session_id FROM analysis_sessions WHERE user_id = #{email}
+		)
+	</delete>
+	
+	<!-- 사용자의 긍정적 신호 데이터 삭제 -->
+	<delete id="deleteUserPositiveSignals" parameterType="String">
+		DELETE FROM positive_signals 
+		WHERE session_id IN (
+			SELECT session_id FROM analysis_sessions WHERE user_id = #{email}
+		)
+	</delete>
+	
+	<!-- 사용자의 대표 메시지 데이터 삭제 -->
+	<delete id="deleteUserFavoriteMessages" parameterType="String">
+		DELETE FROM favorite_messages 
+		WHERE session_id IN (
+			SELECT session_id FROM analysis_sessions WHERE user_id = #{email}
+		)
+	</delete>
+	
+	<!-- 사용자의 분석 세션 데이터 삭제 -->
+	<delete id="deleteUserAnalysisSessions" parameterType="String">
+		DELETE FROM analysis_sessions WHERE user_id = #{email}
+	</delete>
+	
+	<!-- 사용자의 이메일 인증 데이터 삭제 -->
+	<delete id="deleteUserEmailVerifications" parameterType="String">
+		DELETE FROM email_verifications WHERE email = #{email}
+	</delete>
+	
+	<!-- 사용자 계정 삭제 -->
+	<delete id="deleteUser" parameterType="String">
+		DELETE FROM CAMPUS_24IS_CLOUD3_P2_4.USER_INFO WHERE EMAIL = #{email}
+	</delete>
+	
 </mapper>

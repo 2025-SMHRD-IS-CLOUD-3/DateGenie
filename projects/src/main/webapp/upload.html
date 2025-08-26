@@ -121,20 +121,8 @@
 			position: relative;
 			overflow: hidden;
 		}
-		.dropzone.dragover { 
-			background: rgba(124,58,237,.15); 
-			border-color: #7c3aed; 
-			border-style: solid;
-			transform: scale(1.02);
-			box-shadow: 0 10px 25px rgba(124,58,237,.2);
-		}
-		.dropzone:hover {
-			border-color: rgba(124,58,237,.6);
-			background: rgba(124,58,237,.08);
-		}
 		.dropzone input[type="file"] { display:none; }
 		.dropzone .label { display:inline-flex; align-items:center; gap:.5rem; background:linear-gradient(135deg,#ec4899,#8b5cf6); color:#fff; padding:.8rem 1.5rem; border-radius:12px; cursor:pointer; font-size:1.1rem; }
-		.dropzone .label:hover { transform: translateY(-2px); box-shadow:0 12px 26px rgba(236,72,153,.32); }
 		.dropzone-text { margin-top:1rem; color:#6b7280; font-size:1.1rem; }
 		.meta { margin-top:1rem; color:#6b7280; font-size:.9rem; }
 		
@@ -619,35 +607,25 @@
 
 			if (!dropzone || !fileInput) return;
 
-			// 드래그 앤 드롭 이벤트 개선
+			// 드래그 앤 드롭 이벤트 (hover 효과 제거됨)
 			dropzone.addEventListener('dragover', e => { 
 				e.preventDefault();
 				e.stopPropagation();
-				dropzone.classList.add('dragover');
-				console.log('Drag over detected');
 			});
 			
 			dropzone.addEventListener('dragenter', e => {
 				e.preventDefault();
 				e.stopPropagation();
-				dropzone.classList.add('dragover');
-				console.log('Drag enter detected');
 			});
 			
 			dropzone.addEventListener('dragleave', e => {
 				e.preventDefault();
 				e.stopPropagation();
-				// 드롭존을 벗어날 때만 dragover 제거 (자식 요소로 이동할 때는 유지)
-				if (!dropzone.contains(e.relatedTarget)) {
-					dropzone.classList.remove('dragover');
-					console.log('Drag leave detected');
-				}
 			});
 			
 			dropzone.addEventListener('drop', e => { 
 				e.preventDefault();
 				e.stopPropagation();
-				dropzone.classList.remove('dragover');
 				console.log('Drop detected, files:', e.dataTransfer.files.length);
 				
 				if (e.dataTransfer.files.length) {
@@ -712,13 +690,38 @@
 					}
 				}
 				
+				// 업로드 진행률 초기화 및 시작
+				const uploadText = document.getElementById('uploadText');
+				const uploadBar = document.getElementById('uploadProgress');
+				
+				uploadText.textContent = `${files.length}개 파일 업로드 중...`;
+				uploadBar.style.width = '0%';
+				
 				// 사용자 피드백
 				if (window.showNotification) {
 					window.showNotification(`${files.length}개 파일 업로드를 시작합니다.`, 'info');
 				}
 				
-				Array.from(files).forEach(file => {
+				// 업로드 진행률 애니메이션
+				let uploadProgress = 0;
+				const uploadStep = 100 / files.length; // 파일당 진행률
+				let processedFiles = 0;
+				
+				Array.from(files).forEach((file, index) => {
 					console.log('Adding file:', file.name, file.size, file.type);
+					
+					// 파일 처리 시뮬레이션 (실제로는 즉시 처리되지만 사용자 경험을 위해)
+					setTimeout(() => {
+						processedFiles++;
+						uploadProgress = (processedFiles / files.length) * 100;
+						uploadBar.style.width = uploadProgress + '%';
+						
+						if (processedFiles === files.length) {
+							uploadText.textContent = '업로드 완료! 분석을 시작하세요.';
+						} else {
+							uploadText.textContent = `${processedFiles}/${files.length} 파일 업로드 중...`;
+						}
+					}, index * 200); // 각 파일마다 200ms 지연으로 순차 처리 시각화
 					const fileItem = {
 						id: Date.now() + Math.random(),
 						name: file.name,
@@ -879,11 +882,11 @@
 				analyzeBtn.disabled = true;
 				analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 분석 중...';
 				
-				// 진행률 초기화
+				// 분석 진행률 초기화 (업로드는 별도 진행률로 관리)
 				analysisText.textContent = 'Anthropic Claude AI가 대화를 분석 중입니다... (최대 60초 소요)';
 				analysisBar.style.width = '10%';
 				
-				// 시각적 피드백을 위한 진행률 애니메이션
+				// 분석용 시각적 피드백을 위한 진행률 애니메이션
 				let progressStep = 10;
 				progressInterval = setInterval(() => {
 					if (progressStep < 40) {
