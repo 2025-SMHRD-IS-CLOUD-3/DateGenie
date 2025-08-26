@@ -76,17 +76,32 @@
         WHERE session_id = #{sessionId}
     </select>
 
-    <!-- 관심도 추이 조회 (최적화: 인덱스 힌트 및 필요한 컬럼만 선택) -->
-    <select id="getInterestTrends" parameterType="string" resultType="map">
-        SELECT /*+ INDEX(interest_trends IDX_INTEREST_SESSION_DATE) */
-               TO_CHAR(trend_date, 'YYYY-MM-DD') as date, 
-               interest_value as value, 
-               message_count as messageCount, 
-               response_time_avg as avgResponseTime, 
-               emoji_usage_count as emojiCount 
+    <!-- 관심도 추이 조회 (캐시 우회용 새 버전) -->
+    <select id="getInterestTrendsNew" parameterType="string" resultType="map">
+        SELECT 
+            TO_CHAR(trend_date, 'YYYY-MM-DD') as date,
+            interest_value as value,
+            message_count as messageCount,
+            response_time_avg as avgResponseTime,
+            emoji_usage_count as emojiCount
         FROM interest_trends 
-        WHERE session_id = #{sessionId} 
+        WHERE session_id = #{sessionId}
         ORDER BY trend_date
+    </select>
+    
+    <!-- 기존 쿼리 백업 (사용 안함) -->
+    <select id="getInterestTrends" parameterType="string" resultType="map">
+        <![CDATA[
+        SELECT 
+            TO_CHAR(trend_date, 'YYYY-MM-DD') as date,
+            interest_value as value,
+            message_count as messageCount,
+            response_time_avg as avgResponseTime,
+            emoji_usage_count as emojiCount
+        FROM interest_trends 
+        WHERE session_id = #{sessionId}
+        ORDER BY trend_date
+        ]]>
     </select>
 
     <!-- 감정 분석 조회 (최적화: 필요한 컬럼만 선택) -->
@@ -113,8 +128,7 @@
 
     <!-- 대표 호감 메시지 조회 (최적화: 필요한 컬럼만 선택) -->
     <select id="getFavoriteMessage" parameterType="string" resultType="map">
-        SELECT /*+ INDEX(favorite_messages IDX_FAVORITE_SESSION_CONF) */
-               message_text as text, 
+        SELECT message_text as text, 
                confidence_percentage as confidence, 
                analysis_reason as reason,
                TO_CHAR(message_date, 'YYYY-MM-DD HH24:MI:SS') as messageDate
@@ -127,8 +141,7 @@
 
     <!-- 사용자별 분석 히스토리 조회 (최적화: created_at 기반 조회) -->
     <select id="getUserAnalysisHistory" parameterType="string" resultType="map">
-        SELECT /*+ INDEX(analysis_sessions IDX_ANALYSIS_USER_CREATED) */
-            session_id as sessionId,
+        SELECT session_id as sessionId,
             session_name as sessionName,
             partner_name as partnerName,
             success_rate as successRate,
@@ -175,22 +188,36 @@
     </update>
     
     <!-- 세션 ID로 AnalysisResult 객체 조회 (created_at 사용) -->
-    <select id="getBySessionId" parameterType="string" resultType="com.smhrd.model.AnalysisResult">
+    <select id="getBySessionId" parameterType="string" resultMap="analysisResultMap">
         SELECT 
-            session_id as sessionId,
-            user_id as userId,
-            session_name as sessionName,
-            partner_name as partnerName,
+            session_id,
+            user_id,
+            session_name,
+            partner_name,
             success_rate,
             confidence_level,
             relationship_stage,
             hero_insight,
-            created_at as analysisDate,
+            created_at,
             total_messages,
             analysis_status
         FROM analysis_sessions 
         WHERE session_id = #{sessionId}
     </select>
+    
+    <!-- AnalysisResult ResultMap 정의 -->
+    <resultMap id="analysisResultMap" type="com.smhrd.model.AnalysisResult">
+        <id property="sessionId" column="session_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="partnerName" column="partner_name"/>
+        
+        <association property="mainResults" javaType="com.smhrd.model.AnalysisResult$MainResults">
+            <result property="successRate" column="success_rate"/>
+            <result property="confidenceLevel" column="confidence_level"/>
+            <result property="relationshipStage" column="relationship_stage"/>
+            <result property="heroInsight" column="hero_insight"/>
+        </association>
+    </resultMap>
     
     <!-- 세션 삭제 -->
     <delete id="deleteBySessionId" parameterType="string">

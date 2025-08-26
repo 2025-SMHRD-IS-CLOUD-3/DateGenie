@@ -11,6 +11,7 @@ public class AnalysisResult {
     
     private String sessionId;
     private String userId;
+    private String sessionName;
     private String partnerName;
     
     private MainResults mainResults;
@@ -164,6 +165,9 @@ public class AnalysisResult {
     
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
+    
+    public String getSessionName() { return sessionName; }
+    public void setSessionName(String sessionName) { this.sessionName = sessionName; }
     
     public String getPartnerName() { return partnerName; }
     public void setPartnerName(String partnerName) { this.partnerName = partnerName; }

@@ -323,7 +323,7 @@ public class AnthropicAnalysisController extends HttpServlet {
                     trendData.put("emojiCount", trend.getEmojiCount());
                     
                     // ResultMapper의 insertInterestTrend 사용
-                    insertDataToDatabase("ResultMapper.insertInterestTrend", trendData);
+                    insertDataToDatabase("com.smhrd.db.ResultMapper.insertInterestTrend", trendData);
                 }
                 System.out.println("관심도 추이 저장 완료: " + analysisResult.getInterestTrends().size() + "건");
             }
@@ -338,7 +338,7 @@ public class AnthropicAnalysisController extends HttpServlet {
                 emotionData.put("negative", analysisResult.getEmotionAnalysis().getNegative());
                 // 불필요한 컬럼들 제거됨: dominantEmotion, stabilityScore, positiveKeywords, negativeKeywords
                 
-                insertDataToDatabase("ResultMapper.insertEmotionAnalysis", emotionData);
+                insertDataToDatabase("com.smhrd.db.ResultMapper.insertEmotionAnalysis", emotionData);
                 System.out.println("감정 분석 저장 완료");
             }
             
@@ -353,7 +353,7 @@ public class AnthropicAnalysisController extends HttpServlet {
                     signalData.put("confidence", signal.getConfidence());
                     signalData.put("type", "positive_indicator");
                     
-                    insertDataToDatabase("ResultMapper.insertPositiveSignal", signalData);
+                    insertDataToDatabase("com.smhrd.db.ResultMapper.insertPositiveSignal", signalData);
                 }
                 System.out.println("긍정 신호 저장 완료: " + analysisResult.getPositiveSignals().size() + "건");
             }
@@ -369,7 +369,7 @@ public class AnthropicAnalysisController extends HttpServlet {
                 messageData.put("messageDate", analysisResult.getFavoriteMessage().getDate());
                 // 불필요한 컬럼들 제거됨: sender, sentimentScore, intimacyLevel, actionType
                 
-                insertDataToDatabase("ResultMapper.insertFavoriteMessage", messageData);
+                insertDataToDatabase("com.smhrd.db.ResultMapper.insertFavoriteMessage", messageData);
                 System.out.println("대표 메시지 저장 완료");
             }
             

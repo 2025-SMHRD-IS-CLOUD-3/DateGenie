@@ -36,15 +36,15 @@ public class AnalysisResultDAO {
             session = sqlSessionFactory.openSession();
             
             // 기존 결과가 있는지 확인
-            AnalysisResult existing = session.selectOne("ResultMapper.getBySessionId", analysisResult.getSessionId());
+            AnalysisResult existing = session.selectOne("com.smhrd.db.ResultMapper.getBySessionId", analysisResult.getSessionId());
             
             if (existing != null) {
                 // 업데이트
-                int result = session.update("ResultMapper.updateAnalysisResult", analysisResult);
+                int result = session.update("com.smhrd.db.ResultMapper.updateAnalysisResult", analysisResult);
                 success = (result > 0);
             } else {
                 // 새로 삽입
-                int result = session.insert("ResultMapper.insertAnalysisResult", analysisResult);
+                int result = session.insert("com.smhrd.db.ResultMapper.insertAnalysisResult", analysisResult);
                 success = (result > 0);
             }
             
@@ -83,7 +83,7 @@ public class AnalysisResultDAO {
         
         try {
             session = sqlSessionFactory.openSession();
-            result = session.selectOne("ResultMapper.getBySessionId", sessionId);
+            result = session.selectOne("com.smhrd.db.ResultMapper.getBySessionId", sessionId);
             
             if (result != null) {
                 System.out.println("분석 결과 조회 성공 - sessionId: " + sessionId);
@@ -116,7 +116,7 @@ public class AnalysisResultDAO {
             session = sqlSessionFactory.openSession();
             
             // 1. 메인 분석 결과 조회
-            Map<String, Object> mainResult = session.selectOne("ResultMapper.getAnalysisResult", sessionId);
+            Map<String, Object> mainResult = session.selectOne("com.smhrd.db.ResultMapper.getAnalysisResult", sessionId);
             if (mainResult == null) {
                 System.out.println("분석 결과 없음 - sessionId: " + sessionId);
                 return new HashMap<>();
@@ -130,8 +130,8 @@ public class AnalysisResultDAO {
             mainResults.put("heroInsight", mainResult.get("heroInsight"));
             frontendData.put("mainResults", mainResults);
             
-            // 3. 관심도 추이 데이터 조회
-            List<Map<String, Object>> interestTrends = session.selectList("ResultMapper.getInterestTrends", sessionId);
+            // 3. 관심도 추이 데이터 조회 (새 버전 사용)
+            List<Map<String, Object>> interestTrends = session.selectList("com.smhrd.db.ResultMapper.getInterestTrendsNew", sessionId);
             if (interestTrends != null && !interestTrends.isEmpty()) {
                 frontendData.put("interestTrends", interestTrends);
                 System.out.println("관심도 추이 데이터 조회됨: " + interestTrends.size() + "건");
@@ -141,7 +141,7 @@ public class AnalysisResultDAO {
             }
             
             // 4. 감정 분석 조회
-            Map<String, Object> emotionAnalysis = session.selectOne("ResultMapper.getEmotionAnalysis", sessionId);
+            Map<String, Object> emotionAnalysis = session.selectOne("com.smhrd.db.ResultMapper.getEmotionAnalysis", sessionId);
             if (emotionAnalysis != null) {
                 frontendData.put("emotionAnalysis", emotionAnalysis);
                 System.out.println("감정 분석 데이터 조회됨");
@@ -155,7 +155,7 @@ public class AnalysisResultDAO {
             }
             
             // 5. 긍정적 신호 조회
-            List<Map<String, Object>> positiveSignals = session.selectList("ResultMapper.getPositiveSignals", sessionId);
+            List<Map<String, Object>> positiveSignals = session.selectList("com.smhrd.db.ResultMapper.getPositiveSignals", sessionId);
             if (positiveSignals != null && !positiveSignals.isEmpty()) {
                 frontendData.put("positiveSignals", positiveSignals);
                 System.out.println("긍정 신호 조회됨: " + positiveSignals.size() + "건");
@@ -164,7 +164,7 @@ public class AnalysisResultDAO {
             }
             
             // 6. 대표 호감 메시지 조회
-            Map<String, Object> favoriteMessage = session.selectOne("ResultMapper.getFavoriteMessage", sessionId);
+            Map<String, Object> favoriteMessage = session.selectOne("com.smhrd.db.ResultMapper.getFavoriteMessage", sessionId);
             if (favoriteMessage != null) {
                 // 날짜 형식 개선
                 String dateStr = favoriteMessage.get("messageDate") != null ? 
@@ -294,7 +294,7 @@ public class AnalysisResultDAO {
             params.put("userEmail", userEmail);
             params.put("limit", 20); // 최근 20개만
             
-            history = session.selectList("ResultMapper.getUserHistory", params);
+            history = session.selectList("com.smhrd.db.ResultMapper.getUserHistory", params);
             
             System.out.println("사용자 히스토리 조회 - 사용자: " + userEmail + ", 건수: " + (history != null ? history.size() : 0));
             
@@ -321,7 +321,7 @@ public class AnalysisResultDAO {
         
         try {
             session = sqlSessionFactory.openSession();
-            int result = session.delete("ResultMapper.deleteBySessionId", sessionId);
+            int result = session.delete("com.smhrd.db.ResultMapper.deleteBySessionId", sessionId);
             
             if (result > 0) {
                 session.commit();
@@ -359,11 +359,11 @@ public class AnalysisResultDAO {
             session = sqlSessionFactory.openSession();
             
             // 총 분석 횟수
-            Integer totalCount = session.selectOne("ResultMapper.getTotalAnalysisCount", userEmail);
+            Integer totalCount = session.selectOne("com.smhrd.db.ResultMapper.getTotalAnalysisCount", userEmail);
             stats.put("totalAnalysis", totalCount != null ? totalCount : 0);
             
             // 최근 분석 일시
-            Timestamp lastAnalysis = session.selectOne("ResultMapper.getLastAnalysisTime", userEmail);
+            Timestamp lastAnalysis = session.selectOne("com.smhrd.db.ResultMapper.getLastAnalysisTime", userEmail);
             if (lastAnalysis != null) {
                 stats.put("lastAnalysis", lastAnalysis);
                 stats.put("lastAnalysisFormatted", lastAnalysis.toString());
@@ -373,7 +373,7 @@ public class AnalysisResultDAO {
             }
             
             // 평균 성공률
-            Double avgSuccessRate = session.selectOne("ResultMapper.getAverageSuccessRate", userEmail);
+            Double avgSuccessRate = session.selectOne("com.smhrd.db.ResultMapper.getAverageSuccessRate", userEmail);
             stats.put("averageScore", avgSuccessRate != null ? Math.round(avgSuccessRate) : 0);
             
             System.out.println("분석 통계 조회 - 사용자: " + userEmail + ", 총 분석: " + stats.get("totalAnalysis"));

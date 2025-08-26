@@ -490,191 +490,6 @@
             border: none;
         }
 
-        /* === Footer Styles === */
-        .site-footer {
-            background: #ffffff;
-            border-top: 1px solid #e5e7eb;
-            color: #374151;
-            padding: 3rem 0 1.5rem;
-            margin-top: 4rem;
-            position: relative;
-        }
-
-        .site-footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
-                linear-gradient(45deg, rgba(252, 231, 243, 0.3) 0%, rgba(253, 242, 248, 0.3) 25%, rgba(243, 232, 255, 0.3) 50%, rgba(233, 213, 255, 0.3) 75%);
-            z-index: -1;
-        }
-
-        .site-footer .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        .footer-content {
-            display: grid;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-brand {
-            text-align: center;
-        }
-
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .footer-logo i {
-            color: #ec4899;
-            font-size: 1.5rem;
-        }
-
-        .footer-logo span {
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-
-        .footer-description {
-            color: #6b7280;
-            font-size: 0.9rem;
-        }
-
-        .footer-links {
-            display: grid;
-            gap: 1.5rem;
-            text-align: center;
-        }
-
-        .footer-section h4 {
-            color: #374151;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .footer-section ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .footer-section li {
-            margin-bottom: 0.5rem;
-        }
-
-        .footer-section a {
-            color: #6b7280;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color var(--transition-fast);
-        }
-
-        .footer-section a:hover {
-            color: #ec4899;
-        }
-
-        .footer-section .menu-item {
-            color: #9ca3af;
-            font-size: 0.9rem;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid #e5e7eb;
-            padding-top: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            text-align: center;
-        }
-
-        .footer-legal {
-            color: #6b7280;
-            font-size: 0.8rem;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .footer-legal a {
-            color: #6b7280;
-            text-decoration: none;
-            transition: color var(--transition-fast);
-        }
-
-        .footer-legal a:hover {
-            color: #ec4899;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            transition: all var(--transition-fast);
-        }
-
-        .social-links a:hover {
-            background: #ec4899;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .social-links svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        @media (min-width: 768px) {
-            .footer-content {
-                grid-template-columns: 1fr 2fr;
-                text-align: left;
-            }
-
-            .footer-brand {
-                text-align: left;
-            }
-
-            .footer-logo {
-                justify-content: flex-start;
-            }
-
-            .footer-links {
-                grid-template-columns: repeat(3, 1fr);
-                text-align: left;
-            }
-
-            .footer-bottom {
-                flex-direction: row;
-                justify-content: space-between;
-                text-align: left;
-            }
-        }
 
         /* === Main Container === */
         .results-container {
@@ -844,11 +659,13 @@
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.25rem;
+            text-align: left;
         }
 
         .section-subtitle {
             color: var(--text-secondary);
             font-size: 0.9rem;
+            text-align: left;
         }
 
         /* === Signal Components === */
@@ -1585,7 +1402,8 @@
                     date: "날짜 없음",
                     reason: "메시지 분석 중"
                 },
-                conversationGuide: data.conversationGuides || [],
+                conversationGuides: data.conversationGuides || [],
+                conversationGuide: data.conversationGuides || data.conversationGuide || [],
                 customAdvice: data.customAdvice || []
             };
             
@@ -1594,7 +1412,8 @@
                 normalized.interestTrendData = getDefaultTrendData();
             }
             
-            if (normalized.conversationGuide.length === 0) {
+            if (normalized.conversationGuides.length === 0 && normalized.conversationGuide.length === 0) {
+                normalized.conversationGuides = getDefaultConversationGuide();
                 normalized.conversationGuide = getDefaultConversationGuide();
             }
             
@@ -1670,7 +1489,7 @@
             return signalsData.map(signal => ({
                 text: signal.text || '알 수 없는 신호',
                 description: signal.description || '설명 없음',
-                confidence: validateNumericRange(signal.confidence, 1, 5, 1),
+                confidence: validateNumericRange(signal.confidence, 0, 100, 50),
                 type: signal.type || 'unknown',
                 metricValue: signal.metricValue || 0,
                 metricUnit: signal.metricUnit || ''
@@ -2087,7 +1906,10 @@
                             <div class="signal-description">${signal.description}</div>
                             <div class="confidence-indicator">
                                 <span class="confidence-stars">
-                                    ${'★'.repeat(signal.confidence)}${'☆'.repeat(5 - signal.confidence)}
+                                    ${(() => {
+                                        const confidence = Math.max(1, Math.min(5, signal.confidence));
+                                        return '★'.repeat(confidence) + '☆'.repeat(5 - confidence);
+                                    })()}
                                 </span>
                                 <span style="font-size: 0.8rem; margin-left: 0.5rem;">신뢰도</span>
                             </div>
@@ -2114,11 +1936,24 @@
 
             renderConversationGuide() {
                 const container = document.getElementById('conversationGuide');
-                container.innerHTML = this.data.conversationGuide.map(item => `
+                const guides = this.data.conversationGuides || this.data.conversationGuide || [];
+                
+                if (guides.length === 0) {
+                    container.innerHTML = `
+                        <div class="conversation-item">
+                            <div class="conversation-type">로딩 중</div>
+                            <div class="conversation-text">대화 가이드를 준비 중입니다...</div>
+                            <div class="conversation-timing">💡 잠시만 기다려주세요</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = guides.map(item => `
                     <div class="conversation-item">
-                        <div class="conversation-type">${item.type}</div>
-                        <div class="conversation-text">${item.text}</div>
-                        <div class="conversation-timing">💡 ${item.timing}</div>
+                        <div class="conversation-type">${item.type || '일반'}</div>
+                        <div class="conversation-text">${item.text || item.message || '대화 내용 없음'}</div>
+                        <div class="conversation-timing">💡 ${item.timing || item.context || '적절한 시점에 사용'}</div>
                     </div>
                 `).join('');
             }
@@ -2361,7 +2196,7 @@
             generateChartTitle(period, trendData) {
                 return {
                     title: '호감도 변화 추이',
-                    subtitle: `${period.displayText} 호감도 변화`
+                    subtitle: `최근 호감도 변화`
                 };
             }
         }
