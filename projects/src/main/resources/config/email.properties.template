@@ -1,19 +1,20 @@
-# Email Configuration for DateGenie
-# SMTP 서버 설정 (Gmail 예시)
+# Email Configuration Template for DateGenie
+# 이 파일을 email.properties로 복사하고 실제 이메일 설정을 입력하세요
+# 보안상 실제 email.properties 파일은 .gitignore에 추가되어 있습니다
 
-# SMTP 기본 설정 (Gmail SMTP)
+# SMTP 서버 설정 (Gmail 예시)
 email.smtp.host=smtp.gmail.com
 email.smtp.port=587
 email.smtp.auth=true
 email.smtp.starttls.enable=true
 
 # 발송자 정보 (실제 운영 시 환경변수로 관리 권장)
-email.from.address=jky6006@gmail.com
+email.from.address=YOUR_EMAIL@gmail.com
 email.from.name=DateGenie
 
 # 인증 정보 (실제 운영 시 환경변수로 관리 필수)
-email.username=jky6006@gmail.com
-email.password=vzutmjzguqrjyyte
+email.username=YOUR_EMAIL@gmail.com
+email.password=YOUR_APP_PASSWORD_HERE
 
 # 이메일 템플릿 설정
 email.verification.subject=DateGenie Email Verification
