@@ -325,10 +325,26 @@
 
         /* === Footer Styles === */
         .site-footer {
-            background: linear-gradient(135deg, #1f1d3a 0%, #2d1b69 100%);
-            color: white;
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            color: #374151;
             padding: 3rem 0 1.5rem;
             margin-top: 4rem;
+            position: relative;
+        }
+
+        .site-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                linear-gradient(45deg, rgba(252, 231, 243, 0.3) 0%, rgba(253, 242, 248, 0.3) 25%, rgba(243, 232, 255, 0.3) 50%, rgba(233, 213, 255, 0.3) 75%);
+            z-index: -1;
         }
 
         .site-footer .container {
@@ -2313,8 +2329,56 @@
             }
         }
 
+        // === 사용자 상태 관리 ===
+        function checkUserLoginStatus() {
+            // 세션에서 사용자 정보 확인 (실제로는 서버에서 확인해야 함)
+            // 여기서는 results-final.html에 접근했다는 것 자체가 로그인 상태를 의미
+            const authButtons = document.getElementById('authButtons');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            if (authButtons && userDropdown) {
+                // 로그인 상태이므로 로그인/회원가입 버튼 숨기고 사용자 드롭다운 표시
+                authButtons.style.display = 'none';
+                userDropdown.style.display = 'flex';
+                
+                // 사용자 이름 설정 (localStorage에서 사용자 정보 확인)
+                updateUserInfo();
+                
+                console.log('사용자 로그인 상태 확인: 드롭다운 메뉴 표시');
+            }
+        }
+
+        // 사용자 정보 업데이트
+        function updateUserInfo() {
+            try {
+                // localStorage에서 사용자 정보 가져오기
+                const userData = localStorage.getItem('userData');
+                const userNameElement = document.getElementById('userNameText');
+                
+                if (userData && userNameElement) {
+                    const user = JSON.parse(userData);
+                    const userName = user.name || user.email || '사용자';
+                    
+                    // 이메일인 경우 @ 앞부분만 사용
+                    const displayName = userName.includes('@') 
+                        ? userName.split('@')[0] 
+                        : userName;
+                    
+                    userNameElement.textContent = displayName;
+                    console.log('사용자 이름 업데이트:', displayName);
+                } else {
+                    console.log('사용자 데이터 없음, 기본값 유지');
+                }
+            } catch (error) {
+                console.warn('사용자 정보 업데이트 실패:', error);
+            }
+        }
+
         // === 초기화 함수 ===
         document.addEventListener('DOMContentLoaded', function() {
+            // 사용자 로그인 상태 확인 및 UI 업데이트
+            checkUserLoginStatus();
+            
             // 드롭다운 메뉴 초기화
             initUserDropdown();
             
