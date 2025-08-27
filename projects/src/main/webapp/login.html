@@ -43,7 +43,6 @@
         })();
     </script>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/login.css">
     <style>
         /* User Dropdown Menu Styles */
@@ -163,26 +162,6 @@
             }
         }
 
-        /* 다크 모드 */
-        body.dark-mode .user-info { background: transparent; border-color: transparent; }
-        body.dark-mode .user-info:hover { background: transparent; }
-        body.dark-mode .user-name { color: white; }
-        body.dark-mode .user-name-text { color: white; }
-        body.dark-mode .user-greet { color: rgba(255, 255, 255, 0.8); }
-        body.dark-mode .dropdown-menu {
-            background: #2a2a2a;
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-        body.dark-mode .dropdown-item {
-            color: #e5e7eb;
-        }
-        body.dark-mode .dropdown-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-        }
-        body.dark-mode .dropdown-divider {
-            background: rgba(255, 255, 255, 0.1);
-        }
     </style>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -243,7 +222,8 @@
     </nav>
 
     <!-- Login Section -->
-    <section class="login-section">
+    <main>
+        <section class="login-section">
         <div class="login-container">
             <div class="login-card">
             <div class="login-header">
@@ -312,6 +292,7 @@
             </div>
         </div>
     </section>
+    </main>
 
     <!-- Footer -->
     <footer class="site-footer">
@@ -381,11 +362,6 @@
         </div>
     </footer>
 
-    <!-- Dark Mode Toggle -->
-    <button class="dark-mode-toggle" id="darkModeToggle">
-        <i class="fas fa-sun sun-icon"></i>
-        <i class="fas fa-moon moon-icon"></i>
-    </button>
 
     <script src="js/config.js"></script>
     <script src="js/main.js"></script>
@@ -520,6 +496,5 @@
         });
     </script>
     <script src="js/footer.js"></script>
-    <script src="js/dark-mode.js"></script>
 </body>
 </html> 

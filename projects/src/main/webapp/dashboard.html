@@ -13,7 +13,6 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
 		/* 레이아웃: 상단바 + 사이드바 + 메인 패널 */
@@ -274,139 +273,33 @@
 			}
 		}
 
-		/* 다크 모드 보완 */
-		body.dark-mode.dashboard-page::before { 
-			background: linear-gradient(135deg, #0f0f12 0%, #16161b 40%, #12121a 100%); 
-		}
 		
-		body.dark-mode .panel { 
-			background: rgba(34,34,34,0.95); 
-			box-shadow: 0 10px 30px rgba(0,0,0,.45); 
-		}
 		
-		body.dark-mode .quick-card, 
-		body.dark-mode .kpi, 
-		body.dark-mode .list-item { 
-			background: #1e1e1e; 
-			border-color: rgba(255,255,255,.1); 
-		}
 		
-		body.dark-mode .panel-title { 
-			color: #e5e7eb; 
-		}
 		
-		body.dark-mode .welcome h1 { 
-			color: #f8fafc; 
-		}
 		
-		body.dark-mode .welcome p,
-		body.dark-mode .meta,
-		body.dark-mode .quick-card p,
-		body.dark-mode .list-item .left,
-		body.dark-mode .list-item div:last-child { 
-			color: #cbd5e1; 
-		}
 		
-		body.dark-mode .quick-card h4,
-		body.dark-mode .kpi h4 { 
-			color: #9ca3af; 
-		}
 		
-		body.dark-mode .btn-ghost { 
-			color: #c7b8ff; 
-			border-color: rgba(124,58,237,.6); 
-		}
 		
-		body.dark-mode .btn-ghost:hover {
-			background: rgba(124,58,237,.15);
-		}
 
-		body.dark-mode .avatar {
-			box-shadow: 0 6px 16px rgba(139,92,246,.25);
-		}
 		
-		body.dark-mode .dropzone { 
-			background: rgba(124,58,237,.15); 
-			border-color: rgba(124,58,237,.5); 
-		}
 		
-		body.dark-mode .progress { 
-			background: rgba(255,255,255,.15); 
-		}
 		
-		body.dark-mode .sidebar-nav { 
-			background: rgba(34,34,34,0.95); 
-			box-shadow: 0 10px 30px rgba(0,0,0,.45); 
-		}
 		
-		body.dark-mode .sidebar-nav h3 { 
-			color: #e5e7eb; 
-			border-bottom-color: rgba(255,255,255,.1); 
-		}
 		
-		body.dark-mode .nav-link { 
-			color: #cbd5e1; 
-		}
 		
-		body.dark-mode .nav-link:hover { 
-			color: #7c3aed; 
-			background: rgba(124, 58, 237, 0.2); 
-		}
 		
-		body.dark-mode .nav-link.active { 
-			color: #7c3aed; 
-			background: rgba(124, 58, 237, 0.25); 
-		}
 		
-		/* 다크 모드 드롭다운 */
-		body.dark-mode .user-info { 
-			background: transparent; 
-			border-color: transparent; 
-		}
 		
-		body.dark-mode .user-info:hover { 
-			background: transparent; 
-		}
 		
-		body.dark-mode .user-name { 
-			color: #f8fafc; 
-		}
 		
-		body.dark-mode .user-name-text { 
-			color: #f8fafc; 
-		}
 		
-		body.dark-mode .user-greet { 
-			color: #cbd5e1; 
-		}
 		
-		body.dark-mode .dropdown-menu {
-			background: #1e1e1e;
-			border-color: rgba(255, 255, 255, 0.15);
-			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-		}
 		
-		body.dark-mode .dropdown-item {
-			color: #cbd5e1;
-		}
 		
-		body.dark-mode .dropdown-item:hover {
-			background: rgba(255, 255, 255, 0.08);
-			color: #f8fafc;
-		}
 		
-		body.dark-mode .dropdown-item.logout-btn:hover {
-			background: rgba(220, 38, 38, 0.15);
-			color: #f87171;
-		}
 		
-		body.dark-mode .dropdown-item.logout-btn:hover i {
-			color: #f87171;
-		}
 		
-		body.dark-mode .dropdown-divider {
-			background: rgba(255, 255, 255, 0.15);
-		}
     </style>
 </head>
 <body class="dashboard-page">
@@ -640,6 +533,55 @@
 			document.getElementById('profileName').textContent = user.name || '-';
 			document.getElementById('profileEmail').textContent = user.email || '-';
 			
+			// 가입일 표시
+			const joinDateElement = document.getElementById('profileJoinDate');
+			if (joinDateElement) {
+				let joinDate = user.joinDate;
+				if (!joinDate) {
+					// 최초 가입일을 현재 날짜로 설정하고 저장
+					joinDate = new Date().toISOString();
+					user.joinDate = joinDate;
+					localStorage.setItem('user', JSON.stringify(user));
+				}
+				
+				const date = new Date(joinDate);
+				const formattedDate = date.toLocaleDateString('ko-KR', {
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric'
+				});
+				joinDateElement.textContent = formattedDate;
+			}
+			
+			// 분석 횟수 표시
+			const analysisCountElement = document.getElementById('profileAnalysisCount');
+			if (analysisCountElement) {
+				let analysisCount = 0;
+				
+				// localStorage에서 분석 결과 관련 키들을 확인
+				for (let i = 0; i < localStorage.length; i++) {
+					const key = localStorage.key(i);
+					if (key && (key.startsWith('analysisResult_') || key.startsWith('analysis_') || key === 'lastAnalysisResult')) {
+						// lastAnalysisResult는 1번만 카운트
+						if (key === 'lastAnalysisResult') {
+							analysisCount++;
+						} else if (key.startsWith('analysisResult_') || key.startsWith('analysis_')) {
+							analysisCount++;
+						}
+					}
+				}
+				
+				// user 객체에 저장된 분석 횟수가 있고 더 크면 사용
+				if (user.analysisCount && user.analysisCount > analysisCount) {
+					analysisCount = user.analysisCount;
+				} else if (analysisCount > 0) {
+					// 현재 계산된 분석 횟수를 user 객체에 저장
+					user.analysisCount = analysisCount;
+					localStorage.setItem('user', JSON.stringify(user));
+				}
+				
+				analysisCountElement.textContent = `${analysisCount}회`;
+			}
 			
 			// 드롭다운 메뉴 사용자 정보 업데이트
 			const userAvatar = document.getElementById('userAvatar');
@@ -929,11 +871,8 @@
 			initSidebarLinks();
 			loadDashboardData();
 			initUserDropdown();
-			const inline = document.getElementById('toggleDarkInline');
-			if (inline) inline.addEventListener('click', () => { document.getElementById('darkModeToggle')?.click(); });
         });
     </script>
     <script src="js/footer.js"></script>
-    <script src="js/dark-mode.js"></script>
 </body>
 </html>

@@ -48,7 +48,6 @@
         })();
     </script>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/signup.css">
     <style>
         /* User Dropdown Menu Styles */
@@ -168,26 +167,6 @@
             }
         }
 
-        /* 다크 모드 */
-        body.dark-mode .user-info { background: transparent; border-color: transparent; }
-        body.dark-mode .user-info:hover { background: transparent; }
-        body.dark-mode .user-name { color: white; }
-        body.dark-mode .user-name-text { color: white; }
-        body.dark-mode .user-greet { color: rgba(255, 255, 255, 0.8); }
-        body.dark-mode .dropdown-menu {
-            background: #2a2a2a;
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-        body.dark-mode .dropdown-item {
-            color: #e5e7eb;
-        }
-        body.dark-mode .dropdown-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-        }
-        body.dark-mode .dropdown-divider {
-            background: rgba(255, 255, 255, 0.1);
-        }
 
         /* Email Verification Section Styles */
         .email-verification-section {
@@ -339,36 +318,11 @@
         }
 
         /* Dark mode for verification section */
-        body.dark-mode .verification-header h3 {
-            color: white;
-        }
 
-        body.dark-mode .verification-description {
-            color: #9ca3af;
-        }
 
-        body.dark-mode .resend-btn, 
-        body.dark-mode .back-to-signup-btn {
-            border-color: rgba(255, 255, 255, 0.2);
-            color: #d1d5db;
-        }
 
-        body.dark-mode .resend-btn:hover {
-            border-color: #ec4899;
-            color: #ec4899;
-            background: rgba(236, 72, 153, 0.1);
-        }
 
-        body.dark-mode .back-to-signup-btn:hover {
-            border-color: #d1d5db;
-            color: white;
-            background: rgba(209, 213, 219, 0.1);
-        }
 
-        body.dark-mode .verification-info {
-            background: rgba(255, 255, 255, 0.05);
-            color: #9ca3af;
-        }
 
         /* Animation for section transitions */
         @keyframes fadeInUp {
@@ -467,7 +421,8 @@
     </nav>
 
     <!-- Signup Section -->
-    <section class="signup-section">
+    <main>
+        <section class="signup-section">
         <div class="signup-container">
             <div class="signup-card">
                 <div class="signup-header">
@@ -587,6 +542,7 @@
             </div>
         </div>
     </section>
+    </main>
 
     <!-- Footer -->
     <footer class="site-footer">
@@ -656,10 +612,6 @@
         </div>
     </footer>
 
-    <button class="dark-mode-toggle" id="darkModeToggle">
-        <i class="fas fa-sun sun-icon"></i>
-        <i class="fas fa-moon moon-icon"></i>
-    </button>
 
     <script src="js/config.js?v=20240822"></script>
     <script src="js/main.js?v=20240822"></script>
@@ -771,7 +723,6 @@
         });
     </script>
     <script src="js/footer.js"></script>
-    <script src="js/dark-mode.js"></script>
 </body>
 </html>
 

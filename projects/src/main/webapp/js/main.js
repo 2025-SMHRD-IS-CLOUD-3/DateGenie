@@ -189,22 +189,6 @@
         setInterval(updateHueValue, 100);
     }
 
-    // 다크모드 토글 기능
-    function initDarkMode() {
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const body = document.body;
-        const savedDarkMode = localStorage.getItem('darkMode');
-        if (savedDarkMode === 'true') {
-            body.classList.add('dark-mode');
-        }
-        if (darkModeToggle) {
-            darkModeToggle.addEventListener('click', () => {
-                body.classList.toggle('dark-mode');
-                const isDarkMode = body.classList.contains('dark-mode');
-                localStorage.setItem('darkMode', isDarkMode);
-            });
-        }
-    }
 
     // FAQ 토글 기능
     function initFAQ() {
@@ -244,7 +228,6 @@
         initParallax();
         ensureNotificationStyles();
         initFAQ();
-        initDarkMode();
         monitorHueRotate();
         initScrollToTopPersistence();
         // 로고 클릭 시 최상단 이동(Inline JS 제거 대체)

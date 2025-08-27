@@ -10,7 +10,6 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
                  /* 설정 페이지 전용 스타일 */
@@ -242,39 +241,6 @@
              }
          }
 
-                 /* 다크 모드 보완 */
-         body.dark-mode.settings-page::before { background: linear-gradient(135deg, #0f0f12 0%, #16161b 40%, #12121a 100%); }
-         body.dark-mode .panel { background: rgba(34,34,34,0.95); box-shadow: 0 10px 30px rgba(0,0,0,.45); }
-         body.dark-mode .panel-title { color:#e5e7eb; }
-         body.dark-mode .setting-item { border-bottom-color: rgba(255,255,255,.1); }
-         body.dark-mode .setting-info h4 { color: #e5e7eb; }
-         body.dark-mode .setting-info p { color: #cbd5e1; }
-         body.dark-mode .sidebar-nav { background: rgba(34,34,34,0.95); box-shadow: 0 10px 30px rgba(0,0,0,.45); }
-         body.dark-mode .sidebar-nav h3 { color: #e5e7eb; border-bottom-color: rgba(255,255,255,.1); }
-         body.dark-mode .nav-link { color: #cbd5e1; }
-         body.dark-mode .nav-link:hover { color: #7c3aed; background: rgba(124, 58, 237, 0.2); }
-         body.dark-mode .nav-link.active { color: #7c3aed; background: rgba(124, 58, 237, 0.25); }
-        
-        /* 다크 모드 드롭다운 */
-        body.dark-mode .user-info { background: transparent; border-color: transparent; }
-        body.dark-mode .user-info:hover { background: transparent; }
-        body.dark-mode .user-name { color: white; }
-        body.dark-mode .user-name-text { color: white; }
-        body.dark-mode .user-greet { color: rgba(255, 255, 255, 0.8); }
-        body.dark-mode .dropdown-menu {
-            background: #2a2a2a;
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-        body.dark-mode .dropdown-item {
-            color: #e5e7eb;
-        }
-        body.dark-mode .dropdown-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-        }
-        body.dark-mode .dropdown-divider {
-            background: rgba(255, 255, 255, 0.1);
-        }
     </style>
 </head>
 <body class="settings-page">
@@ -380,21 +346,6 @@
                     </label>
                 </div>
 
-                <div class="setting-item">
-                    <div class="setting-left">
-                        <div class="setting-icon">
-                            <i class="fas fa-moon"></i>
-                        </div>
-                        <div class="setting-info">
-                            <h4>다크 모드</h4>
-                            <p>어두운 테마로 전환합니다</p>
-                        </div>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="darkModeToggle">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
 
                 <div class="setting-item">
                     <div class="setting-left">
@@ -682,38 +633,45 @@
             }
         }
 
-        // 설정 토글 이벤트
-        document.getElementById('notifyToggle').addEventListener('change', function(e) {
-            localStorage.setItem('notifications', e.target.checked);
-            if (e.target.checked) {
-                alert('알림이 활성화되었습니다.');
-            } else {
-                alert('알림이 비활성화되었습니다.');
-            }
-        });
+        // 설정 토글 이벤트 초기화
+        function initSettingsToggles() {
+            const notifyToggle = document.getElementById('notifyToggle');
+            const dataKeepToggle = document.getElementById('dataKeepToggle');
+            const privacyToggle = document.getElementById('privacyToggle');
 
-        document.getElementById('darkModeToggle').addEventListener('change', function(e) {
-            document.body.classList.toggle('dark-mode', e.target.checked);
-            localStorage.setItem('darkMode', e.target.checked);
-        });
-
-        document.getElementById('dataKeepToggle').addEventListener('change', function(e) {
-            localStorage.setItem('dataKeep', e.target.checked);
-            if (e.target.checked) {
-                alert('데이터 보관이 활성화되었습니다.');
-            } else {
-                alert('데이터 보관이 비활성화되었습니다.');
+            if (notifyToggle) {
+                notifyToggle.addEventListener('change', function(e) {
+                    localStorage.setItem('notifications', e.target.checked);
+                    if (e.target.checked) {
+                        alert('알림이 활성화되었습니다.');
+                    } else {
+                        alert('알림이 비활성화되었습니다.');
+                    }
+                });
             }
-        });
 
-        document.getElementById('privacyToggle').addEventListener('change', function(e) {
-            localStorage.setItem('privacy', e.target.checked);
-            if (e.target.checked) {
-                alert('개인정보 보호가 활성화되었습니다.');
-            } else {
-                alert('개인정보 보호가 비활성화되었습니다.');
+            if (dataKeepToggle) {
+                dataKeepToggle.addEventListener('change', function(e) {
+                    localStorage.setItem('dataKeep', e.target.checked);
+                    if (e.target.checked) {
+                        alert('데이터 보관이 활성화되었습니다.');
+                    } else {
+                        alert('데이터 보관이 비활성화되었습니다.');
+                    }
+                });
             }
-        });
+
+            if (privacyToggle) {
+                privacyToggle.addEventListener('change', function(e) {
+                    localStorage.setItem('privacy', e.target.checked);
+                    if (e.target.checked) {
+                        alert('개인정보 보호가 활성화되었습니다.');
+                    } else {
+                        alert('개인정보 보호가 비활성화되었습니다.');
+                    }
+                });
+            }
+        }
 
         // 데이터 관리 함수들
         function exportData() {
@@ -808,51 +766,26 @@
         // 설정 로드
         function loadSettings() {
             const notifications = localStorage.getItem('notifications') !== 'false';
-            const darkMode = localStorage.getItem('darkMode') === 'true';
             const dataKeep = localStorage.getItem('dataKeep') !== 'false';
             const privacy = localStorage.getItem('privacy') !== 'false';
 
-            // 애니메이션 비활성화
-            document.body.classList.add('no-animation');
+            const notifyToggle = document.getElementById('notifyToggle');
+            const dataKeepToggle = document.getElementById('dataKeepToggle');
+            const privacyToggle = document.getElementById('privacyToggle');
 
-            document.getElementById('notifyToggle').checked = notifications;
-            document.getElementById('darkModeToggle').checked = darkMode;
-            document.getElementById('dataKeepToggle').checked = dataKeep;
-            document.getElementById('privacyToggle').checked = privacy;
-
-            // 다크 모드 적용
-            document.body.classList.toggle('dark-mode', darkMode);
-
-            // 애니메이션 재활성화 (다음 프레임에서)
-            requestAnimationFrame(() => {
-                document.body.classList.remove('no-animation');
-            });
+            if (notifyToggle) notifyToggle.checked = notifications;
+            if (dataKeepToggle) dataKeepToggle.checked = dataKeep;
+            if (privacyToggle) privacyToggle.checked = privacy;
         }
 
-        // 오른쪽 하단 다크모드 버튼 이벤트 리스너 (요소가 있는 경우에만)
-        const darkModeToggleBtn = document.getElementById('darkModeToggleBtn');
-        if (darkModeToggleBtn) {
-            darkModeToggleBtn.addEventListener('click', function() {
-                const darkModeToggle = document.getElementById('darkModeToggle');
-                const currentMode = localStorage.getItem('darkMode') === 'true';
-                const newMode = !currentMode;
-                
-                // 토글 상태 업데이트
-                if (darkModeToggle) darkModeToggle.checked = newMode;
-                
-                // 다크모드 적용
-                document.body.classList.toggle('dark-mode', newMode);
-                localStorage.setItem('darkMode', newMode);
-            });
-        }
 
         document.addEventListener('DOMContentLoaded', function(){
             loadUserInfo();
             initUserDropdown();
             loadSettings();
+            initSettingsToggles();
         });
     </script>
     <script src="js/footer.js"></script>
-    <script src="js/dark-mode.js"></script>
 </body>
 </html>
