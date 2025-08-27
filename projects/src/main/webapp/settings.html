@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="cache-version" content="3.3-20250826-2255">
     <title>설정 - Date Genie</title>
     <link rel="icon" type="image/svg+xml" href="images/icon.svg">
 
@@ -17,13 +16,13 @@
              min-height: calc(100vh - var(--navbar-height));
              padding-top: var(--navbar-height);
              background: transparent;
-             max-width: 1200px;
+             max-width: 2000px;
              margin: 0 auto;
-             padding-left: 20px;
-             padding-right: 20px;
+             padding-left: 15px;
+             padding-right: 15px;
              display: grid;
-             grid-template-columns: 250px minmax(0, 1fr);
-             gap: 2rem;
+             grid-template-columns: 220px minmax(0, 1fr);
+             gap: 3rem;
          }
 
          /* 사이드바 네비게이션 */
@@ -94,14 +93,26 @@
             z-index: -1;
         }
 
-        .main { width: 100%; max-width: 800px; padding: 2rem 2rem 3rem; justify-self: stretch; }
-        .panel { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 20px; padding: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
+        .main { width: 100%; max-width: 2200px; padding: 2rem 1.5rem 3rem; justify-self: stretch; }
+        .panel { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 20px; padding: 2rem 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
         .panel-header { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1rem; }
         .panel-title { display:flex; align-items:center; gap:.6rem; font-size:1.2rem; color:#1f1d3a; font-weight:700; }
         .panel-title i { color:#7c3aed; }
 
         .setting-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid #e5e7eb; }
         .setting-item:last-child { border-bottom: none; }
+        
+        /* 넓은 레이아웃 조정 - 구조 유지 */
+        .setting-item { width: 100%; max-width: none; padding: 1.5rem 0; }
+        .setting-left { flex: 1; max-width: none; gap: 1rem; }
+        .setting-info { width: 100%; max-width: none; }
+        .setting-icon { width: 50px; height: 50px; }
+        .setting-info h4 { font-size: 1.1rem; margin-bottom: 0.3rem; }
+        .setting-info p { font-size: 0.95rem; }
+        .toggle-switch { width: 60px; height: 28px; }
+        .toggle-slider:before { height: 22px; width: 22px; left: 3px; bottom: 3px; }
+        input:checked + .toggle-slider:before { transform: translateX(32px); }
+        .btn-ghost, .btn-danger { padding: 0.8rem 1.3rem; font-size: 1rem; }
         .setting-left { display: flex; align-items: center; gap: 0.75rem; }
         .setting-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #ec4899, #8b5cf6); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
         .setting-info h4 { font-size: 1rem; color: #1e1b4b; margin-bottom: 0.25rem; }
@@ -241,11 +252,44 @@
              }
          }
 
+                 /* 다크 모드 보완 */
+         body.dark-mode.settings-page::before { background: linear-gradient(135deg, #0f0f12 0%, #16161b 40%, #12121a 100%); }
+         body.dark-mode .panel { background: rgba(34,34,34,0.95); box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+         body.dark-mode .panel-title { color:#e5e7eb; }
+         body.dark-mode .setting-item { border-bottom-color: rgba(255,255,255,.1); }
+         body.dark-mode .setting-info h4 { color: #e5e7eb; }
+         body.dark-mode .setting-info p { color: #cbd5e1; }
+         body.dark-mode .sidebar-nav { background: rgba(34,34,34,0.95); box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+         body.dark-mode .sidebar-nav h3 { color: #e5e7eb; border-bottom-color: rgba(255,255,255,.1); }
+         body.dark-mode .nav-link { color: #cbd5e1; }
+         body.dark-mode .nav-link:hover { color: #7c3aed; background: rgba(124, 58, 237, 0.2); }
+         body.dark-mode .nav-link.active { color: #7c3aed; background: rgba(124, 58, 237, 0.25); }
+        
+        /* 다크 모드 드롭다운 */
+        body.dark-mode .user-info { background: transparent; border-color: transparent; }
+        body.dark-mode .user-info:hover { background: transparent; }
+        body.dark-mode .user-name { color: white; }
+        body.dark-mode .user-name-text { color: white; }
+        body.dark-mode .user-greet { color: rgba(255, 255, 255, 0.8); }
+        body.dark-mode .dropdown-menu {
+            background: #2a2a2a;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        body.dark-mode .dropdown-item {
+            color: #e5e7eb;
+        }
+        body.dark-mode .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+        body.dark-mode .dropdown-divider {
+            background: rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
 <body class="settings-page">
     <nav class="navbar">
-        <div class="nav-container" style="max-width: 1200px;">
+        <div class="nav-container" style="max-width: 2000px;">
             <div class="nav-logo">
                 <a href="/DateGenie/index.html" class="brand-logo" aria-label="Date Genie Home">
                     <i class="fas fa-heart heart-icon" aria-hidden="true"></i>
@@ -346,6 +390,21 @@
                     </label>
                 </div>
 
+                <div class="setting-item">
+                    <div class="setting-left">
+                        <div class="setting-icon">
+                            <i class="fas fa-moon"></i>
+                        </div>
+                        <div class="setting-info">
+                            <h4>다크 모드</h4>
+                            <p>어두운 테마로 전환합니다</p>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
 
                 <div class="setting-item">
                     <div class="setting-left">
@@ -561,15 +620,12 @@
 
         function loadUserInfo() {
             const userInfo = localStorage.getItem('user');
-            const authProvider = localStorage.getItem('authProvider');
             if (!userInfo) { 
-                console.log('로컬 스토리지에서 사용자 정보를 찾을 수 없음');
                 window.location.href = '/DateGenie/login.html'; 
                 return; 
             }
             
             const user = JSON.parse(userInfo);
-            console.log('사용자 정보 로드됨:', user.name, user.email);
             let profilePicture = user.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiNmM2Y0ZjYiLz4KPGNpcmNsZSBjeD0iMzIiIGN5PSIyNiIgcj0iMTAiIGZpbGw9IiM2YjczODAiLz4KPHBhdGggZD0iTTMyIDQ0Yy04IDAtMTUgNC0xNSAxMnYyaDMwdi0yYzAtOC03LTEyLTE1LTEyeiIgZmlsbD0iIzZiNzM4MCIvPgo8L3N2Zz4K';
             if (profilePicture.includes('googleusercontent.com') && profilePicture.includes('=s96-c')) {
                 profilePicture = profilePicture.replace('=s96-c','=s200-c');
@@ -633,45 +689,38 @@
             }
         }
 
-        // 설정 토글 이벤트 초기화
-        function initSettingsToggles() {
-            const notifyToggle = document.getElementById('notifyToggle');
-            const dataKeepToggle = document.getElementById('dataKeepToggle');
-            const privacyToggle = document.getElementById('privacyToggle');
-
-            if (notifyToggle) {
-                notifyToggle.addEventListener('change', function(e) {
-                    localStorage.setItem('notifications', e.target.checked);
-                    if (e.target.checked) {
-                        alert('알림이 활성화되었습니다.');
-                    } else {
-                        alert('알림이 비활성화되었습니다.');
-                    }
-                });
+        // 설정 토글 이벤트
+        document.getElementById('notifyToggle').addEventListener('change', function(e) {
+            localStorage.setItem('notifications', e.target.checked);
+            if (e.target.checked) {
+                alert('알림이 활성화되었습니다.');
+            } else {
+                alert('알림이 비활성화되었습니다.');
             }
+        });
 
-            if (dataKeepToggle) {
-                dataKeepToggle.addEventListener('change', function(e) {
-                    localStorage.setItem('dataKeep', e.target.checked);
-                    if (e.target.checked) {
-                        alert('데이터 보관이 활성화되었습니다.');
-                    } else {
-                        alert('데이터 보관이 비활성화되었습니다.');
-                    }
-                });
-            }
+        document.getElementById('darkModeToggle').addEventListener('change', function(e) {
+            document.body.classList.toggle('dark-mode', e.target.checked);
+            localStorage.setItem('darkMode', e.target.checked);
+        });
 
-            if (privacyToggle) {
-                privacyToggle.addEventListener('change', function(e) {
-                    localStorage.setItem('privacy', e.target.checked);
-                    if (e.target.checked) {
-                        alert('개인정보 보호가 활성화되었습니다.');
-                    } else {
-                        alert('개인정보 보호가 비활성화되었습니다.');
-                    }
-                });
+        document.getElementById('dataKeepToggle').addEventListener('change', function(e) {
+            localStorage.setItem('dataKeep', e.target.checked);
+            if (e.target.checked) {
+                alert('데이터 보관이 활성화되었습니다.');
+            } else {
+                alert('데이터 보관이 비활성화되었습니다.');
             }
-        }
+        });
+
+        document.getElementById('privacyToggle').addEventListener('change', function(e) {
+            localStorage.setItem('privacy', e.target.checked);
+            if (e.target.checked) {
+                alert('개인정보 보호가 활성화되었습니다.');
+            } else {
+                alert('개인정보 보호가 비활성화되었습니다.');
+            }
+        });
 
         // 데이터 관리 함수들
         function exportData() {
@@ -699,66 +748,27 @@
             }
         }
 
-        async function deleteAccount() {
-            const user = JSON.parse(localStorage.getItem('user'));
-            if (!user || !user.email) {
-                alert('로그인이 필요합니다.');
-                return;
-            }
-            
+        function deleteAccount() {
             if (confirm('정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-                // 이메일 확인 입력받기
-                const confirmEmail = prompt('확인을 위해 이메일 주소를 입력해주세요:', '');
-                
-                if (confirmEmail === null) {
-                    return; // 사용자가 취소한 경우
-                }
-                
-                if (confirmEmail !== user.email) {
-                    alert('이메일 주소가 일치하지 않습니다.');
-                    return;
-                }
-                
                 if (confirm('마지막 확인: 모든 데이터가 영구적으로 삭제됩니다. 계속하시겠습니까?')) {
-                    try {
-                        // 서버에 계정 삭제 요청
-                        const response = await fetch('DeleteAccountService', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            body: `confirmEmail=${encodeURIComponent(confirmEmail)}`
-                        });
-                        
-                        const result = await response.json();
-                        
-                        if (result.success) {
-                            // Google 로그아웃 처리
-                            if (typeof google !== 'undefined' && google.accounts) {
-                                google.accounts.id.disableAutoSelect();
-                            }
-                            
-                            // 모든 로그인 관련 데이터 삭제
-                            localStorage.clear();
-                            sessionStorage.clear();
-                            
-                            // 쿠키 삭제 (Google OAuth 등)
-                            document.cookie.split(";").forEach(function(c) { 
-                                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
-                            });
-                            
-                            alert('계정이 완전히 삭제되었습니다. 이용해주셔서 감사합니다.');
-                            
-                            // 강제로 홈페이지로 이동 (로그인되지 않은 상태)
-                            window.location.href = '/DateGenie/index.html';
-                        } else {
-                            alert('계정 삭제 중 오류가 발생했습니다: ' + result.message);
-                        }
-                        
-                    } catch (error) {
-                        console.error('계정 삭제 요청 중 오류:', error);
-                        alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                    // Google 로그아웃 처리
+                    if (typeof google !== 'undefined' && google.accounts) {
+                        google.accounts.id.disableAutoSelect();
                     }
+                    
+                    // 모든 로그인 관련 데이터 삭제
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    
+                    // 쿠키 삭제 (Google OAuth 등)
+                    document.cookie.split(";").forEach(function(c) { 
+                        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                    });
+                    
+                    alert('계정이 삭제되었습니다. 로그인 페이지로 이동합니다.');
+                    
+                    // 강제로 홈페이지로 이동 (로그인되지 않은 상태)
+                    window.location.href = '/DateGenie/index.html';
                 }
             }
         }
@@ -766,24 +776,45 @@
         // 설정 로드
         function loadSettings() {
             const notifications = localStorage.getItem('notifications') !== 'false';
+            const darkMode = localStorage.getItem('darkMode') === 'true';
             const dataKeep = localStorage.getItem('dataKeep') !== 'false';
             const privacy = localStorage.getItem('privacy') !== 'false';
 
-            const notifyToggle = document.getElementById('notifyToggle');
-            const dataKeepToggle = document.getElementById('dataKeepToggle');
-            const privacyToggle = document.getElementById('privacyToggle');
+            // 애니메이션 비활성화
+            document.body.classList.add('no-animation');
 
-            if (notifyToggle) notifyToggle.checked = notifications;
-            if (dataKeepToggle) dataKeepToggle.checked = dataKeep;
-            if (privacyToggle) privacyToggle.checked = privacy;
+            document.getElementById('notifyToggle').checked = notifications;
+            document.getElementById('darkModeToggle').checked = darkMode;
+            document.getElementById('dataKeepToggle').checked = dataKeep;
+            document.getElementById('privacyToggle').checked = privacy;
+
+            // 다크 모드 적용
+            document.body.classList.toggle('dark-mode', darkMode);
+
+            // 애니메이션 재활성화 (다음 프레임에서)
+            requestAnimationFrame(() => {
+                document.body.classList.remove('no-animation');
+            });
         }
 
+        // 오른쪽 하단 다크모드 버튼 이벤트 리스너
+        document.getElementById('darkModeToggleBtn').addEventListener('click', function() {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const currentMode = localStorage.getItem('darkMode') === 'true';
+            const newMode = !currentMode;
+            
+            // 토글 상태 업데이트
+            darkModeToggle.checked = newMode;
+            
+            // 다크모드 적용
+            document.body.classList.toggle('dark-mode', newMode);
+            localStorage.setItem('darkMode', newMode);
+        });
 
         document.addEventListener('DOMContentLoaded', function(){
             loadUserInfo();
             initUserDropdown();
             loadSettings();
-            initSettingsToggles();
         });
     </script>
     <script src="js/footer.js"></script>

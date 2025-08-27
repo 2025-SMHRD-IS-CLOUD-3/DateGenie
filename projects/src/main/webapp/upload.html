@@ -19,13 +19,13 @@
             min-height: calc(100vh - var(--navbar-height));
             padding-top: var(--navbar-height);
 			background: transparent;
-            max-width: 1200px;
+            max-width: 2000px;
             margin: 0 auto;
-			padding-left: 20px;
-			padding-right: 20px;
+			padding-left: 15px;
+			padding-right: 15px;
             display: grid;
-			grid-template-columns: 250px minmax(0, 1fr);
-			gap: 2rem;
+			grid-template-columns: 220px minmax(0, 1fr);
+			gap: 3rem;
 		}
 
 		/* 사이드바 네비게이션 */
@@ -96,8 +96,8 @@
 			z-index: -1;
 		}
 
-		.main { width: 100%; max-width: 1200px; padding: 2rem 2rem 3rem; justify-self: stretch; }
-		.panel { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 20px; padding: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
+		.main { width: 100%; max-width: 2200px; padding: 2rem 1.5rem 3rem; justify-self: stretch; }
+		.panel { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: 20px; padding: 2rem 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
 		.panel-header { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1rem; }
 		.panel-title { display:flex; align-items:center; gap:.6rem; font-size:1.2rem; color:#1f1d3a; font-weight:700; }
 		.panel-title i { color:#7c3aed; }
@@ -122,6 +122,20 @@
 			overflow: hidden;
 		}
 		.dropzone input[type="file"] { display:none; }
+		
+		/* 넓은 레이아웃 조정 - 구조 유지 */
+		.dropzone { width: 100%; max-width: none; padding: 2rem; }
+		.dropzone .label { padding: 1rem 1.8rem; font-size: 1.1rem; }
+		.dropzone-text { font-size: 1.1rem; margin-top: 1rem; }
+		.meta { font-size: 1rem; margin-top: 1rem; }
+		.kpis { max-width: none; gap: 1.2rem; }
+		.quick-grid { max-width: none; gap: 1.2rem; }
+		.kpi { padding: 1.3rem 1.8rem; }
+		.kpi h4 { font-size: 1.1rem; margin-bottom: 0.8rem; }
+		.progress { height: 12px; }
+		.quick-card { padding: 1.3rem; }
+		.quick-card h4 { font-size: 1.1rem; }
+		.quick-card p { font-size: 0.95rem; }
 		.dropzone .label { display:inline-flex; align-items:center; gap:.5rem; background:linear-gradient(135deg,#ec4899,#8b5cf6); color:#fff; padding:.8rem 1.5rem; border-radius:12px; cursor:pointer; font-size:1.1rem; }
 		.dropzone-text { margin-top:1rem; color:#6b7280; font-size:1.1rem; }
 		.meta { margin-top:1rem; color:#6b7280; font-size:.9rem; }
@@ -384,7 +398,7 @@
 </head>
 <body class="upload-page">
     <nav class="navbar">
-        <div class="nav-container" style="max-width: 1200px;">
+        <div class="nav-container" style="max-width: 2000px;">
             <div class="nav-logo">
                 <a href="/DateGenie/index.html" class="brand-logo" aria-label="Date Genie Home">
                     <i class="fas fa-heart heart-icon" aria-hidden="true"></i>
@@ -1141,13 +1155,14 @@
 				localStorage.setItem('analysisResult', JSON.stringify(result.analysisData));
 				localStorage.setItem('sessionId', result.sessionId);
 				
-				// 마이페이지 분석 결과에 저장
+				// 마이페이지 분석 결과에 저장 확인
 				try {
-					await saveAnalysisToMyPage(result, partnerName);
+					// 이미 저장되었는지 확인 후 필요시에만 저장
+					await ensureAnalysisSavedToMyPage(result, partnerName);
 					analysisText.textContent = '분석 완료! 결과 페이지로 이동합니다...';
 				} catch (saveError) {
-					console.warn('마이페이지 저장 실패:', saveError);
-					analysisText.textContent = '분석 완료! 결과 페이지로 이동합니다... (저장 실패)';
+					console.warn('마이페이지 저장 확인 실패:', saveError);
+					analysisText.textContent = '분석 완료! 결과 페이지로 이동합니다... (저장 확인 실패)';
 				}
 				
 				// 성공 알림
@@ -1266,6 +1281,47 @@
 			});
 		}
 		
+		// 마이페이지에 분석 결과가 저장되었는지 확인하고 필요시 저장
+		async function ensureAnalysisSavedToMyPage(result, partnerName) {
+			console.log('마이페이지 분석 결과 저장 확인 중...', {
+				sessionId: result.sessionId,
+				partnerName: partnerName
+			});
+			
+			try {
+				// 먼저 히스토리에 이미 저장되어 있는지 확인
+				const historyResponse = await fetch('/DateGenie/AnthropicAnalysisController?action=getHistory', {
+					method: 'POST',
+					credentials: 'include',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+					}
+				});
+				
+				if (historyResponse.ok) {
+					const historyResult = await historyResponse.json();
+					if (historyResult.success && historyResult.results) {
+						// 현재 sessionId가 이미 히스토리에 있는지 확인
+						const existingSession = historyResult.results.find(item => item.sessionId === result.sessionId);
+						if (existingSession) {
+							console.log('이미 마이페이지에 저장된 분석 결과입니다:', result.sessionId);
+							return { success: true, message: '이미 저장됨' };
+						}
+					}
+				}
+				
+				// 히스토리에 없으면 저장 시도
+				console.log('마이페이지에 새 분석 결과 저장 중...');
+				return await saveAnalysisToMyPage(result, partnerName);
+				
+			} catch (error) {
+				console.error('마이페이지 저장 확인 중 오류:', error);
+				// 확인 실패 시에도 저장 시도
+				console.log('확인 실패로 인한 저장 시도...');
+				return await saveAnalysisToMyPage(result, partnerName);
+			}
+		}
+
 		// 마이페이지에 분석 결과 저장
 		async function saveAnalysisToMyPage(result, partnerName) {
 			console.log('마이페이지에 분석 결과 저장 중...', {
