@@ -37,8 +37,7 @@
               }catch(e){ reveal(); }
             })();
         </script>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/style.css?v=20250827">
     <style>
         /* User Dropdown Menu Styles */
         .user-dropdown {
@@ -157,26 +156,6 @@
             }
         }
 
-        /* 다크 모드 */
-        body.dark-mode .user-info { background: transparent; border-color: transparent; }
-        body.dark-mode .user-info:hover { background: transparent; }
-        body.dark-mode .user-name { color: white; }
-        body.dark-mode .user-name-text { color: white; }
-        body.dark-mode .user-greet { color: rgba(255, 255, 255, 0.8); }
-        body.dark-mode .dropdown-menu {
-            background: #2a2a2a;
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-        body.dark-mode .dropdown-item {
-            color: #e5e7eb;
-        }
-        body.dark-mode .dropdown-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-        }
-        body.dark-mode .dropdown-divider {
-            background: rgba(255, 255, 255, 0.1);
-        }
     </style>
         <script>
             (function(){
@@ -261,7 +240,8 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero" id="home">
+    <main>
+        <section class="hero" id="home">
         <!-- Heartbeat Animation Background -->
         <div class="heartbeat-container">
             <svg class="heartbeat-line" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg">
@@ -567,6 +547,7 @@
             </div>
         </div>
     </section>
+    </main>
 
     <!-- Footer -->
     <footer class="site-footer">
@@ -638,7 +619,6 @@
 
 
     <script src="js/main.js"></script>
-    <script src="js/dark-mode-toggle.js"></script>
     <script src="js/footer.js"></script>
     <script>
         // 사용자 드롭다운 메뉴 기능
@@ -746,6 +726,5 @@
             loadUserInfo();
         });
     </script>
-    <script src="js/dark-mode.js"></script>
 </body>
 </html> 

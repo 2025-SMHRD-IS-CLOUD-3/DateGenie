@@ -499,82 +499,20 @@ body {
 }
 
 /* Dark Mode Styles */
-body.dark-mode .login-section {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 25%, #1e1e1e 50%, #2d2d2d 75%, #1a1a1a 100%);
-    color: #ffffff;
-}
-
-body.dark-mode .login-card {
-    background: rgba(40, 40, 40, 0.95);
-    color: #ffffff;
-}
-
-body.dark-mode .login-header h2 {
-    color: #ffffff;
-}
-
-body.dark-mode .login-header p {
-    color: #cccccc;
-}
-
-body.dark-mode .form-group label {
-    color: #ffffff;
-}
-
-body.dark-mode .input-wrapper input {
-    background: rgba(60, 60, 60, 0.8);
-    border-color: #4a4a4a;
-    color: #ffffff;
-}
-
-body.dark-mode .input-wrapper input:focus {
-    background: rgba(80, 80, 80, 0.8);
-    border-color: #ec4899;
-}
-
-body.dark-mode .input-wrapper i {
-    color: #cccccc;
-}
-
-body.dark-mode .toggle-password {
-    color: #cccccc;
-}
 
 
-body.dark-mode .checkbox-wrapper {
-    color: #cccccc;
-}
 
-body.dark-mode .checkmark {
-    border-color: #4a4a4a;
-}
 
-body.dark-mode .social-btn {
-    background: rgba(60, 60, 60, 0.8);
-    border-color: #4a4a4a;
-    color: #ffffff;
-}
 
-body.dark-mode .social-btn.google {
-    background: rgba(60, 60, 60, 0.8);
-    border-color: #4a4a4a;
-    color: #ffffff;
-}
 
-body.dark-mode .social-btn.google:hover {
-    background: rgba(80, 80, 80, 0.8);
-    border-color: #ec4899;
-}
 
-body.dark-mode .signup-link {
-    color: #cccccc;
-}
 
-body.dark-mode .social-login p {
-    color: #cccccc;
-}
 
-body.dark-mode .social-login p::before,
-body.dark-mode .social-login p::after {
-    background: #4a4a4a;
-} 
+
+
+
+
+
+
+
+

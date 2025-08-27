@@ -14,8 +14,7 @@
     <link rel="icon" type="image/svg+xml" href="images/icon.svg">
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/style.css?v=20250827">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -290,218 +289,67 @@
         }
 
 
-        /* === 포괄적인 다크모드 스타일 === */
-        body.dark-mode {
-            background: #0f1117;
-            color: #e5e7eb;
-        }
+
+
+
+
 
         /* 페이지 배경 */
-        body.dark-mode::before {
-            background: linear-gradient(135deg, #0f1117 0%, #1a1d24 40%, #0f1117 100%);
-        }
 
         /* 네비게이션 바 */
-        body.dark-mode .navbar {
-            background: rgba(15, 17, 23, 0.95);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
 
-        body.dark-mode .brand-logo {
-            color: #f8fafc;
-        }
 
-        body.dark-mode .heart-icon {
-            color: #ef4444;
-        }
 
         /* 사용자 드롭다운 */
-        body.dark-mode .user-info {
-            background: rgba(255, 255, 255, 0.05);
-        }
 
-        body.dark-mode .user-name {
-            color: #f8fafc;
-        }
 
-        body.dark-mode .user-greet {
-            color: #cbd5e1;
-        }
 
-        body.dark-mode .dropdown-menu {
-            background: #1e293b;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
 
-        body.dark-mode .dropdown-item {
-            color: #e2e8f0;
-        }
 
-        body.dark-mode .dropdown-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-        }
 
         /* 결과 컨테이너 */
-        body.dark-mode .results-container {
-            background: rgba(30, 41, 59, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
 
         /* 히어로 섹션 */
-        body.dark-mode .hero-section {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
 
-        body.dark-mode .hero-title {
-            color: #f1f5f9;
-        }
 
-        body.dark-mode .hero-subtitle {
-            color: #cbd5e1;
-        }
 
-        body.dark-mode .hero-insight {
-            color: #e2e8f0;
-        }
 
-        body.dark-mode .confidence-level {
-            color: #22c55e;
-        }
 
         /* 카드 스타일 */
-        body.dark-mode .result-card,
-        body.dark-mode .column-card {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
 
-        body.dark-mode .card-header {
-            background: rgba(15, 23, 42, 0.8);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
 
-        body.dark-mode .card-title {
-            color: #f1f5f9;
-        }
 
-        body.dark-mode .card-subtitle {
-            color: #94a3b8;
-        }
 
-        body.dark-mode .card-content {
-            color: #e2e8f0;
-        }
 
         /* 차트 컨테이너 */
-        body.dark-mode .chart-container {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
 
-        body.dark-mode .chart-title {
-            color: #f1f5f9;
-        }
 
         /* 섹션 헤더 */
-        body.dark-mode .section-header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
 
-        body.dark-mode .section-title {
-            color: #f1f5f9;
-        }
 
-        body.dark-mode .section-subtitle {
-            color: #94a3b8;
-        }
 
         /* 텍스트 요소들 */
-        body.dark-mode .score-value {
-            color: #fbbf24;
-        }
 
-        body.dark-mode .score-label,
-        body.dark-mode .metric-label {
-            color: #cbd5e1;
-        }
 
-        body.dark-mode .metric-value {
-            color: #f1f5f9;
-        }
 
         /* 배지와 태그 */
-        body.dark-mode .badge {
-            background: rgba(99, 102, 241, 0.2);
-            color: #a5b4fc;
-            border: 1px solid rgba(99, 102, 241, 0.3);
-        }
 
-        body.dark-mode .tag {
-            background: rgba(34, 197, 94, 0.2);
-            color: #86efac;
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
 
         /* 진행률 바 */
-        body.dark-mode .progress-bar {
-            background: rgba(55, 65, 81, 0.8);
-        }
 
-        body.dark-mode .progress-fill {
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-        }
 
         /* 리스트 아이템 */
-        body.dark-mode .list-item {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
 
-        body.dark-mode .list-item:hover {
-            background: rgba(30, 41, 59, 0.8);
-        }
 
         /* 인사이트 섹션 */
-        body.dark-mode .insight-item {
-            background: rgba(30, 41, 59, 0.6);
-            border-left: 3px solid #3b82f6;
-        }
 
-        body.dark-mode .insight-text {
-            color: #e2e8f0;
-        }
 
-        body.dark-mode .insight-icon {
-            color: #60a5fa;
-        }
 
         /* 푸터 */
-        body.dark-mode footer {
-            background: rgba(15, 17, 23, 0.95);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #94a3b8;
-        }
 
-        /* 스크롤바 다크모드 */
-        body.dark-mode::-webkit-scrollbar {
-            width: 8px;
-        }
 
-        body.dark-mode::-webkit-scrollbar-track {
-            background: rgba(30, 41, 59, 0.3);
-        }
 
-        body.dark-mode::-webkit-scrollbar-thumb {
-            background: rgba(148, 163, 184, 0.5);
-            border-radius: 4px;
-        }
 
-        body.dark-mode::-webkit-scrollbar-thumb:hover {
-            background: rgba(148, 163, 184, 0.7);
-        }
 
         /* Dashboard Shell Layout - from dashboard.html */
         .dashboard-shell {
@@ -2649,6 +2497,5 @@
     </script>
     <script src="js/main.js"></script>
     <script src="js/footer.js"></script>
-    <script src="js/dark-mode.js"></script>
 </body>
 </html>
