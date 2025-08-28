@@ -377,6 +377,7 @@ body {
     background: #FEE500;
     border-color: #FEE500;
     color: #000000;
+    transform: none;
 }
 
 .social-btn.google {
